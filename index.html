@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ViaggiaSmart – Analizziamo e pianifichiamo il viaggio migliore</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config={theme:{extend:{colors:{brand:{50:'#f0f9ff',100:'#e0f2fe',200:'#bae6fd',300:'#7dd3fc',400:'#38bdf8',500:'#0ea5e9',600:'#0284c7',700:'#0369a1',800:'#075985',900:'#0c4a6e'}},fontFamily:{sans:['Inter','system-ui','sans-serif']},animation:{float:'float 6s ease-in-out infinite','pulse-soft':'pulseSoft 2.5s ease-in-out infinite','pin-drop':'pinDrop 1.2s ease-out forwards',click:'clickAnim 2.8s ease-in-out infinite'},keyframes:{float:{'0%,100%':{transform:'translateY(0)'},'50%':{transform:'translateY(-12px)'}},pulseSoft:{'0%,100%':{opacity:'1',transform:'scale(1)'},'50%':{opacity:'.85',transform:'scale(1.03)'}},pinDrop:{'0%':{transform:'translateY(-40px) scale(0)',opacity:'0'},'60%':{transform:'translateY(8px) scale(1.15)',opacity:'1'},'100%':{transform:'translateY(0) scale(1)',opacity:'1'}},clickAnim:{'0%,70%,100%':{transform:'scale(1)',opacity:'.7'},'80%':{transform:'scale(.9)',opacity:'1'},'90%':{transform:'scale(1.05)',opacity:'1'}}}}}}
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+body{font-family:Inter,system-ui,sans-serif}
+.glass{background:rgba(255,255,255,.9);backdrop-filter:blur(12px)}
+.map-mock{background:linear-gradient(135deg,#e0f2fe 0%,#f0fdf4 50%,#fef3c7 100%)}
+.route-path{stroke-dasharray:1000;stroke-dashoffset:1000;animation:drawPath 4s ease-in-out infinite}
+@keyframes drawPath{0%{stroke-dashoffset:1000}40%{stroke-dashoffset:0}100%{stroke-dashoffset:0}}
+.cursor-sim{animation:clickAnim 2.8s ease-in-out infinite}
+.section-card{transition:all .3s ease}.section-card:hover{transform:translateY(-6px);box-shadow:0 25px 50px -12px rgb(14 165 233/.25)}
+.review-card:hover{transform:translateY(-4px);box-shadow:0 20px 40px -12px rgb(0 0 0/.12)}
+.page{display:none}.page.active{display:block;animation:fadeIn .35s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.lang-menu{display:none}.lang-menu.open{display:block}
+.wizard-step{display:none}.wizard-step.active{display:block;animation:fadeIn .35s ease}
+.chat-bubble{max-width:85%}
+</style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased">
+
+<!-- NAV -->
+<header class="sticky top-0 z-50 glass border-b border-slate-200/60">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center justify-between h-16">
+<a href="#" onclick="go('home');return false" class="flex items-center gap-2 group">
+<div class="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-brand-500/30">V</div>
+<span class="font-bold text-xl tracking-tight">Viaggia<span class="text-brand-600">Smart</span></span>
+</a>
+<nav class="hidden md:flex items-center gap-1">
+<button type="button" onclick="go('home')" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-brand-600 hover:bg-brand-50">Home</button>
+<button type="button" onclick="go('viaggi')" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-brand-600 hover:bg-brand-50">Viaggi</button>
+<button type="button" onclick="go('vacanze')" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-brand-600 hover:bg-brand-50">Vacanze</button>
+<button type="button" onclick="go('eventi')" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-brand-600 hover:bg-brand-50">Eventi</button>
+<button type="button" onclick="go('generale')" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-brand-600 hover:bg-brand-50">Generale</button>
+<button type="button" onclick="go('plan')" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-brand-600 hover:bg-brand-50">Pianifica</button>
+<button type="button" onclick="go('ai')" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-brand-600 hover:bg-brand-50">Assistente IA</button>
+<button type="button" onclick="go('prezzi')" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-brand-600 hover:bg-brand-50">Prezzi</button>
+</nav>
+<div class="flex items-center gap-2">
+<div class="relative">
+<button type="button" onclick="toggleLang()" class="flex items-center gap-1 px-2.5 py-1.5 rounded-full border border-slate-200 text-xs font-semibold hover:bg-slate-50"><span id="cur-lang">IT</span>
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></button>
+<div id="lang-menu" class="lang-menu absolute right-0 mt-1 w-36 bg-white rounded-xl shadow-xl border border-slate-100 py-1 z-50 text-sm">
+<button type="button" onclick="setLang('it')" class="w-full text-left px-3 py-2 hover:bg-slate-50">Italiano</button>
+<button type="button" onclick="setLang('en')" class="w-full text-left px-3 py-2 hover:bg-slate-50">English</button>
+<button type="button" onclick="setLang('fr')" class="w-full text-left px-3 py-2 hover:bg-slate-50">Français</button>
+<button type="button" onclick="setLang('de')" class="w-full text-left px-3 py-2 hover:bg-slate-50">Deutsch</button>
+<button type="button" onclick="setLang('es')" class="w-full text-left px-3 py-2 hover:bg-slate-50">Español</button>
+</div>
+</div>
+<button type="button" id="btn-account" onclick="go('account')" class="hidden sm:inline-flex px-3 py-1.5 text-sm font-semibold text-brand-700 hover:bg-brand-50 rounded-full">Il mio piano</button>
+<button type="button" onclick="go('prezzi')" class="px-4 py-2 rounded-full bg-brand-600 text-white text-sm font-semibold shadow-lg shadow-brand-600/25 hover:bg-brand-700">Inizia</button>
+</div>
+</div>
+</div>
+</header>
+
+<!-- ========== HOME ========== -->
+<div id="page-home" class="page active">
+<section class="relative overflow-hidden pt-12 pb-16 lg:pt-16 lg:pb-24">
+<div class="absolute inset-0 bg-gradient-to-b from-brand-50 via-white to-slate-50 pointer-events-none"></div>
+<div class="absolute top-20 right-0 w-96 h-96 bg-brand-200/40 rounded-full blur-3xl -z-10"></div>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+<div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+<div class="text-center lg:text-left">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-100 text-brand-700 text-xs font-semibold mb-6">
+<span class="w-2 h-2 rounded-full bg-brand-500 animate-pulse"></span>
+Non ti rimandiamo altrove · Analizziamo e pianifichiamo noi
+</div>
+<h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 leading-[1.1]">
+Analizziamo le offerte.<br>
+<span class="bg-gradient-to-r from-brand-600 to-emerald-500 bg-clip-text text-transparent">Costruiamo il tuo viaggio migliore.</span>
+</h1>
+<p class="mt-6 text-lg text-slate-600 max-w-xl mx-auto lg:mx-0 leading-relaxed">
+Ci dici destinazione, budget, mezzo e stile. Confrontiamo opzioni, calcoliamo soste e costi, e ti consegniamo l’itinerario ottimizzato. Per qualsiasi meta al mondo.
+</p>
+<div class="mt-8 flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
+<button type="button" onclick="go('plan')" class="inline-flex items-center justify-center px-7 py-3.5 rounded-full bg-brand-600 text-white font-semibold shadow-xl shadow-brand-600/30 hover:bg-brand-700 transition">
+Pianifica il viaggio
+<svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+</button>
+<button type="button" onclick="go('prezzi')" class="inline-flex items-center justify-center px-7 py-3.5 rounded-full bg-white border border-slate-200 text-slate-700 font-semibold hover:bg-slate-50 transition">Vedi i prezzi</button>
+</div>
+<div class="mt-10 flex items-center justify-center lg:justify-start gap-6 text-sm text-slate-500">
+<div class="flex -space-x-2">
+<img class="w-8 h-8 rounded-full border-2 border-white" src="https://i.pravatar.cc/100?img=11" alt="">
+<img class="w-8 h-8 rounded-full border-2 border-white" src="https://i.pravatar.cc/100?img=32" alt="">
+<img class="w-8 h-8 rounded-full border-2 border-white" src="https://i.pravatar.cc/100?img=5" alt="">
+</div>
+<div><div class="flex text-amber-400 text-sm">★★★★★</div><span class="font-medium text-slate-700">4.9/5</span> da chi ha già pianificato</div>
+</div>
+</div>
+<!-- Animated mock -->
+<div class="relative">
+<div class="relative mx-auto max-w-md">
+<div class="relative rounded-3xl bg-slate-900 p-2 shadow-2xl shadow-slate-900/20 animate-float">
+<div class="rounded-2xl overflow-hidden bg-white">
+<div class="bg-gradient-to-r from-brand-600 to-brand-700 px-4 py-3 flex items-center justify-between">
+<div class="flex items-center gap-2 text-white text-sm font-semibold">Itinerario ottimizzato</div>
+<span class="text-xs bg-white/20 px-2 py-0.5 rounded-full text-white">Budget ok</span>
+</div>
+<div class="relative h-56 map-mock overflow-hidden">
+<div class="absolute inset-0 opacity-30" style="background-image:radial-gradient(circle at 1px 1px,#94a3b8 1px,transparent 0);background-size:24px 24px"></div>
+<svg class="absolute inset-0 w-full h-full" viewBox="0 0 400 260" preserveAspectRatio="none"><path class="route-path" d="M60 180 Q120 80 180 120 T280 90 T340 140" fill="none" stroke="#0ea5e9" stroke-width="4" stroke-linecap="round"/></svg>
+<div class="absolute left-[12%] top-[62%] w-6 h-6 -translate-x-1/2 -translate-y-full animate-[pinDrop_1.2s_ease-out_.3s_forwards] opacity-0"><div class="w-6 h-6 bg-red-500 rounded-full border-2 border-white shadow-lg flex items-center justify-center text-white text-[10px] font-bold">1</div></div>
+<div class="absolute left-[42%] top-[38%] w-6 h-6 -translate-x-1/2 -translate-y-full animate-[pinDrop_1.2s_ease-out_.8s_forwards] opacity-0"><div class="w-6 h-6 bg-brand-500 rounded-full border-2 border-white shadow-lg flex items-center justify-center text-white text-[10px] font-bold">2</div></div>
+<div class="absolute left-[68%] top-[28%] w-6 h-6 -translate-x-1/2 -translate-y-full animate-[pinDrop_1.2s_ease-out_1.3s_forwards] opacity-0"><div class="w-6 h-6 bg-emerald-500 rounded-full border-2 border-white shadow-lg flex items-center justify-center text-white text-[10px] font-bold">3</div></div>
+<div class="absolute bottom-4 left-1/2 -translate-x-1/2">
+<button class="relative px-5 py-2.5 rounded-full bg-white text-brand-700 font-semibold text-sm shadow-xl border border-brand-100 flex items-center gap-2 animate-pulse-soft">
+Apri itinerario
+<div class="absolute -right-3 -bottom-3 cursor-sim"><svg class="w-6 h-6 text-slate-800 drop-shadow" fill="currentColor" viewBox="0 0 24 24"><path d="M5.5 3.21V20.8c0 .1.05.19.13.26l.16.1c.1.05.21.05.31 0l4.4-2.5 3.1 5.4c.05.1.16.16.27.16h.1c.14 0 .26-.09.3-.22l1.8-5.9 4.7.7c.14.02.27-.05.33-.18.05-.12.03-.26-.07-.36L5.8 3.05c-.1-.1-.24-.12-.36-.06-.1.05-.18.15-.18.26z"/></svg></div>
+</button>
+</div>
+</div>
+<div class="p-3 space-y-2 border-t border-slate-100">
+<div class="flex items-center gap-3 p-2 rounded-xl bg-brand-50">
+<div class="w-8 h-8 rounded-lg bg-brand-500 text-white flex items-center justify-center text-xs font-bold">1</div>
+<div class="flex-1 min-w-0"><div class="text-sm font-medium truncate">Tappa ottimizzata</div><div class="text-xs text-slate-500">Mezzo + sosta · budget</div></div>
+<span class="text-xs font-medium text-emerald-600">Ok</span>
+</div>
+</div>
+</div>
+</div>
+<div class="absolute -left-4 top-16 bg-white rounded-2xl shadow-xl px-4 py-3 border border-slate-100 hidden sm:block">
+<div class="text-xs text-slate-500">Spesa stimata</div>
+<div class="text-lg font-bold">Nel budget</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- 4 section cards -->
+<section class="py-16 bg-white border-y border-slate-100">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="text-center max-w-2xl mx-auto mb-12">
+<h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900">Scegli cosa vuoi organizzare</h2>
+<p class="mt-3 text-slate-600">Pagine dedicate. Clicca e apri la sezione completa.</p>
+</div>
+<div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+<button type="button" onclick="go('viaggi')" class="section-card text-left group block rounded-3xl overflow-hidden bg-white border border-slate-200 shadow-sm hover:border-brand-200 w-full">
+<div class="h-40 relative overflow-hidden">
+<img src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=600&q=80" alt="Viaggi" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+<div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+<div class="absolute bottom-3 left-4 text-white font-bold text-lg">Viaggi</div>
+</div>
+<div class="p-5"><p class="text-sm text-slate-600">Itinerari multi-tappa, road trip, city break. Mezzi, soste e budget.</p>
+<span class="inline-flex mt-3 text-sm font-semibold text-brand-600">Apri pagina Viaggi →</span></div>
+</button>
+<button type="button" onclick="go('vacanze')" class="section-card text-left group block rounded-3xl overflow-hidden bg-white border border-slate-200 shadow-sm hover:border-emerald-200 w-full">
+<div class="h-40 relative overflow-hidden">
+<img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&q=80" alt="Vacanze" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+<div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+<div class="absolute bottom-3 left-4 text-white font-bold text-lg">Vacanze</div>
+</div>
+<div class="p-5"><p class="text-sm text-slate-600">Mare, montagna, relax. Affollamento e stagione inclusa nel piano.</p>
+<span class="inline-flex mt-3 text-sm font-semibold text-emerald-600">Apri pagina Vacanze →</span></div>
+</button>
+<button type="button" onclick="go('eventi')" class="section-card text-left group block rounded-3xl overflow-hidden bg-white border border-slate-200 shadow-sm hover:border-violet-200 w-full">
+<div class="h-40 relative overflow-hidden">
+<img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=600&q=80" alt="Eventi" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+<div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+<div class="absolute bottom-3 left-4 text-white font-bold text-lg">Eventi</div>
+</div>
+<div class="p-5"><p class="text-sm text-slate-600">Festival, sport, raduni, concerti. Giorno migliore e logistica.</p>
+<span class="inline-flex mt-3 text-sm font-semibold text-violet-600">Apri pagina Eventi →</span></div>
+</button>
+<button type="button" onclick="go('generale')" class="section-card text-left group block rounded-3xl overflow-hidden bg-white border border-slate-200 shadow-sm hover:border-amber-200 w-full">
+<div class="h-40 relative overflow-hidden">
+<img src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=600&q=80" alt="Generale" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+<div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+<div class="absolute bottom-3 left-4 text-white font-bold text-lg">Generale</div>
+</div>
+<div class="p-5"><p class="text-sm text-slate-600">Costi medi, confronti stagione, consigli per destinazione.</p>
+<span class="inline-flex mt-3 text-sm font-semibold text-amber-600">Apri pagina Generale →</span></div>
+</button>
+</div>
+</div>
+</section>
+
+<section class="py-16">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="text-center mb-12">
+<h2 class="text-3xl font-extrabold text-slate-900">Come lavoriamo</h2>
+<p class="mt-2 text-slate-600">Non aggreghiamo link. Analizziamo e costruiamo il piano.</p>
+</div>
+<div class="grid md:grid-cols-3 gap-8">
+<div class="rounded-3xl p-8 bg-white border border-slate-100 shadow-sm">
+<div class="w-12 h-12 rounded-2xl bg-brand-100 text-brand-600 flex items-center justify-center mb-5 font-bold">1</div>
+<h3 class="text-xl font-bold mb-2">Domande mirate</h3>
+<p class="text-sm text-slate-600">Dove, quando, budget, mezzo (aereo/treno/traghetto/auto), frequenza soste, stile, interessi.</p>
+</div>
+<div class="rounded-3xl p-8 bg-white border border-slate-100 shadow-sm">
+<div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center mb-5 font-bold">2</div>
+<h3 class="text-xl font-bold mb-2">Analisi e piano</h3>
+<p class="text-sm text-slate-600">Confrontiamo opzioni e generiamo itinerario con costi e soste. Per qualsiasi destinazione al mondo.</p>
+</div>
+<div class="rounded-3xl p-8 bg-white border border-slate-100 shadow-sm">
+<div class="w-12 h-12 rounded-2xl bg-violet-100 text-violet-600 flex items-center justify-center mb-5 font-bold">3</div>
+<h3 class="text-xl font-bold mb-2">Assistente IA</h3>
+<p class="text-sm text-slate-600">Raffina il piano in chat. In futuro collegabile a ChatGPT con la tua API key.</p>
+</div>
+</div>
+</div>
+</section>
+
+<section class="py-12 bg-white border-y border-slate-100">
+<div class="max-w-7xl mx-auto px-4 grid sm:grid-cols-2 lg:grid-cols-4 gap-4 text-center">
+<div class="rounded-xl border border-dashed border-slate-200 p-4"><div class="font-semibold text-sm">Estensione browser</div><div class="text-xs text-slate-500 mt-1">In arrivo</div></div>
+<div class="rounded-xl border border-dashed border-slate-200 p-4"><div class="font-semibold text-sm">Confronto voli</div><div class="text-xs text-slate-500 mt-1">In arrivo</div></div>
+<div class="rounded-xl border border-dashed border-slate-200 p-4"><div class="font-semibold text-sm">Treni & traghetti</div><div class="text-xs text-slate-500 mt-1">In arrivo</div></div>
+<div class="rounded-xl border border-dashed border-slate-200 p-4"><div class="font-semibold text-sm">IA ChatGPT</div><div class="text-xs text-slate-500 mt-1">Struttura pronta</div></div>
+</div>
+</section>
+
+<section class="py-16 bg-slate-50">
+<div class="max-w-7xl mx-auto px-4">
+<div class="text-center mb-10"><h2 class="text-3xl font-extrabold">Cosa dicono</h2></div>
+<div class="grid md:grid-cols-3 gap-6">
+<div class="review-card rounded-3xl bg-white border border-slate-100 p-6 transition"><div class="text-amber-400 mb-2">★★★★★</div><p class="text-sm text-slate-700">“Finalmente un sito che mi fa il piano, non mi manda su Booking. Budget e soste chiari.”</p><div class="mt-4 text-sm font-semibold">Giulia R. · Milano</div></div>
+<div class="review-card rounded-3xl bg-white border border-slate-100 p-6 transition"><div class="text-amber-400 mb-2">★★★★★</div><p class="text-sm text-slate-700">“Per il festival ho scelto mezzo e giorno meno affollato. Il wizard è chiaro.”</p><div class="mt-4 text-sm font-semibold">Marco B. · Bologna</div></div>
+<div class="review-card rounded-3xl bg-white border border-slate-100 p-6 transition"><div class="text-amber-400 mb-2">★★★★★</div><p class="text-sm text-slate-700">“Pagato una volta, il piano resta. Torno e trovo ancora il mio abbonamento.”</p><div class="mt-4 text-sm font-semibold">Laura M. · Torino</div></div>
+</div>
+</div>
+</section>
+</div>
+
+<!-- ========== VIAGGI PAGE ========== -->
+<div id="page-viaggi" class="page">
+<section class="py-16">
+<div class="max-w-5xl mx-auto px-4">
+<button type="button" onclick="go('home')" class="text-sm text-brand-600 font-semibold mb-6">← Home</button>
+<div class="rounded-3xl overflow-hidden mb-10 h-56 relative">
+<img src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200&q=80" class="w-full h-full object-cover" alt="Viaggi">
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+<div class="absolute bottom-6 left-6 text-white"><h1 class="text-3xl sm:text-4xl font-extrabold">Viaggi</h1><p class="mt-1 text-white/90">Itinerari multi-tappa · road trip · city break</p></div>
+</div>
+<p class="text-lg text-slate-600 mb-8">Pianifichiamo viaggi completi: scelta del mezzo (aereo, treno, auto, misto), frequenza delle soste, budget e stile. Non ti mandiamo su altri siti: costruiamo il percorso ottimale in base alle tue risposte.</p>
+<div class="grid sm:grid-cols-2 gap-6 mb-10">
+<div class="rounded-2xl bg-white border border-slate-200 p-6"><h3 class="font-bold text-lg mb-2">Cosa include un piano Viaggi</h3><ul class="text-sm text-slate-600 space-y-2"><li>• Destinazione (ovunque nel mondo)</li><li>• Mezzo selezionabile e alternative</li><li>• Soste ogni 2 / 3 / 4 ore o solo città</li><li>• Stima costi alloggio + trasporti + attività</li><li>• Giorni e ordine tappe ottimizzati</li></ul></div>
+<div class="rounded-2xl bg-white border border-slate-200 p-6"><h3 class="font-bold text-lg mb-2">Esempi di utilizzo</h3><ul class="text-sm text-slate-600 space-y-2"><li>• Road trip Costa Amalfitana</li><li>• Interrail / treno Europa</li><li>• City break multi-città</li><li>• Viaggio lungo scalo aereo + treno</li></ul></div>
+</div>
+<button type="button" onclick="go('plan')" class="px-7 py-3.5 rounded-full bg-brand-600 text-white font-semibold shadow-lg hover:bg-brand-700">Pianifica un viaggio</button>
+</div>
+</section>
+</div>
+
+<!-- ========== VACANZE PAGE ========== -->
+<div id="page-vacanze" class="page">
+<section class="py-16">
+<div class="max-w-5xl mx-auto px-4">
+<button type="button" onclick="go('home')" class="text-sm text-brand-600 font-semibold mb-6">← Home</button>
+<div class="rounded-3xl overflow-hidden mb-10 h-56 relative">
+<img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=80" class="w-full h-full object-cover" alt="Vacanze">
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+<div class="absolute bottom-6 left-6 text-white"><h1 class="text-3xl sm:text-4xl font-extrabold">Vacanze</h1><p class="mt-1 text-white/90">Mare · montagna · relax · famiglia</p></div>
+</div>
+<p class="text-lg text-slate-600 mb-8">Vacanze orientate al riposo o alla natura: includiamo affollamento stimato, alta/bassa stagione e budget per alloggio e attività. Stesso wizard di pianificazione, con focus vacanza.</p>
+<div class="grid sm:grid-cols-2 gap-6 mb-10">
+<div class="rounded-2xl bg-white border border-slate-200 p-6"><h3 class="font-bold text-lg mb-2">Focus vacanza</h3><ul class="text-sm text-slate-600 space-y-2"><li>• Periodo migliore (folla e prezzi)</li><li>• Stile: economico → lusso</li><li>• Mezzo e trasferimenti</li><li>• Attività e tempo libero</li></ul></div>
+<div class="rounded-2xl bg-white border border-slate-200 p-6"><h3 class="font-bold text-lg mb-2">Esempi</h3><ul class="text-sm text-slate-600 space-y-2"><li>• Settimana al mare in bassa stagione</li><li>• Montagna con soste auto</li><li>• Isola con traghetto + soggiorno</li></ul></div>
+</div>
+<button type="button" onclick="go('plan')" class="px-7 py-3.5 rounded-full bg-emerald-600 text-white font-semibold shadow-lg hover:bg-emerald-700">Pianifica una vacanza</button>
+</div>
+</section>
+</div>
+
+<!-- ========== EVENTI PAGE ========== -->
+<div id="page-eventi" class="page">
+<section class="py-16">
+<div class="max-w-5xl mx-auto px-4">
+<button type="button" onclick="go('home')" class="text-sm text-brand-600 font-semibold mb-6">← Home</button>
+<div class="rounded-3xl overflow-hidden mb-10 h-56 relative">
+<img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=1200&q=80" class="w-full h-full object-cover" alt="Eventi festival">
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+<div class="absolute bottom-6 left-6 text-white"><h1 class="text-3xl sm:text-4xl font-extrabold">Eventi</h1><p class="mt-1 text-white/90">Festival · concerti · sport · raduni auto</p></div>
+</div>
+<p class="text-lg text-slate-600 mb-8">Organizziamo l’esperienza intorno a un evento: arrivo, alloggio, giorno migliore per evitare code, mezzo e ritorno. Analizziamo logistica e budget, non ti lasciamo solo con un biglietto.</p>
+<div class="grid sm:grid-cols-2 gap-6 mb-10">
+<div class="rounded-2xl bg-white border border-slate-200 p-6"><h3 class="font-bold text-lg mb-2">Cosa pianifichiamo</h3><ul class="text-sm text-slate-600 space-y-2"><li>• Trasporto verso l’evento</li><li>• Alloggio vicino o comodo</li><li>• Giorno/orario consigliato (folla)</li><li>• Budget totale stimato</li><li>• Piano rientro</li></ul></div>
+<div class="rounded-2xl bg-white border border-slate-200 p-6"><h3 class="font-bold text-lg mb-2">Tipologie</h3><ul class="text-sm text-slate-600 space-y-2"><li>• Festival musicali</li><li>• Eventi sportivi</li><li>• Raduni e fiere auto/moto</li><li>• Concerti e show</li></ul></div>
+</div>
+<button type="button" onclick="go('plan')" class="px-7 py-3.5 rounded-full bg-violet-600 text-white font-semibold shadow-lg hover:bg-violet-700">Pianifica un evento</button>
+</div>
+</section>
+</div>
+
+<!-- ========== GENERALE PAGE ========== -->
+<div id="page-generale" class="page">
+<section class="py-16">
+<div class="max-w-5xl mx-auto px-4">
+<button type="button" onclick="go('home')" class="text-sm text-brand-600 font-semibold mb-6">← Home</button>
+<div class="rounded-3xl overflow-hidden mb-10 h-56 relative">
+<img src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1200&q=80" class="w-full h-full object-cover" alt="Generale">
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+<div class="absolute bottom-6 left-6 text-white"><h1 class="text-3xl sm:text-4xl font-extrabold">Generale</h1><p class="mt-1 text-white/90">Costi medi · stagione · confronti</p></div>
+</div>
+<p class="text-lg text-slate-600 mb-8">Sezione per orientarti prima di decidere: costi medi per destinazione, differenza alta/bassa stagione, indicazioni su mezzi e tempi. Poi passi al wizard completo per il piano dettagliato.</p>
+<div class="grid sm:grid-cols-3 gap-4 mb-10">
+<div class="rounded-2xl bg-white border border-slate-200 p-5 text-center"><div class="text-2xl font-extrabold text-brand-600">Hotel</div><div class="text-sm text-slate-500 mt-1">Fasce di prezzo medie</div></div>
+<div class="rounded-2xl bg-white border border-slate-200 p-5 text-center"><div class="text-2xl font-extrabold text-brand-600">Cibo</div><div class="text-sm text-slate-500 mt-1">Spesa giornaliera orientativa</div></div>
+<div class="rounded-2xl bg-white border border-slate-200 p-5 text-center"><div class="text-2xl font-extrabold text-brand-600">Stagione</div><div class="text-sm text-slate-500 mt-1">Alta vs bassa</div></div>
+</div>
+<button type="button" onclick="go('plan')" class="px-7 py-3.5 rounded-full bg-amber-500 text-white font-semibold shadow-lg hover:bg-amber-600">Passa alla pianificazione</button>
+</div>
+</section>
+</div>
+
+<!-- ========== PREZZI ========== -->
+<div id="page-prezzi" class="page">
+<section class="py-16">
+<div class="max-w-5xl mx-auto px-4">
+<div class="text-center mb-12">
+<h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900">Piani chiari</h1>
+<p class="mt-3 text-slate-600">Dopo l’acquisto (demo) il piano resta salvato su questo dispositivo.</p>
+</div>
+<div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+<div class="rounded-2xl bg-white border border-slate-200 p-6">
+<div class="text-xs font-semibold text-slate-500 uppercase">Confronto offerte</div>
+<div class="mt-3 text-3xl font-extrabold">2,00 €</div>
+<p class="mt-2 text-sm text-slate-500">1 analisi rapida</p>
+<ul class="mt-5 space-y-2 text-sm text-slate-600"><li>✓ 1 piano base</li><li>✓ Mezzi e costi</li></ul>
+<button type="button" onclick="buy('compare','Confronto offerte','2,00 €')" class="mt-6 w-full py-2.5 rounded-full border-2 border-brand-600 text-brand-600 font-semibold text-sm hover:bg-brand-50">Acquista</button>
+</div>
+<div class="rounded-2xl bg-white border border-slate-200 p-6">
+<div class="text-xs font-semibold text-slate-500 uppercase">10 viaggi</div>
+<div class="mt-3 text-3xl font-extrabold">19,90 €</div>
+<p class="mt-2 text-sm text-slate-500">Pacchetto 10 piani</p>
+<ul class="mt-5 space-y-2 text-sm text-slate-600"><li>✓ 10 piani completi</li><li>✓ Soste + mezzi</li><li>✓ 12 mesi</li></ul>
+<button type="button" onclick="buy('pack10','Pacchetto 10 viaggi','19,90 €')" class="mt-6 w-full py-2.5 rounded-full border-2 border-brand-600 text-brand-600 font-semibold text-sm hover:bg-brand-50">Acquista</button>
+</div>
+<div class="rounded-2xl bg-brand-600 text-white p-6 relative scale-[1.02] shadow-xl shadow-brand-600/25">
+<div class="absolute -top-2.5 left-1/2 -translate-x-1/2 px-2.5 py-0.5 bg-amber-400 text-amber-900 text-[10px] font-bold rounded-full">Più scelto</div>
+<div class="text-xs font-semibold text-brand-100 uppercase">Mensile</div>
+<div class="mt-3 text-3xl font-extrabold">14,90 €</div>
+<p class="mt-2 text-sm text-brand-100">Illimitato / mese</p>
+<ul class="mt-5 space-y-2 text-sm text-brand-50"><li>✓ Piani illimitati</li><li>✓ Assistente IA</li><li>✓ Ogni destinazione</li></ul>
+<button type="button" onclick="buy('monthly','Abbonamento mensile','14,90 €')" class="mt-6 w-full py-2.5 rounded-full bg-white text-brand-700 font-semibold text-sm">Abbonati</button>
+</div>
+<div class="rounded-2xl bg-white border border-slate-200 p-6">
+<div class="text-xs font-semibold text-slate-500 uppercase">Annuale</div>
+<div class="mt-3 text-3xl font-extrabold">29,99 €</div>
+<p class="mt-2 text-sm text-slate-500">12 mesi illimitati</p>
+<ul class="mt-5 space-y-2 text-sm text-slate-600"><li>✓ Tutto del mensile</li><li>✓ Risparmi</li><li>✓ Priorità</li></ul>
+<button type="button" onclick="buy('yearly','Abbonamento annuale','29,99 €')" class="mt-6 w-full py-2.5 rounded-full border-2 border-brand-600 text-brand-600 font-semibold text-sm hover:bg-brand-50">Acquista</button>
+</div>
+</div>
+<p class="mt-8 text-center text-xs text-slate-500">Demo: pagamento simulato in localStorage. Produzione: Stripe.</p>
+<div class="mt-10 text-center"><button type="button" onclick="go('legal')" class="text-sm text-brand-600 font-semibold">Policy rimborsi e privacy →</button></div>
+</div>
+</section>
+</div>
+
+<!-- ========== PLAN (wizard gated) ========== -->
+<div id="page-plan" class="page">
+<section class="py-12">
+<div id="plan-container" class="max-w-2xl mx-auto px-4">
+<div id="plan-locked" class="hidden"></div>
+<div id="plan-wizard">
+<div class="mb-4 rounded-xl bg-amber-50 border border-amber-200 px-4 py-3 text-sm text-amber-900">
+<strong>Accesso demo libero:</strong> puoi usare il wizard senza pagare. Dopo “Genera piano” vedi alloggi, mappa, trasporti e pulsanti Prenota ora.
+</div>
+<div class="mb-6 flex flex-wrap items-center justify-between gap-2">
+<h1 class="text-2xl font-extrabold">Pianifica il tuo viaggio</h1>
+<span id="plan-badge" class="text-xs font-semibold px-3 py-1 rounded-full bg-amber-100 text-amber-800">Demo · accesso libero</span>
+</div>
+<div class="flex gap-1 mb-8">
+<div id="pg1" class="h-1.5 flex-1 rounded-full bg-brand-500"></div>
+<div id="pg2" class="h-1.5 flex-1 rounded-full bg-slate-200"></div>
+<div id="pg3" class="h-1.5 flex-1 rounded-full bg-slate-200"></div>
+<div id="pg4" class="h-1.5 flex-1 rounded-full bg-slate-200"></div>
+</div>
+
+<!-- STEP 1: viaggiatori PRIMA, poi destinazione -->
+<div id="ws1" class="wizard-step active space-y-5">
+<div>
+<label class="block text-sm font-semibold mb-1.5">Numero di viaggiatori</label>
+<select id="w-peo" class="w-full px-4 py-3 rounded-xl border border-slate-200">
+<option value="1">1 persona</option>
+<option value="2" selected>2 persone</option>
+<option value="3">3 persone</option>
+<option value="4">4 persone</option>
+<option value="5+">5 o più</option>
+</select>
+</div>
+<div>
+<label class="block text-sm font-semibold mb-1.5">Dove vuoi andare? (qualsiasi meta al mondo)</label>
+<input id="w-dest" type="text" placeholder="Es. Trapani, Sicilia, Tokyo, Lisbona..." class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-brand-400 focus:outline-none">
+</div>
+<div>
+<label class="block text-sm font-semibold mb-1.5">Quando?</label>
+<select id="w-when" class="w-full px-4 py-3 rounded-xl border border-slate-200">
+<option>Date flessibili (miglior prezzo / stagione)</option>
+<option>Entro 30 giorni</option>
+<option>Entro 3 mesi</option>
+<option>Date precise</option>
+</select>
+</div>
+<div>
+<label class="block text-sm font-semibold mb-1.5">Durata approssimativa</label>
+<select id="w-days" class="w-full px-4 py-3 rounded-xl border border-slate-200">
+<option>2–3 giorni</option>
+<option selected>4–7 giorni</option>
+<option>8–14 giorni</option>
+<option>15+ giorni</option>
+</select>
+</div>
+<button type="button" onclick="wiz(2)" class="w-full py-3 rounded-full bg-brand-600 text-white font-semibold">Avanti</button>
+</div>
+
+<div id="ws2" class="wizard-step space-y-5">
+<div>
+<label class="block text-sm font-semibold mb-1.5">Mezzo di trasporto preferito</label>
+<select id="w-tr" class="w-full px-4 py-3 rounded-xl border border-slate-200">
+<option>Aereo</option>
+<option>Treno</option>
+<option>Traghetto</option>
+<option>Auto / road trip</option>
+<option selected>Misto (ottimizza tu)</option>
+</select>
+</div>
+<div>
+<label class="block text-sm font-semibold mb-1.5">Ogni quanto fare una sosta?</label>
+<select id="w-st" class="w-full px-4 py-3 rounded-xl border border-slate-200">
+<option>Ogni ~2 ore</option>
+<option selected>Ogni ~3 ore</option>
+<option>Ogni ~4 ore</option>
+<option>Solo città principali</option>
+<option>Nessuna / volo diretto</option>
+</select>
+</div>
+<div>
+<label class="block text-sm font-semibold mb-1.5">Budget totale orientativo (€)</label>
+<input id="w-bud" type="number" min="50" placeholder="es. 800" class="w-full px-4 py-3 rounded-xl border border-slate-200">
+</div>
+<div class="flex gap-3">
+<button type="button" onclick="wiz(1)" class="flex-1 py-3 rounded-full border border-slate-200 font-semibold">Indietro</button>
+<button type="button" onclick="wiz(3)" class="flex-1 py-3 rounded-full bg-brand-600 text-white font-semibold">Avanti</button>
+</div>
+</div>
+
+<div id="ws3" class="wizard-step space-y-5">
+<div>
+<label class="block text-sm font-semibold mb-1.5">Stile di viaggio</label>
+<select id="w-style" class="w-full px-4 py-3 rounded-xl border border-slate-200">
+<option>Economico</option>
+<option selected>Intermedio</option>
+<option>Comfort</option>
+<option>Lusso</option>
+</select>
+</div>
+<div>
+<label class="block text-sm font-semibold mb-1.5">Interessi principali</label>
+<select id="w-int" class="w-full px-4 py-3 rounded-xl border border-slate-200">
+<option>Cultura</option>
+<option>Natura</option>
+<option>Mare</option>
+<option>Cibo</option>
+<option>Eventi</option>
+<option selected>Misto</option>
+</select>
+</div>
+<div>
+<label class="block text-sm font-semibold mb-1.5">Preferenza alloggio</label>
+<select id="w-stay" class="w-full px-4 py-3 rounded-xl border border-slate-200">
+<option selected>Entrambi (hotel + Airbnb)</option>
+<option>Solo hotel</option>
+<option>Solo Airbnb / appartamenti</option>
+</select>
+</div>
+<div class="flex gap-3">
+<button type="button" onclick="wiz(2)" class="flex-1 py-3 rounded-full border border-slate-200 font-semibold">Indietro</button>
+<button type="button" onclick="wiz(4)" class="flex-1 py-3 rounded-full bg-brand-600 text-white font-semibold">Genera piano</button>
+</div>
+</div>
+
+<!-- RISULTATO COMPLETO -->
+<div id="ws4" class="wizard-step space-y-6">
+<div class="rounded-2xl bg-brand-50 border border-brand-100 p-5">
+<h3 class="font-bold text-brand-900 text-lg">Il tuo piano organizzato</h3>
+<p class="text-sm text-brand-800 mt-1">Alloggi, trasporti, mappa e pulsanti Prenota ora. Dati di esempio realistici — in produzione si collegano API o feed partner.</p>
+</div>
+<div id="plan-out"></div>
+<div class="flex flex-col sm:flex-row gap-3">
+<button type="button" onclick="wiz(1); document.getElementById('plan-container').className='max-w-2xl mx-auto px-4'" class="flex-1 py-3 rounded-full border border-slate-200 font-semibold">Nuova pianificazione</button>
+<button type="button" onclick="go('ai')" class="flex-1 py-3 rounded-full bg-brand-600 text-white font-semibold">Assistente IA</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+
+<!-- ========== AI ========== -->
+<div id="page-ai" class="page">
+<section class="py-12">
+<div class="max-w-2xl mx-auto px-4">
+<h1 class="text-2xl font-extrabold mb-2">Assistente IA</h1>
+<p class="text-sm text-slate-600 mb-6">Demo con risposte simulate. In futuro: tua API key OpenAI/ChatGPT.</p>
+<div class="rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-sm">
+<div id="chat-log" class="h-80 overflow-y-auto p-4 space-y-3 bg-slate-50">
+<div class="chat-bubble bg-white border border-slate-100 rounded-2xl rounded-tl-sm px-4 py-2.5 text-sm shadow-sm">Ciao! Dimmi destinazione, budget, mezzo o cosa cambiare nel piano.</div>
+</div>
+<div class="p-3 border-t flex gap-2">
+<input id="chat-in" type="text" placeholder="Messaggio..." class="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400">
+<button type="button" onclick="sendChat()" class="px-5 py-2.5 rounded-xl bg-brand-600 text-white text-sm font-semibold">Invia</button>
+</div>
+</div>
+</div>
+</section>
+</div>
+
+<!-- ========== LEGAL ========== -->
+<div id="page-legal" class="page">
+<section class="py-16">
+<div class="max-w-3xl mx-auto px-4 space-y-10">
+<button type="button" onclick="go('home')" class="text-sm text-brand-600 font-semibold">← Home</button>
+<h1 class="text-3xl font-extrabold">Policy e Privacy</h1>
+<div class="rounded-2xl bg-white border border-slate-200 p-6 sm:p-8">
+<h2 class="text-xl font-bold mb-4">Politica di rimborso</h2>
+<div class="space-y-3 text-sm text-slate-600 leading-relaxed">
+<p><strong>Confronto offerte (2 €)</strong> — prodotto digitale a consumo. Non rimborsabile dopo la generazione del piano, salvo malfunzionamento tecnico dimostrato.</p>
+<p><strong>Pacchetto 10 viaggi (19,90 €)</strong> — rimborso entro 14 giorni se non è stato usato più di 1 piano.</p>
+<p><strong>Mensile (14,90 €)</strong> — disdici quando vuoi. Rimborso pro-rata solo entro 48 ore dal primo addebito e senza uso sostanziale.</p>
+<p><strong>Annuale (29,99 €)</strong> — rimborso entro 14 giorni se non sono stati generati più di 2 piani.</p>
+<p>Richieste entro i termini, con email di acquisto. Elaborazione entro 10 giorni lavorativi.</p>
+<p class="text-xs text-slate-500">Demo: nessun pagamento reale. Testo valido per la produzione.</p>
+</div>
+</div>
+<div class="rounded-2xl bg-white border border-slate-200 p-6 sm:p-8">
+<h2 class="text-xl font-bold mb-4">Privacy (sintesi)</h2>
+<div class="space-y-3 text-sm text-slate-600 leading-relaxed">
+<p><strong>Titolare</strong> — ViaggiaSmart (demo). In produzione: ragione sociale e contatti.</p>
+<p><strong>Dati</strong> — email, pagamenti (Stripe), risposte wizard, chat IA; piano e lingua in localStorage sul dispositivo.</p>
+<p><strong>Finalità</strong> — servizio, abbonamenti, miglioramento, obblighi di legge.</p>
+<p><strong>Diritti</strong> — accesso, rettifica, cancellazione, portabilità, opposizione.</p>
+<p><strong>Terzi</strong> — processori pagamento; provider IA solo se colleghi la tua API key. Non vendiamo i dati.</p>
+<p>privacy@viaggiasmart.example</p>
+</div>
+</div>
+</div>
+</section>
+</div>
+
+<!-- ========== ACCOUNT ========== -->
+<div id="page-account" class="page">
+<section class="py-16">
+<div class="max-w-md mx-auto px-4 text-center">
+<h1 class="text-2xl font-extrabold mb-4">Il tuo piano</h1>
+<div id="acc-box" class="rounded-2xl bg-white border border-slate-200 p-6 shadow-sm"></div>
+<button type="button" onclick="clearPlan()" class="mt-6 text-sm text-red-600 hover:underline">Cancella piano demo da questo dispositivo</button>
+</div>
+</section>
+</div>
+
+<footer class="border-t border-slate-200 py-10 bg-white">
+<div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-slate-500">
+<div class="font-semibold text-slate-800">ViaggiaSmart</div>
+<div class="flex flex-wrap justify-center gap-4">
+<button type="button" onclick="go('viaggi')" class="hover:text-slate-800">Viaggi</button>
+<button type="button" onclick="go('eventi')" class="hover:text-slate-800">Eventi</button>
+<button type="button" onclick="go('prezzi')" class="hover:text-slate-800">Prezzi</button>
+<button type="button" onclick="go('legal')" class="hover:text-slate-800">Policy</button>
+</div>
+<div>© 2026 · Demo senza API a pagamento</div>
+</div>
+</footer>
+
+<script>
+function go(id){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
+  var el=document.getElementById('page-'+id);
+  if(el) el.classList.add('active');
+  window.scrollTo(0,0);
+  if(id==='plan') refreshAccess();
+  if(id==='account') renderAcc();
+}
+function toggleLang(){document.getElementById('lang-menu').classList.toggle('open')}
+document.addEventListener('click',function(e){
+  if(!e.target.closest('#lang-menu')&&!e.target.closest('[onclick="toggleLang()"]'))
+    document.getElementById('lang-menu').classList.remove('open');
+});
+function setLang(c){
+  document.getElementById('cur-lang').textContent=c.toUpperCase();
+  localStorage.setItem('vs_lang',c);
+  document.getElementById('lang-menu').classList.remove('open');
+  document.documentElement.lang=c;
+}
+setLang(localStorage.getItem('vs_lang')||'it');
+
+function getPlan(){try{return JSON.parse(localStorage.getItem('vs_plan')||'null')}catch(e){return null}}
+function buy(id,name,price){
+  localStorage.setItem('vs_plan',JSON.stringify({id:id,name:name,price:price,boughtAt:new Date().toISOString()}));
+  alert('Piano attivo: '+name+' ('+price+')\n\nSalvato su questo dispositivo. Se chiudi e riapri il sito, il piano resta.');
+  go('plan');
+}
+function clearPlan(){localStorage.removeItem('vs_plan');renderAcc();refreshAccess()}
+function refreshAccess(){
+  var p=getPlan(), badge=document.getElementById('plan-badge'), btn=document.getElementById('btn-account');
+  // Demo: wizard sempre accessibile senza pagamento
+  if(p){
+    badge.textContent=p.name+' · '+p.price;
+    badge.className='text-xs font-semibold px-3 py-1 rounded-full bg-emerald-100 text-emerald-700';
+    btn.classList.remove('hidden');
+  } else {
+    badge.textContent='Demo · accesso libero';
+    badge.className='text-xs font-semibold px-3 py-1 rounded-full bg-amber-100 text-amber-800';
+    btn.classList.add('hidden');
+  }
+}
+function renderAcc(){
+  var box=document.getElementById('acc-box'), p=getPlan();
+  if(!p) box.innerHTML='<p class="text-slate-600">Nessun piano attivo.</p><button type="button" onclick="go(\'prezzi\')" class="mt-4 px-5 py-2 rounded-full bg-brand-600 text-white text-sm font-semibold">Vedi prezzi</button>';
+  else box.innerHTML='<div class="text-emerald-600 font-semibold mb-2">Piano attivo</div><div class="text-xl font-bold">'+p.name+'</div><div class="text-slate-500">'+p.price+'</div><div class="text-xs text-slate-400 mt-2">'+p.boughtAt+'</div><button type="button" onclick="go(\'plan\')" class="mt-5 px-5 py-2 rounded-full bg-brand-600 text-white text-sm font-semibold">Vai a Pianifica</button>';
+}
+function wiz(n){
+  document.querySelectorAll('.wizard-step').forEach(function(s){s.classList.remove('active')});
+  document.getElementById('ws'+n).classList.add('active');
+  for(var i=1;i<=4;i++) document.getElementById('pg'+i).className='h-1.5 flex-1 rounded-full '+(i<=n?'bg-brand-500':'bg-slate-200');
+  var cont=document.getElementById('plan-container');
+  if(n===4){
+    cont.className='max-w-4xl mx-auto px-4';
+    buildFullPlan();
+  } else {
+    cont.className='max-w-2xl mx-auto px-4';
+  }
+}
+
+function enc(s){return encodeURIComponent(s||'')}
+function buildFullPlan(){
+  var d=(document.getElementById('w-dest').value||'Trapani').trim();
+  var tr=document.getElementById('w-tr').value;
+  var st=document.getElementById('w-st').value;
+  var budNum=parseInt(document.getElementById('w-bud').value,10)||800;
+  var bud=String(budNum);
+  var days=document.getElementById('w-days').value;
+  var style=document.getElementById('w-style').value;
+  var int=document.getElementById('w-int').value;
+  var peo=document.getElementById('w-peo').value;
+  var when=document.getElementById('w-when').value;
+  var stay=document.getElementById('w-stay').value;
+  var q=enc(d);
+  var mapSrc='https://maps.google.com/maps?q='+q+'&z=12&output=embed';
+  var booking='https://www.booking.com/searchresults.html?ss='+q+'&group_adults='+((peo==='5+')?5:peo);
+  var airbnb='https://www.airbnb.it/s/'+q+'/homes';
+  var skyscanner='https://www.skyscanner.it/trasporti/voli/?adults='+((peo==='5+')?2:peo)+'&destination='+q;
+  var trenitalia='https://www.trenitalia.com/';
+  var ferries='https://www.directferries.it/';
+  var gmaps='https://www.google.com/maps/search/'+q;
+
+  var nNights=4;
+  if(days.indexOf('2–3')===0) nNights=2;
+  else if(days.indexOf('4–7')===0) nNights=5;
+  else if(days.indexOf('8–14')===0) nNights=10;
+  else nNights=14;
+
+  // Budget split: ~35% alloggio, ~25% trasporto, resto cibo/attività
+  var maxNight=Math.max(40, Math.floor((budNum*0.35)/nNights));
+  var maxTransport=Math.floor(budNum*0.25);
+
+  var hotelList=[
+    {name:'Hotel Centro '+d, type:'Hotel', dist:'0,4 km dal centro', priceNum:78, price:'da 78 €/notte', stars:'★★★★', tip:'Comodo per partenze mattina'},
+    {name:'B&B Vista Mare', type:'Hotel / B&B', dist:'1,2 km', priceNum:62, price:'da 62 €/notte', stars:'★★★', tip:'Buon rapporto qualità-prezzo'},
+    {name:'Appartamento centro storico', type:'Airbnb', dist:'0,6 km', priceNum:55, price:'da 55 €/notte', stars:'★★★★', tip:'Ideale per '+peo+' viaggiatori'},
+    {name:'Residence vicino stazione/porto', type:'Hotel', dist:'0,9 km', priceNum:70, price:'da 70 €/notte', stars:'★★★', tip:'Utile se arrivi in traghetto/treno'},
+    {name:'Hotel Airone', type:'Hotel', dist:'1,5 km', priceNum:95, price:'da 95 €/notte', stars:'★★★★', tip:'Più comfort, colazione inclusa'},
+    {name:'Casa vacanze economica', type:'Airbnb', dist:'2,0 km', priceNum:42, price:'da 42 €/notte', stars:'★★★', tip:'Massimo risparmio sul budget'}
+  ];
+  hotelList.forEach(function(h){
+    h.total=h.priceNum*nNights;
+    h.inBudget=h.total<=(budNum*0.40);
+    h.score=(h.inBudget?2:0)+(h.priceNum<=maxNight?2:0)+(h.type.indexOf('Airbnb')>=0&&stay.indexOf('Airbnb')>=0?1:0);
+  });
+  hotelList.sort(function(a,b){return b.score-a.score||a.priceNum-b.priceNum});
+  var bestHotels=hotelList.filter(function(h){return h.inBudget}).slice(0,3);
+  if(!bestHotels.length) bestHotels=hotelList.slice(0,2);
+
+  var transportRows=[];
+  if(tr==='Aereo'||tr==='Misto (ottimizza tu)'){
+    transportRows.push({mode:'Aereo', company:'Ryanair / easyJet (low cost)', time:'~1h30–2h30', priceNum:45, price:'da 29–89 € a/r', link:skyscanner, book:'Cerca voli', tip:'Spesso il più economico per lunghe distanze'});
+    transportRows.push({mode:'Aereo', company:'ITA Airways / full service', time:'~1h30–2h', priceNum:120, price:'da 90–180 € a/r', link:skyscanner, book:'Cerca voli', tip:'Più comodo, bagaglio incluso spesso'});
+  }
+  if(tr==='Treno'||tr==='Misto (ottimizza tu)'){
+    transportRows.push({mode:'Treno', company:'Trenitalia / Italo (offerta)', time:'variabile', priceNum:35, price:'da 19–65 €', link:trenitalia, book:'Vai a Trenitalia', tip:'Ottimo rapporto qualità-prezzo in Italia/Europa'});
+  }
+  if(tr==='Traghetto'||tr==='Misto (ottimizza tu)'||/sicilia|sardegna|isole|trapani/i.test(d)){
+    transportRows.push({mode:'Traghetto', company:'GNV / Tirrenia / Liberty Lines', time:'~3–8 h', priceNum:50, price:'da 25–90 €', link:ferries, book:'Cerca traghetti', tip:'Utile per isole; prenota in anticipo in alta stagione'});
+  }
+  if(tr==='Auto / road trip'||tr==='Misto (ottimizza tu)'){
+    transportRows.push({mode:'Auto', company:'Noleggio / auto propria', time:'a tappe', priceNum:80, price:'carburante + noleggio ~60–120 €', link:gmaps, book:'Apri percorso Maps', tip:'Flessibile per soste; controlla ZTL e parcheggi'});
+  }
+  if(!transportRows.length){
+    transportRows.push({mode:tr, company:'Opzioni locali', time:'—', priceNum:50, price:'da verificare', link:skyscanner, book:'Cerca opzioni', tip:''});
+  }
+  transportRows.forEach(function(r){
+    r.inBudget=r.priceNum<=maxTransport;
+    r.score=(r.inBudget?2:0)+(r.priceNum<=maxTransport*0.6?1:0);
+  });
+  transportRows.sort(function(a,b){return b.score-a.score||a.priceNum-b.priceNum});
+  var bestTr=transportRows.filter(function(r){return r.inBudget});
+  if(!bestTr.length) bestTr=transportRows.slice(0,1);
+
+  // POI: green = tourist, fuchsia = food
+  var pois=[
+    {name:'Centro storico / piazza principale', kind:'tour', x:28, y:42},
+    {name:'Punto panoramico / belvedere', kind:'tour', x:62, y:28},
+    {name:'Museo o sito culturale', kind:'tour', x:45, y:55},
+    {name:'Spiaggia / parco naturale', kind:'tour', x:78, y:48},
+    {name:'Ristorante Piccione', kind:'food', x:35, y:38},
+    {name:'Bar / caffè centrale', kind:'food', x:52, y:45},
+    {name:'Trattoria tipica', kind:'food', x:70, y:60},
+    {name:'Hotel Airone (pernotto)', kind:'stay', x:40, y:70}
+  ];
+  if(/bled|slovenia|ljubljana/i.test(d)){
+    pois=[
+      {name:'Lago di Bled', kind:'tour', x:55, y:40},
+      {name:'Isola di Bled / chiesa', kind:'tour', x:52, y:38},
+      {name:'Castello di Bled', kind:'tour', x:48, y:32},
+      {name:'Gola di Vintgar', kind:'tour', x:30, y:25},
+      {name:'Ristorante Piccione', kind:'food', x:58, y:48},
+      {name:'Café ob jezeru', kind:'food', x:60, y:42},
+      {name:'Hotel Airone', kind:'stay', x:45, y:55}
+    ];
+  }
+  if(/sicilia|trapani|palermo/i.test(d)){
+    pois=[
+      {name:'Centro Trapani / Torre di Ligny', kind:'tour', x:30, y:50},
+      {name:'Erice (borgo)', kind:'tour', x:55, y:25},
+      {name:'San Vito Lo Capo', kind:'tour', x:75, y:35},
+      {name:'Saline / mulini a vento', kind:'tour', x:40, y:60},
+      {name:'Ristorante Piccione', kind:'food', x:32, y:45},
+      {name:'Bar del centro', kind:'food', x:28, y:48},
+      {name:'Trattoria sul porto', kind:'food', x:25, y:55},
+      {name:'Hotel Airone', kind:'stay', x:38, y:52}
+    ];
+  }
+
+  // Day-by-day itinerary options
+  var dayNames=['Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato','Domenica'];
+  var itineraries=[];
+  if(/bled|slovenia/i.test(d)){
+    itineraries=[
+      {title:'Opzione A · Classica lago', days:[
+        {day:'Lunedì', items:['Mattina: arrivo e check-in','Gita al Lago di Bled (pin verde)','Passeggiata sull’isola / belvedere','Cena leggera in centro']},
+        {day:'Martedì', items:['Pranzo al Ristorante Piccione (pin fucsia)','Pomeriggio: Castello di Bled','Sera: dormire in Hotel Airone']},
+        {day:'Mercoledì', items:['Gola di Vintgar (pin verde)','Caffè al lago (pin fucsia)','Rientro / partenza']}
+      ]},
+      {title:'Opzione B · Natura e risparmio', days:[
+        {day:'Lunedì', items:['Arrivo + Airbnb economico','Lago di Bled a piedi / bus','Picnic invece di ristorante gourmet']},
+        {day:'Martedì', items:['Vintgar al mattino','Pranzo trattoria tipica (fucsia)','Sera libera in centro']}
+      ]}
+    ];
+  } else if(/sicilia|trapani/i.test(d)){
+    itineraries=[
+      {title:'Opzione A · Mare e borghi', days:[
+        {day:'Lunedì', items:['Arrivo Trapani (porto/aeroporto)','Centro storico + Torre di Ligny (verde)','Aperitivo bar del centro (fucsia)','Notte in alloggio consigliato']},
+        {day:'Martedì', items:['Mattina: Erice (verde)','Pranzo al Ristorante Piccione (fucsia)','Pomeriggio libero','Dormire in Hotel Airone o Airbnb']},
+        {day:'Mercoledì', items:['San Vito Lo Capo (verde)','Pranzo sul mare','Rientro Trapani / partenza']}
+      ]},
+      {title:'Opzione B · Cultura e saline', days:[
+        {day:'Lunedì', items:['Saline e mulini a vento (verde)','Pranzo trattoria sul porto (fucsia)','Sera in centro']},
+        {day:'Martedì', items:['Erice mezza giornata','Caffè e dolci tipici (fucsia)','Notte stessa base']}
+      ]},
+      {title:'Opzione C · Solo weekend light', days:[
+        {day:'Sabato', items:['Arrivo + check-in','Centro + un pin verde a scelta','Cena ristorante fucsia']},
+        {day:'Domenica', items:['Una tappa verde (Erice o San Vito)','Rientro']}
+      ]}
+    ];
+  } else {
+    itineraries=[
+      {title:'Opzione A · Classica', days:[
+        {day:'Lunedì', items:['Arrivo e check-in alloggio consigliato','Visita centro storico / piazza (pin verde)','Cena in trattoria tipica (pin fucsia)']},
+        {day:'Martedì', items:['Gita al punto panoramico o museo (verde)','Pranzo al Ristorante Piccione (fucsia)','Pomeriggio libero','Dormire in Hotel Airone o equivalente']},
+        {day:'Mercoledì', items:['Spiaggia / parco naturale (verde)','Caffè centrale (fucsia)','Partenza']}
+      ]},
+      {title:'Opzione B · Più rilassata', days:[
+        {day:'Giorno 1', items:['Arrivo soft','Solo un pin verde + bar fucsia','Notte base']},
+        {day:'Giorno 2', items:['Mezza giornata attrazione verde','Pranzo fucsia','Sera libera']}
+      ]},
+      {title:'Opzione C · Intensiva', days:[
+        {day:'Giorno 1', items:['Due pin verdi al mattino e pomeriggio','Pranzo e cena fucsia','Hotel Airone']},
+        {day:'Giorno 2', items:['Ultimo pin verde','Trasferimento / partenza']}
+      ]}
+    ];
+  }
+
+  var html='';
+  // Riepilogo + CONSIGLIO BUDGET
+  html+='<div class="rounded-2xl bg-white border border-slate-200 p-5 mb-4">';
+  html+='<div class="flex flex-wrap gap-3 text-sm">';
+  html+='<span class="px-3 py-1 rounded-full bg-slate-100 font-medium">📍 '+d+'</span>';
+  html+='<span class="px-3 py-1 rounded-full bg-slate-100">👥 '+peo+'</span>';
+  html+='<span class="px-3 py-1 rounded-full bg-slate-100">📅 '+when+' · '+days+'</span>';
+  html+='<span class="px-3 py-1 rounded-full bg-slate-100">💶 '+bud+' €</span>';
+  html+='</div>';
+  html+='<div class="mt-4 rounded-xl bg-emerald-50 border border-emerald-200 p-4 text-sm text-emerald-900">';
+  html+='<div class="font-bold mb-1">Consiglio per rientrare nel budget (~'+bud+' €)</div>';
+  html+='<p class="mb-2">Alloggio max consigliato ≈ <strong>'+maxNight+' €/notte</strong> × '+nNights+' notti. Trasporti entro ≈ <strong>'+maxTransport+' €</strong>.</p>';
+  html+='<p><strong>Alloggi migliori per il budget:</strong> '+bestHotels.map(function(h){return h.name+' ('+h.price+')'}).join(' · ')+'</p>';
+  html+='<p class="mt-1"><strong>Trasporti consigliati:</strong> '+bestTr.map(function(r){return r.mode+' – '+r.company+' ('+r.price+')'}).join(' · ')+'</p>';
+  html+='</div></div>';
+
+  // Tabs
+  html+='<div class="flex flex-wrap gap-2 mb-4" id="plan-tabs">';
+  html+='<button type="button" onclick="showTab(\'tab-map\')" class="tab-btn px-4 py-2 rounded-full text-sm font-semibold bg-brand-600 text-white" data-tab="tab-map">Mappa e itinerari</button>';
+  html+='<button type="button" onclick="showTab(\'tab-stay\')" class="tab-btn px-4 py-2 rounded-full text-sm font-semibold bg-slate-100 text-slate-700" data-tab="tab-stay">Alloggi</button>';
+  html+='<button type="button" onclick="showTab(\'tab-tr\')" class="tab-btn px-4 py-2 rounded-full text-sm font-semibold bg-slate-100 text-slate-700" data-tab="tab-tr">Trasporti</button>';
+  html+='</div>';
+
+  // TAB MAP + itineraries + custom legend map
+  html+='<div id="tab-map" class="plan-tab space-y-4">';
+  html+='<div class="rounded-2xl overflow-hidden border border-slate-200 bg-white">';
+  html+='<div class="px-4 py-3 border-b border-slate-100 flex flex-wrap justify-between items-center gap-2"><span class="font-semibold text-sm">Mappa · '+d+'</span>';
+  html+='<div class="flex flex-wrap gap-3 text-xs font-medium">';
+  html+='<span class="inline-flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-emerald-500"></span> Luoghi turistici</span>';
+  html+='<span class="inline-flex items-center gap-1"><span class="w-3 h-3 rounded-full" style="background:#e879f9"></span> Ristoranti / bar</span>';
+  html+='<span class="inline-flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-sky-500"></span> Pernotto</span>';
+  html+='</div>';
+  html+='<a href="'+gmaps+'" target="_blank" rel="noopener" class="text-xs font-semibold text-brand-600">Google Maps →</a></div>';
+  // Custom schematic map with colored pins
+  html+='<div class="relative h-72 sm:h-80 map-mock overflow-hidden">';
+  html+='<div class="absolute inset-0 opacity-40" style="background-image:radial-gradient(circle at 1px 1px,#94a3b8 1px,transparent 0);background-size:20px 20px"></div>';
+  html+='<iframe title="Mappa base" src="'+mapSrc+'" class="absolute inset-0 w-full h-full border-0 opacity-50 pointer-events-none" loading="lazy"></iframe>';
+  pois.forEach(function(p){
+    var col=p.kind==='tour'?'#10b981':(p.kind==='food'?'#e879f9':'#0ea5e9');
+    html+='<div class="absolute z-10 -translate-x-1/2 -translate-y-full" style="left:'+p.x+'%;top:'+p.y+'%" title="'+p.name+'">';
+    html+='<div class="w-4 h-4 rounded-full border-2 border-white shadow-lg" style="background:'+col+'"></div>';
+    html+='<div class="mt-0.5 max-w-[100px] text-[10px] font-semibold leading-tight bg-white/90 px-1 rounded shadow-sm">'+p.name+'</div>';
+    html+='</div>';
+  });
+  html+='</div></div>';
+
+  // Multiple itineraries day by day
+  html+='<div class="space-y-4">';
+  html+='<h4 class="font-bold text-lg">Diverse opzioni di itinerario</h4>';
+  itineraries.forEach(function(it,idx){
+    html+='<div class="rounded-2xl bg-white border border-slate-200 p-5">';
+    html+='<div class="font-bold text-brand-700 mb-3">'+it.title+'</div>';
+    it.days.forEach(function(dd){
+      html+='<div class="mb-3 last:mb-0">';
+      html+='<div class="text-sm font-bold text-slate-900 mb-1">'+dd.day+'</div>';
+      html+='<ul class="text-sm text-slate-600 space-y-1 pl-1">';
+      dd.items.forEach(function(item){
+        var badge='';
+        if(/verde|Lago|Castello|Erice|San Vito|museo|panoramic|storico|Saline|Vintgar|Spiaggia|parco|belvedere/i.test(item))
+          badge=' <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 align-middle"></span>';
+        if(/fucsia|Piccione|ristorante|trattoria|bar|caffè|Cena|Pranzo|Aperitivo/i.test(item))
+          badge+=' <span class="inline-block w-2 h-2 rounded-full align-middle" style="background:#e879f9"></span>';
+        if(/Hotel Airone|dormire|Notte|check-in|Airbnb/i.test(item))
+          badge+=' <span class="inline-block w-2 h-2 rounded-full bg-sky-500 align-middle"></span>';
+        html+='<li class="flex gap-2"><span class="text-slate-300">·</span><span>'+item+badge+'</span></li>';
+      });
+      html+='</ul></div>';
+    });
+    html+='</div>';
+  });
+  html+='</div>';
+  html+='<p class="text-xs text-slate-500">Pin <span class="text-emerald-600 font-semibold">verdi</span> = luoghi turistici salienti · pin <span class="font-semibold" style="color:#e879f9">fucsia</span> = ristoranti/bar · pin <span class="text-sky-600 font-semibold">azzurri</span> = pernotto. Mappa schematica + sfondo Google; in produzione marker nativi via API Maps.</p>';
+  html+='</div>';
+
+  // TAB STAY
+  html+='<div id="tab-stay" class="plan-tab hidden space-y-4">';
+  html+='<div class="rounded-xl bg-emerald-50 border border-emerald-200 p-3 text-sm text-emerald-900"><strong>Per il tuo budget</strong> prioritizza: '+bestHotels.map(function(h){return h.name}).join(', ')+'.</div>';
+  html+='<p class="text-sm text-slate-600">Se ti fermi a <strong>'+d+'</strong>, puoi dormire qui. Badge verde = rientra nel budget alloggio stimato.</p>';
+  hotelList.forEach(function(h){
+    var isAir=h.type.indexOf('Airbnb')>=0;
+    var link=isAir?airbnb:booking;
+    var border=h.inBudget?'border-emerald-300 ring-1 ring-emerald-200':'border-slate-200';
+    html+='<div class="rounded-2xl bg-white border '+border+' p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-4">';
+    html+='<div class="flex-1"><div class="flex flex-wrap items-center gap-2"><span class="font-bold">'+h.name+'</span>';
+    html+='<span class="text-xs px-2 py-0.5 rounded-full '+(isAir?'bg-rose-100 text-rose-700':'bg-sky-100 text-sky-700')+'">'+h.type+'</span>';
+    if(h.inBudget) html+='<span class="text-xs px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-semibold">Consigliato per budget</span>';
+    html+='</div>';
+    html+='<div class="text-amber-500 text-sm mt-0.5">'+h.stars+'</div>';
+    html+='<div class="text-sm text-slate-600 mt-1">📍 '+h.dist+' · '+h.tip+'</div>';
+    html+='<div class="font-semibold text-brand-700 mt-1">'+h.price+' <span class="text-xs font-normal text-slate-500">(≈ '+h.total+' € per '+nNights+' notti)</span></div></div>';
+    html+='<a href="'+link+'" target="_blank" rel="noopener" class="inline-flex justify-center px-5 py-2.5 rounded-full bg-brand-600 text-white text-sm font-semibold hover:bg-brand-700 shrink-0">Prenota ora</a>';
+    html+='</div>';
+  });
+  html+='<div class="flex flex-wrap gap-3">';
+  html+='<a href="'+booking+'" target="_blank" rel="noopener" class="px-4 py-2 rounded-full border-2 border-sky-500 text-sky-700 text-sm font-semibold">Hotel su Booking</a>';
+  html+='<a href="'+airbnb+'" target="_blank" rel="noopener" class="px-4 py-2 rounded-full border-2 border-rose-500 text-rose-700 text-sm font-semibold">Airbnb</a>';
+  html+='</div></div>';
+
+  // TAB TRANSPORT
+  html+='<div id="tab-tr" class="plan-tab hidden space-y-4">';
+  html+='<div class="rounded-xl bg-emerald-50 border border-emerald-200 p-3 text-sm text-emerald-900"><strong>Per il tuo budget</strong> i mezzi più adatti: '+bestTr.map(function(r){return r.mode+' ('+r.company+')'}).join(', ')+'.</div>';
+  transportRows.forEach(function(r){
+    var border=r.inBudget?'border-emerald-300 ring-1 ring-emerald-200':'border-slate-200';
+    html+='<div class="rounded-2xl bg-white border '+border+' p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-4">';
+    html+='<div class="flex-1"><div class="flex flex-wrap items-center gap-2"><span class="font-bold">'+r.mode+' · '+r.company+'</span>';
+    if(r.inBudget) html+='<span class="text-xs px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-semibold">Consigliato per budget</span>';
+    html+='</div>';
+    html+='<div class="text-sm text-slate-600 mt-1">⏱ '+r.time+' · 💶 '+r.price+'</div>';
+    if(r.tip) html+='<div class="text-xs text-slate-500 mt-1">'+r.tip+'</div>';
+    html+='</div>';
+    html+='<a href="'+r.link+'" target="_blank" rel="noopener" class="inline-flex justify-center px-5 py-2.5 rounded-full bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 shrink-0">Prenota ora</a>';
+    html+='</div>';
+  });
+  html+='</div>';
+
+  document.getElementById('plan-out').innerHTML=html;
+}
+
+function showTab(id){
+  document.querySelectorAll('.plan-tab').forEach(function(t){t.classList.add('hidden')});
+  document.getElementById(id).classList.remove('hidden');
+  document.querySelectorAll('.tab-btn').forEach(function(b){
+    if(b.getAttribute('data-tab')===id){b.className='tab-btn px-4 py-2 rounded-full text-sm font-semibold bg-brand-600 text-white'}
+    else{b.className='tab-btn px-4 py-2 rounded-full text-sm font-semibold bg-slate-100 text-slate-700'}
+  });
+}
+function sendChat(){
+  var inp=document.getElementById('chat-in'), t=inp.value.trim(); if(!t) return;
+  var log=document.getElementById('chat-log');
+  log.innerHTML+='<div class="chat-bubble ml-auto bg-brand-600 text-white rounded-2xl rounded-tr-sm px-4 py-2.5 text-sm">'+esc(t)+'</div>';
+  inp.value='';
+  setTimeout(function(){
+    var m=t.toLowerCase(), r='Usa il wizard in Pianifica per destinazione, mezzo e soste. (Demo senza API ChatGPT.)';
+    if(m.indexOf('budget')>=0||m.indexOf('cost')>=0) r='Per il budget: bassa stagione e mezzi misti. Imposta il budget nel wizard.';
+    if(m.indexOf('treno')>=0) r='Treno ottimo per tratte medie in Europa. Selezionalo come mezzo nel wizard.';
+    if(m.indexOf('event')>=0||m.indexOf('festival')>=0) r='Per eventi: pagina Eventi e poi wizard con date e mezzo verso la sede.';
+    log.innerHTML+='<div class="chat-bubble bg-white border border-slate-100 rounded-2xl rounded-tl-sm px-4 py-2.5 text-sm shadow-sm">'+r+'</div>';
+    log.scrollTop=log.scrollHeight;
+  },500);
+  log.scrollTop=log.scrollHeight;
+}
+function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML}
+document.getElementById('chat-in').addEventListener('keypress',function(e){if(e.key==='Enter')sendChat()});
+refreshAccess();
+</script>
+</body>
+</html>
