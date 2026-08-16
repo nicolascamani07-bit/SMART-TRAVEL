@@ -461,7 +461,12 @@ header.sticky{z-index:9999!important}
 </div>
 </footer>
 
-<script id="api-config" type="application/json">{"mode":"demo","supabaseUrl":"","supabasePublishableKey":""}</script>
+<script id="api-config" type="application/json">
+{
+  "mode": "live",
+  "workerUrl": "https://SOSTITUISCI-CON-IL-TUO-WORKER.workers.dev"
+}
+</script>
 
 <script>
 (function(){
@@ -535,15 +540,22 @@ var aiHistory=[];
 var API_CONFIG=(function(){
   try{return JSON.parse((document.getElementById('api-config')||{}).textContent||'{}')}catch(e){return {mode:'demo'}}
 })();
-var API_LIVE=API_CONFIG.mode==='live'&&/^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(API_CONFIG.supabaseUrl||'');
+var API_LIVE=API_CONFIG.mode==='live'&&!!(API_CONFIG.workerUrl||API_CONFIG.supabaseUrl);
 
-function apiEndpoint(name){return String(API_CONFIG.supabaseUrl||'').replace(/\/$/,'')+'/functions/v1/'+name}
+function apiEndpoint(name){
+  var base=String(API_CONFIG.workerUrl||API_CONFIG.supabaseUrl||'').replace(/\/$/,'');
+  if(API_CONFIG.workerUrl) return base+'/'+name;
+  return base+'/functions/v1/'+name;
+}
 async function apiPost(name,payload){
   if(!API_LIVE)throw new Error('DEMO_MODE');
   var ctrl=new AbortController();
   var timer=setTimeout(function(){ctrl.abort()},35000);
   var headers={'Content-Type':'application/json'};
-  if(API_CONFIG.supabasePublishableKey)headers.apikey=API_CONFIG.supabasePublishableKey;
+  if(API_CONFIG.supabasePublishableKey){
+    headers.apikey=API_CONFIG.supabasePublishableKey;
+    headers.Authorization='Bearer '+API_CONFIG.supabasePublishableKey;
+  }
   try{
     var response=await fetch(apiEndpoint(name),{method:'POST',headers:headers,body:JSON.stringify(payload),signal:ctrl.signal});
     var data={};try{data=await response.json()}catch(e){}
