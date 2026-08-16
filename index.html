@@ -13,10 +13,9 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
-<!-- Google AdSense -->
+<script src="https://js.stripe.com/v3/"></script>
+<!-- Google AdSense - SOSTITUISCI ca-pub-XXXXXXXXXXXXXXXX con il tuo Publisher ID reale -->
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
-
 <style>
 body{font-family:Inter,system-ui,sans-serif}
 .glass{background:rgba(255,255,255,.95);backdrop-filter:blur(12px)}
@@ -40,35 +39,15 @@ header.sticky{z-index:9999!important}
 .poi-green{background:#10b981;border:2px solid #fff}
 .poi-pink{background:#d946ef;border:2px solid #fff}
 .poi-blue{background:#0ea5e9;border:2px solid #fff}
-
-/* AdSense blend style */
-.ad-slot{
-  display:block;
-  margin:1.25rem auto;
-  max-width:100%;
-  background:linear-gradient(180deg,#f8fafc 0%,#f1f5f9 100%);
-  border:1px solid #e2e8f0;
-  border-radius:1rem;
-  padding:12px 10px 8px;
-  text-align:center;
-  overflow:hidden;
-  box-shadow:0 1px 3px rgba(15,23,42,.04);
-}
-.ad-slot .ad-label{
-  display:block;
-  font-size:10px;
-  font-weight:600;
-  letter-spacing:.04em;
-  text-transform:uppercase;
-  color:#94a3b8;
-  margin-bottom:6px;
-}
-.ad-slot ins{
-  display:block !important;
-  margin:0 auto;
-}
+/* === Annunci AdSense integrati (stile nativo SmartTravel) === */
+.ad-wrap{margin:1.25rem auto;max-width:100%;padding:0 1rem}
+.ad-box{background:#fff;border:1px solid #e2e8f0;border-radius:1rem;padding:12px 14px;box-shadow:0 1px 3px rgba(0,0,0,.04);overflow:hidden}
+.ad-label{font-size:10px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:#94a3b8;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.ad-label:before{content:'';width:4px;height:4px;border-radius:99px;background:#cbd5e1}
+.ad-box .adsbygoogle{display:block;min-height:90px}
+.ad-box.ad-incontent{background:linear-gradient(180deg,#f8fafc 0%,#fff 100%);border-color:#e0e7ff}
 @media print{
-  header,footer,.no-print,.ad-slot{display:none!important}
+  header,footer,.no-print,.ad-wrap{display:none!important}
   .page{display:block!important}
   #plan-print-area{display:block!important}
 }
@@ -140,10 +119,10 @@ header.sticky{z-index:9999!important}
 </div>
 </section>
 
-<!-- AD 1: Home - dopo hero -->
-<div class="max-w-7xl mx-auto px-4 no-print">
-  <div class="ad-slot">
-    <span class="ad-label">Annuncio</span>
+<!-- AdSense Home - sotto hero -->
+<div class="ad-wrap no-print max-w-7xl mx-auto">
+  <div class="ad-box ad-incontent">
+    <div class="ad-label">Pubblicità</div>
     <ins class="adsbygoogle"
          style="display:block"
          data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
@@ -177,16 +156,18 @@ header.sticky{z-index:9999!important}
 <div id="plan-box" class="max-w-2xl mx-auto px-4">
 <div class="mb-4 rounded-xl bg-brand-50 border border-brand-100 px-4 py-3 text-sm text-brand-900 no-print" data-i18n="demo_banner">Wizard completo: interessi, ritmo, orari. Output con mappa, tappe e PDF.</div>
 
-<!-- AD 2: Pianifica -->
-<div class="ad-slot no-print mb-4">
-  <span class="ad-label">Annuncio</span>
-  <ins class="adsbygoogle"
-       style="display:block"
-       data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-       data-ad-slot="2222222222"
-       data-ad-format="auto"
-       data-full-width-responsive="true"></ins>
-  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+<!-- AdSense Plan -->
+<div class="ad-wrap no-print mb-4" style="padding:0">
+  <div class="ad-box">
+    <div class="ad-label">Pubblicità</div>
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+         data-ad-slot="2222222222"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+  </div>
 </div>
 
 <div class="flex flex-wrap justify-between items-center gap-2 mb-4">
@@ -398,19 +379,6 @@ header.sticky{z-index:9999!important}
 <div id="hotel-results" class="mt-4 space-y-3"></div>
 </div>
 </div>
-
-<!-- AD 3: Voli & Hotel -->
-<div class="ad-slot no-print mt-8">
-  <span class="ad-label">Annuncio</span>
-  <ins class="adsbygoogle"
-       style="display:block"
-       data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-       data-ad-slot="3333333333"
-       data-ad-format="auto"
-       data-full-width-responsive="true"></ins>
-  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-</div>
-
 <p class="mt-6 text-xs text-slate-500" data-i18n="travel_disclaimer">Prezzi e disponibilità possono cambiare fino alla conferma. La prenotazione verrà attivata in una fase successiva.</p>
 </section>
 </div>
@@ -438,16 +406,18 @@ header.sticky{z-index:9999!important}
 <select id="list-filter" class="hidden"><option value="all">all</option></select>
 </div>
 
-<!-- AD 4: Esplora -->
-<div class="ad-slot no-print mb-8">
-  <span class="ad-label">Annuncio</span>
-  <ins class="adsbygoogle"
-       style="display:block"
-       data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-       data-ad-slot="4444444444"
-       data-ad-format="auto"
-       data-full-width-responsive="true"></ins>
-  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+<!-- AdSense Listings -->
+<div class="ad-wrap no-print mb-8" style="padding:0">
+  <div class="ad-box ad-incontent">
+    <div class="ad-label">Pubblicità</div>
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+         data-ad-slot="3333333333"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+  </div>
 </div>
 
 <div class="mb-8">
@@ -553,7 +523,6 @@ header.sticky{z-index:9999!important}
 </script>
 
 <script>
-/* ... tutto lo script originale rimane identico ... */
 (function(){
 'use strict';
 var I18N={
@@ -696,9 +665,63 @@ function go(id){
   if(id==='plan'){refreshAccess();renderSelected()}
   return false;
 }
-function buy(id,name,price){
-  try{localStorage.setItem('st_plan',JSON.stringify({id:id,name:name,price:price}))}catch(e){}
-  alert(t('active_plan')+': '+name+' ('+price+')');go('plan');
+/* Stripe Price IDs */
+var STRIPE_PRICES = {
+  compare: 'price_1U5BaP4UxF5QJc4DCY6t5WFI',   // Analisi 2,00 €
+  monthly: 'price_1U5Bau4UxF5QJc4DntOhX2VP',   // Mensile 14,90 €
+  pack10:  'price_1U5BbM4UxF5QJc4D2SBSs7yt'    // 10 piani 19,90 €
+};
+
+async function buy(id, name, price) {
+  var priceId = STRIPE_PRICES[id];
+  if (!priceId) {
+    alert('Piano non trovato');
+    return;
+  }
+
+  // Salva in attesa (verrà confermato dopo il pagamento)
+  try {
+    localStorage.setItem('st_plan_pending', JSON.stringify({ id: id, name: name, price: price, priceId: priceId }));
+  } catch (e) {}
+
+  var workerBase = (API_CONFIG && API_CONFIG.workerUrl) ? String(API_CONFIG.workerUrl).replace(/\/$/, '') : '';
+  var successUrl = window.location.origin + window.location.pathname + '?paid=1&plan=' + encodeURIComponent(id);
+  var cancelUrl  = window.location.href;
+
+  // Prova a creare la sessione Checkout tramite il tuo Worker
+  if (workerBase) {
+    try {
+      var res = await fetch(workerBase + '/create-checkout-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          priceId: priceId,
+          successUrl: successUrl,
+          cancelUrl: cancelUrl,
+          planId: id,
+          planName: name
+        })
+      });
+      var data = await res.json();
+      if (data && data.url) {
+        window.location.href = data.url;
+        return;
+      }
+      if (data && data.error) {
+        console.warn('Stripe worker error:', data.error);
+      }
+    } catch (err) {
+      console.warn('Checkout session failed, fallback...', err);
+    }
+  }
+
+  // Fallback demo (se il worker non ha ancora l'endpoint)
+  // In produzione questo non dovrebbe mai apparire
+  alert('Pagamento Stripe in preparazione.\n\nPiano: ' + name + ' (' + price + ')\nPrice ID: ' + priceId + '\n\nAggiungi l\'endpoint /create-checkout-session sul tuo Worker per attivare i pagamenti reali.');
+  try {
+    localStorage.setItem('st_plan', JSON.stringify({ id: id, name: name, price: price }));
+  } catch (e) {}
+  go('plan');
 }
 function refreshAccess(){
   var p=null;try{p=JSON.parse(localStorage.getItem('st_plan')||'null')}catch(e){}
@@ -1437,6 +1460,35 @@ document.getElementById('chat-in').addEventListener('keypress',function(e){if(e.
 try{selected=JSON.parse(localStorage.getItem('st_selected')||'null')||{flight:null,hotel:null,cruise:null}}catch(e){}
 if(!Object.prototype.hasOwnProperty.call(selected,'hotel'))selected.hotel=null;
 applyLang();refreshAccess();
+
+// Gestione ritorno da Stripe Checkout (?paid=1)
+(function handleStripeReturn(){
+  try {
+    var params = new URLSearchParams(window.location.search);
+    if (params.get('paid') === '1') {
+      var planId = params.get('plan') || '';
+      var pending = null;
+      try { pending = JSON.parse(localStorage.getItem('st_plan_pending') || 'null'); } catch(e){}
+      if (pending && (!planId || pending.id === planId)) {
+        localStorage.setItem('st_plan', JSON.stringify({
+          id: pending.id,
+          name: pending.name,
+          price: pending.price,
+          paidAt: new Date().toISOString()
+        }));
+        localStorage.removeItem('st_plan_pending');
+        refreshAccess();
+        // Pulisce l'URL
+        if (window.history && window.history.replaceState) {
+          window.history.replaceState({}, document.title, window.location.pathname);
+        }
+        alert((lang === 'it' ? 'Pagamento riuscito! Piano attivo: ' : 'Payment successful! Active plan: ') + pending.name);
+        go('plan');
+      }
+    }
+  } catch(e){}
+})();
+
 setTimeout(initHomeMap,300);
 var hs=document.getElementById('home-search');if(hs)hs.addEventListener('keypress',function(e){if(e.key==='Enter')searchFromHome()});
 })();
