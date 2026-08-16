@@ -3,72 +3,65 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Smart Travel – Pianifica e prenota il tuo viaggio</title>
-<meta name="description" content="Smart Travel: itinerari su misura, inserzioni interattive, voli, crociere, hotel e traghetti. Assistente ST AI. Pianificazione intelligente per ogni destinazione."/>
+<title>Smart Travel – Pianifica e prenota nel sito</title>
+<meta name="description" content="Smart Travel: ricerca voli, hotel e crociere nel sito. Piani, budget, ST AI. Pronto per API Amadeus e Supabase."/>
 <meta name="theme-color" content="#2563eb"/>
-<meta property="og:title" content="Smart Travel"/>
-<meta property="og:description" content="Pianifica itinerari e prenota voli, hotel e crociere in un unico flusso."/>
-<meta property="og:type" content="website"/>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='80'>✈️</text></svg>"/>
 <script src="https://cdn.tailwindcss.com"></script>
-<script>
-tailwind.config={theme:{extend:{colors:{brand:{50:'#eff6ff',100:'#dbeafe',200:'#bfdbfe',300:'#93c5fd',400:'#60a5fa',500:'#3b82f6',600:'#2563eb',700:'#1d4ed8',800:'#1e40af',900:'#1e3a8a'},accent:{500:'#06b6d4',600:'#0891b2'}},fontFamily:{sans:['Inter','system-ui','sans-serif']}}}}
-</script>
+<script>tailwind.config={theme:{extend:{colors:{brand:{50:'#eff6ff',100:'#dbeafe',500:'#3b82f6',600:'#2563eb',700:'#1d4ed8'},accent:{500:'#06b6d4',600:'#0891b2'}},fontFamily:{sans:['Inter','system-ui','sans-serif']}}}}</script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box}
-body{font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+body{font-family:Inter,system-ui,sans-serif}
 .glass{background:rgba(255,255,255,.95);backdrop-filter:blur(12px)}
 .page{display:none}.page.active{display:block;animation:fadeIn .3s ease}
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-.lang-menu,.mobile-menu{display:none}
-.lang-menu.open,.mobile-menu.open{display:block}
+.lang-menu,.mobile-menu{display:none}.lang-menu.open,.mobile-menu.open{display:block}
 .wizard-step{display:none}.wizard-step.active{display:block;animation:fadeIn .3s ease}
-.card-h{transition:transform .2s,box-shadow .2s}.card-h:hover{transform:translateY(-3px);box-shadow:0 16px 32px -12px rgba(37,99,235,.2)}
-.listing{transition:border-color .2s,box-shadow .2s}.listing:hover{border-color:#93c5fd;box-shadow:0 10px 24px -10px rgba(37,99,235,.15)}
+.card-h{transition:transform .2s,box-shadow .2s}.card-h:hover{transform:translateY(-3px);box-shadow:0 14px 28px -10px rgba(37,99,235,.18)}
+.listing:hover{border-color:#93c5fd;box-shadow:0 10px 24px -10px rgba(37,99,235,.15)}
 .map-bg{background:linear-gradient(145deg,#dbeafe,#ecfeff,#f0fdf4)}
 .chat-b{max-width:88%}
-input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid #2563eb;outline-offset:2px}
-.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
+input:focus,select:focus,button:focus-visible{outline:2px solid #2563eb;outline-offset:2px}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+.api-badge{font-size:10px;letter-spacing:.02em}
 </style>
 </head>
 <body class="bg-slate-50 text-slate-800">
-
-<a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:bg-white focus:px-3 focus:py-2 focus:rounded">Skip to content</a>
+<a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:bg-white focus:px-3 focus:py-2 focus:rounded">Skip</a>
 
 <header class="sticky top-0 z-50 glass border-b border-slate-200/80">
 <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-2">
-<a href="#" onclick="go('home');return false" class="flex items-center gap-2 shrink-0" aria-label="Smart Travel home">
+<a href="#" onclick="go('home');return false" class="flex items-center gap-2 shrink-0">
 <span class="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-600 to-accent-600 text-white font-extrabold flex items-center justify-center text-xs shadow-md">ST</span>
-<span class="font-bold text-lg tracking-tight">Smart <span class="text-brand-600">Travel</span></span>
+<span class="font-bold text-lg">Smart <span class="text-brand-600">Travel</span></span>
 </a>
-<nav class="hidden lg:flex items-center gap-0.5 text-sm font-medium" aria-label="Main">
-<button type="button" onclick="go('home')" class="nav-link px-3 py-2 rounded-lg text-slate-600 hover:bg-brand-50 hover:text-brand-700" data-i18n="nav_home">Home</button>
-<button type="button" onclick="go('listings')" class="nav-link px-3 py-2 rounded-lg text-slate-600 hover:bg-brand-50 hover:text-brand-700" data-i18n="nav_listings">Inserzioni</button>
-<button type="button" onclick="go('plan')" class="nav-link px-3 py-2 rounded-lg text-slate-600 hover:bg-brand-50 hover:text-brand-700" data-i18n="nav_plan">Pianifica</button>
-<button type="button" onclick="go('flights')" class="nav-link px-3 py-2 rounded-lg text-slate-600 hover:bg-brand-50 hover:text-brand-700" data-i18n="nav_flights">Voli</button>
-<button type="button" onclick="go('cruises')" class="nav-link px-3 py-2 rounded-lg text-slate-600 hover:bg-brand-50 hover:text-brand-700" data-i18n="nav_cruises">Crociere</button>
-<button type="button" onclick="go('ai')" class="nav-link px-3 py-2 rounded-lg text-slate-600 hover:bg-brand-50 hover:text-brand-700">ST AI</button>
-<button type="button" onclick="go('prezzi')" class="nav-link px-3 py-2 rounded-lg text-slate-600 hover:bg-brand-50 hover:text-brand-700" data-i18n="nav_pricing">Prezzi</button>
+<nav class="hidden lg:flex items-center gap-0.5 text-sm font-medium">
+<button type="button" onclick="go('home')" class="px-3 py-2 rounded-lg text-slate-600 hover:bg-brand-50" data-i18n="nav_home">Home</button>
+<button type="button" onclick="go('listings')" class="px-3 py-2 rounded-lg text-slate-600 hover:bg-brand-50" data-i18n="nav_listings">Inserzioni</button>
+<button type="button" onclick="go('plan')" class="px-3 py-2 rounded-lg text-slate-600 hover:bg-brand-50" data-i18n="nav_plan">Pianifica</button>
+<button type="button" onclick="go('flights')" class="px-3 py-2 rounded-lg text-slate-600 hover:bg-brand-50" data-i18n="nav_flights">Voli</button>
+<button type="button" onclick="go('cruises')" class="px-3 py-2 rounded-lg text-slate-600 hover:bg-brand-50" data-i18n="nav_cruises">Crociere</button>
+<button type="button" onclick="go('ai')" class="px-3 py-2 rounded-lg text-slate-600 hover:bg-brand-50">ST AI</button>
+<button type="button" onclick="go('prezzi')" class="px-3 py-2 rounded-lg text-slate-600 hover:bg-brand-50" data-i18n="nav_pricing">Prezzi</button>
 </nav>
 <div class="flex items-center gap-2">
 <div class="relative">
-<button type="button" id="lang-btn" onclick="toggleLang(event)" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-slate-200 text-xs font-bold hover:bg-slate-50" aria-haspopup="listbox" aria-expanded="false">
+<button type="button" id="lang-btn" onclick="toggleLang(event)" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-slate-200 text-xs font-bold hover:bg-slate-50">
 <span id="cur-lang">IT</span>
-<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
 </button>
-<div id="lang-menu" class="lang-menu absolute right-0 mt-1.5 w-36 bg-white rounded-xl shadow-xl border border-slate-100 py-1 z-[100]" role="listbox">
-<button type="button" role="option" onclick="setLang('it')" class="w-full text-left px-4 py-2.5 text-sm hover:bg-slate-50 font-medium">Italiano</button>
-<button type="button" role="option" onclick="setLang('en')" class="w-full text-left px-4 py-2.5 text-sm hover:bg-slate-50 font-medium">English</button>
+<div id="lang-menu" class="lang-menu absolute right-0 mt-1.5 w-36 bg-white rounded-xl shadow-xl border py-1 z-[100]">
+<button type="button" onclick="setLang('it')" class="w-full text-left px-4 py-2.5 text-sm hover:bg-slate-50 font-medium">Italiano</button>
+<button type="button" onclick="setLang('en')" class="w-full text-left px-4 py-2.5 text-sm hover:bg-slate-50 font-medium">English</button>
 </div>
 </div>
-<button type="button" onclick="go('plan')" class="hidden sm:inline-flex px-4 py-2 rounded-full bg-gradient-to-r from-brand-600 to-accent-600 text-white text-sm font-semibold shadow-md hover:opacity-95" data-i18n="nav_cta">Pianifica</button>
-<button type="button" id="menu-btn" onclick="toggleMobile(event)" class="lg:hidden p-2 rounded-lg border border-slate-200 hover:bg-slate-50" aria-label="Menu">
+<button type="button" onclick="go('plan')" class="hidden sm:inline-flex px-4 py-2 rounded-full bg-gradient-to-r from-brand-600 to-accent-600 text-white text-sm font-semibold" data-i18n="nav_cta">Pianifica</button>
+<button type="button" onclick="toggleMobile(event)" class="lg:hidden p-2 rounded-lg border border-slate-200" aria-label="Menu">
 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
 </button>
 </div>
 </div>
-<div id="mobile-menu" class="mobile-menu lg:hidden border-t border-slate-100 bg-white px-4 py-3 space-y-1 text-sm font-medium">
+<div id="mobile-menu" class="mobile-menu lg:hidden border-t bg-white px-4 py-3 space-y-1 text-sm font-medium">
 <button type="button" onclick="go('home');closeMobile()" class="block w-full text-left px-3 py-2.5 rounded-lg hover:bg-brand-50" data-i18n="nav_home">Home</button>
 <button type="button" onclick="go('listings');closeMobile()" class="block w-full text-left px-3 py-2.5 rounded-lg hover:bg-brand-50" data-i18n="nav_listings">Inserzioni</button>
 <button type="button" onclick="go('plan');closeMobile()" class="block w-full text-left px-3 py-2.5 rounded-lg hover:bg-brand-50" data-i18n="nav_plan">Pianifica</button>
@@ -81,190 +74,138 @@ input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid #
 
 <main id="main">
 
-<!-- HOME -->
 <div id="page-home" class="page active">
-<section class="relative overflow-hidden pt-12 pb-16">
+<section class="pt-12 pb-16 relative overflow-hidden">
 <div class="absolute inset-0 bg-gradient-to-b from-brand-50 via-white to-slate-50 pointer-events-none"></div>
 <div class="max-w-7xl mx-auto px-4 relative grid lg:grid-cols-2 gap-10 items-center">
 <div>
-<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-100 text-brand-800 text-xs font-semibold mb-5">
-<span class="w-2 h-2 rounded-full bg-brand-500 animate-pulse"></span>
-<span data-i18n="hero_badge">Pianificazione + prenotazione</span>
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-semibold mb-5">
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+<span data-i18n="hero_badge">Tutto nel sito · API-ready</span>
 </div>
-<h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight text-slate-900 leading-tight">
-<span data-i18n="hero_t1">Il tuo viaggio,</span><br>
-<span class="bg-gradient-to-r from-brand-600 to-accent-600 bg-clip-text text-transparent" data-i18n="hero_t2">organizzato e prenotabile.</span>
+<h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight leading-tight">
+<span data-i18n="hero_t1">Ricerca e piano</span><br>
+<span class="bg-gradient-to-r from-brand-600 to-accent-600 bg-clip-text text-transparent" data-i18n="hero_t2">senza uscire da Smart Travel.</span>
 </h1>
-<p class="mt-5 text-lg text-slate-600 max-w-lg leading-relaxed" data-i18n="hero_sub">Crea itinerari su misura, esplora inserzioni e prenota voli, crociere, hotel e traghetti in un unico flusso.</p>
+<p class="mt-5 text-lg text-slate-600 max-w-lg" data-i18n="hero_sub">Voli, hotel e crociere con risultati mostrati qui. Pronto per Amadeus e Supabase a costo minimo.</p>
 <div class="mt-8 flex flex-wrap gap-3">
-<button type="button" onclick="go('plan')" class="px-6 py-3.5 rounded-full bg-gradient-to-r from-brand-600 to-accent-600 text-white font-semibold shadow-lg hover:opacity-95" data-i18n="hero_cta1">Inizia a pianificare</button>
-<button type="button" onclick="go('listings')" class="px-6 py-3.5 rounded-full bg-white border border-slate-200 font-semibold hover:bg-slate-50" data-i18n="hero_cta2">Vedi inserzioni</button>
+<button type="button" onclick="go('flights')" class="px-6 py-3.5 rounded-full bg-gradient-to-r from-brand-600 to-accent-600 text-white font-semibold shadow-lg" data-i18n="hero_cta1">Cerca voli</button>
+<button type="button" onclick="go('plan')" class="px-6 py-3.5 rounded-full bg-white border border-slate-200 font-semibold hover:bg-slate-50" data-i18n="hero_cta2">Pianifica viaggio</button>
 </div>
-<p class="mt-6 text-sm text-slate-500"><span class="text-amber-400">★★★★★</span> <span data-i18n="hero_social">4.9 · ST AI incluso</span></p>
 </div>
 <div class="hidden sm:block">
 <div class="rounded-3xl bg-slate-900 p-2 shadow-2xl max-w-md ml-auto">
 <div class="rounded-2xl bg-white overflow-hidden">
-<div class="bg-gradient-to-r from-brand-600 to-accent-600 text-white px-4 py-3 flex justify-between text-sm font-semibold">
-<span data-i18n="mock_title">Itinerario Smart Travel</span>
-<span class="text-xs bg-white/20 px-2 py-0.5 rounded-full" data-i18n="mock_ok">Budget ok</span>
+<div class="bg-gradient-to-r from-brand-600 to-accent-600 text-white px-4 py-3 text-sm font-semibold flex justify-between">
+<span data-i18n="mock_title">Risultati nel sito</span>
+<span class="text-xs bg-white/20 px-2 py-0.5 rounded-full api-badge">MOCK → API</span>
 </div>
-<div class="h-40 map-bg relative p-4">
-<span class="absolute left-[20%] top-[40%] w-3 h-3 rounded-full bg-emerald-500 border-2 border-white shadow" title="Attrazione"></span>
-<span class="absolute left-[48%] top-[32%] w-3 h-3 rounded-full bg-fuchsia-500 border-2 border-white shadow" title="Ristoro"></span>
-<span class="absolute left-[72%] top-[52%] w-3 h-3 rounded-full bg-sky-500 border-2 border-white shadow" title="Hotel"></span>
-<div class="absolute bottom-3 left-3 right-3 bg-white/95 rounded-xl p-2 text-xs font-medium text-slate-700 shadow" data-i18n="mock_hint">Apri un’inserzione per prenotare</div>
-</div>
+<div class="p-4 space-y-2 text-sm">
+<div class="flex justify-between border rounded-xl p-3"><span>MXP → PMO · 07:40</span><strong class="text-brand-700">49 €</strong></div>
+<div class="flex justify-between border rounded-xl p-3"><span>LIN → PMO · 12:15</span><strong class="text-brand-700">67 €</strong></div>
+<div class="flex justify-between border rounded-xl p-3 bg-emerald-50 border-emerald-200"><span data-i18n="mock_pick">Selezionato per il piano</span><strong class="text-emerald-700">✓</strong></div>
 </div>
 </div>
 </div>
-</div>
-</section>
-
-<section class="py-12 bg-white border-y border-slate-100">
-<div class="max-w-7xl mx-auto px-4">
-<h2 class="text-2xl font-extrabold text-center mb-8" data-i18n="cat_title">Esplora e prenota</h2>
-<div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-<button type="button" onclick="go('listings')" class="card-h text-left rounded-2xl border border-slate-200 p-5 bg-white">
-<div class="text-2xl mb-2" aria-hidden="true">🗺️</div>
-<div class="font-bold" data-i18n="nav_listings">Inserzioni</div>
-<p class="text-sm text-slate-500 mt-1" data-i18n="cat_list">Destinazioni e pacchetti</p>
-</button>
-<button type="button" onclick="go('flights')" class="card-h text-left rounded-2xl border border-slate-200 p-5 bg-white">
-<div class="text-2xl mb-2" aria-hidden="true">✈️</div>
-<div class="font-bold" data-i18n="nav_flights">Voli</div>
-<p class="text-sm text-slate-500 mt-1" data-i18n="cat_fl">Skyscanner e Google Flights</p>
-</button>
-<button type="button" onclick="go('cruises')" class="card-h text-left rounded-2xl border border-slate-200 p-5 bg-white">
-<div class="text-2xl mb-2" aria-hidden="true">🚢</div>
-<div class="font-bold" data-i18n="nav_cruises">Crociere</div>
-<p class="text-sm text-slate-500 mt-1" data-i18n="cat_cr">Costa, MSC, Royal</p>
-</button>
-<button type="button" onclick="go('plan')" class="card-h text-left rounded-2xl border border-slate-200 p-5 bg-white">
-<div class="text-2xl mb-2" aria-hidden="true">✨</div>
-<div class="font-bold" data-i18n="nav_plan">Pianifica</div>
-<p class="text-sm text-slate-500 mt-1" data-i18n="cat_pl">Wizard + budget + ST AI</p>
-</button>
 </div>
 </div>
 </section>
 
-<section class="py-14">
-<div class="max-w-7xl mx-auto px-4 grid md:grid-cols-3 gap-6">
-<div class="rounded-2xl bg-white border border-slate-100 p-6 card-h">
-<div class="w-10 h-10 rounded-xl bg-brand-100 text-brand-700 font-bold flex items-center justify-center mb-3">1</div>
-<h3 class="font-bold" data-i18n="how1_t">Configura</h3>
-<p class="text-sm text-slate-600 mt-2" data-i18n="how1_d">Destinazione, viaggiatori, budget e preferenze in pochi passi.</p>
-</div>
-<div class="rounded-2xl bg-white border border-slate-100 p-6 card-h">
-<div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 font-bold flex items-center justify-center mb-3">2</div>
-<h3 class="font-bold" data-i18n="how2_t">Confronta</h3>
-<p class="text-sm text-slate-600 mt-2" data-i18n="how2_d">Alloggi e trasporti ordinati per budget, con inserzioni prenotabili.</p>
-</div>
-<div class="rounded-2xl bg-white border border-slate-100 p-6 card-h">
-<div class="w-10 h-10 rounded-xl bg-cyan-100 text-cyan-700 font-bold flex items-center justify-center mb-3">3</div>
-<h3 class="font-bold" data-i18n="how3_t">Prenota</h3>
-<p class="text-sm text-slate-600 mt-2" data-i18n="how3_d">Link diretti a voli, hotel, traghetti e crociere sulle piattaforme partner.</p>
-</div>
+<section class="py-12 bg-white border-y">
+<div class="max-w-7xl mx-auto px-4 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<button type="button" onclick="go('flights')" class="card-h text-left rounded-2xl border p-5 bg-white"><div class="text-2xl mb-2">✈️</div><div class="font-bold" data-i18n="nav_flights">Voli</div><p class="text-sm text-slate-500 mt-1" data-i18n="cat_fl">Ricerca interna · Amadeus-ready</p></button>
+<button type="button" onclick="go('cruises')" class="card-h text-left rounded-2xl border p-5 bg-white"><div class="text-2xl mb-2">🚢</div><div class="font-bold" data-i18n="nav_cruises">Crociere</div><p class="text-sm text-slate-500 mt-1" data-i18n="cat_cr">Catalogo nel sito</p></button>
+<button type="button" onclick="go('listings')" class="card-h text-left rounded-2xl border p-5 bg-white"><div class="text-2xl mb-2">🗺️</div><div class="font-bold" data-i18n="nav_listings">Inserzioni</div><p class="text-sm text-slate-500 mt-1" data-i18n="cat_list">Pacchetti e destinazioni</p></button>
+<button type="button" onclick="go('plan')" class="card-h text-left rounded-2xl border p-5 bg-white"><div class="text-2xl mb-2">✨</div><div class="font-bold" data-i18n="nav_plan">Pianifica</div><p class="text-sm text-slate-500 mt-1" data-i18n="cat_pl">Budget + itinerario + ST AI</p></button>
 </div>
 </section>
 
-<section class="py-14 bg-slate-900 text-white" id="home-pricing">
+<section class="py-12">
+<div class="max-w-3xl mx-auto px-4 rounded-2xl border bg-white p-6 shadow-sm">
+<h2 class="font-extrabold text-lg mb-2" data-i18n="api_title">API a basso costo</h2>
+<p class="text-sm text-slate-600 mb-4" data-i18n="api_sub">Oggi: risultati mock nel sito. Domani: Amadeus (free tier) + Supabase Edge Functions senza redirect obbligatori.</p>
+<ul class="text-sm text-slate-600 space-y-1 list-disc pl-5">
+<li data-i18n="api_1">Voli/hotel: Amadeus Self-Service (quota gratis, poi pay-as-you-go)</li>
+<li data-i18n="api_2">Backend: Supabase free tier (proxy chiavi, mai nel browser)</li>
+<li data-i18n="api_3">Mappe: OpenStreetMap + Leaflet (0 €)</li>
+</ul>
+</div>
+</section>
+
+<section class="py-14 bg-slate-900 text-white">
 <div class="max-w-5xl mx-auto px-4">
 <h2 class="text-2xl font-extrabold text-center mb-2" data-i18n="price_title">Piani</h2>
-<p class="text-center text-slate-400 text-sm mb-8" data-i18n="price_sub">Demo locale. In produzione: Supabase.</p>
+<p class="text-center text-slate-400 text-sm mb-8" data-i18n="price_sub">Paghi per il valore sul sito, non per essere reindirizzato.</p>
 <div class="grid sm:grid-cols-3 gap-4">
-<div class="rounded-2xl bg-white/5 border border-white/10 p-5">
-<div class="text-xs uppercase text-slate-400 font-semibold" data-i18n="p1_name">Analisi singola</div>
-<div class="text-3xl font-extrabold mt-1">2,00 €</div>
-<button type="button" onclick="buy('compare','Analisi singola','2,00 €')" class="mt-4 w-full py-2.5 rounded-full bg-white text-slate-900 text-sm font-semibold hover:bg-slate-100" data-i18n="buy">Attiva</button>
-</div>
-<div class="rounded-2xl bg-brand-500/20 border border-brand-400/40 p-5 relative">
-<div class="absolute -top-2 left-1/2 -translate-x-1/2 text-[10px] font-bold bg-amber-400 text-amber-950 px-2 py-0.5 rounded-full" data-i18n="popular">Consigliato</div>
-<div class="text-xs uppercase text-brand-200 font-semibold" data-i18n="p3_name">Mensile</div>
-<div class="text-3xl font-extrabold mt-1">14,90 €</div>
-<button type="button" onclick="buy('monthly','Abbonamento mensile','14,90 €')" class="mt-4 w-full py-2.5 rounded-full bg-white text-brand-800 text-sm font-semibold" data-i18n="buy">Attiva</button>
-</div>
-<div class="rounded-2xl bg-white/5 border border-white/10 p-5">
-<div class="text-xs uppercase text-slate-400 font-semibold" data-i18n="p2_name">10 piani</div>
-<div class="text-3xl font-extrabold mt-1">19,90 €</div>
-<button type="button" onclick="buy('pack10','Pacchetto 10 piani','19,90 €')" class="mt-4 w-full py-2.5 rounded-full bg-white text-slate-900 text-sm font-semibold hover:bg-slate-100" data-i18n="buy">Attiva</button>
+<div class="rounded-2xl bg-white/5 border border-white/10 p-5"><div class="text-xs uppercase text-slate-400 font-semibold" data-i18n="p1_name">Analisi</div><div class="text-3xl font-extrabold mt-1">2,00 €</div><button type="button" onclick="buy('compare','Analisi','2,00 €')" class="mt-4 w-full py-2.5 rounded-full bg-white text-slate-900 text-sm font-semibold" data-i18n="buy">Attiva</button></div>
+<div class="rounded-2xl bg-brand-500/20 border border-brand-400/40 p-5 relative"><div class="absolute -top-2 left-1/2 -translate-x-1/2 text-[10px] font-bold bg-amber-400 text-amber-950 px-2 py-0.5 rounded-full" data-i18n="popular">Consigliato</div><div class="text-xs uppercase text-brand-200 font-semibold" data-i18n="p3_name">Mensile</div><div class="text-3xl font-extrabold mt-1">14,90 €</div><button type="button" onclick="buy('monthly','Mensile','14,90 €')" class="mt-4 w-full py-2.5 rounded-full bg-white text-brand-800 text-sm font-semibold" data-i18n="buy">Attiva</button></div>
+<div class="rounded-2xl bg-white/5 border border-white/10 p-5"><div class="text-xs uppercase text-slate-400 font-semibold" data-i18n="p2_name">10 piani</div><div class="text-3xl font-extrabold mt-1">19,90 €</div><button type="button" onclick="buy('pack10','10 piani','19,90 €')" class="mt-4 w-full py-2.5 rounded-full bg-white text-slate-900 text-sm font-semibold" data-i18n="buy">Attiva</button></div>
 </div>
 </div>
+</section>
 </div>
+
+<!-- FLIGHTS in-site -->
+<div id="page-flights" class="page">
+<section class="py-12 max-w-3xl mx-auto px-4">
+<button type="button" onclick="go('home')" class="text-sm text-brand-600 font-semibold mb-3">← Home</button>
+<div class="flex flex-wrap items-center gap-2 mb-2">
+<h1 class="text-3xl font-extrabold" data-i18n="fl_title">Voli</h1>
+<span class="api-badge px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 font-semibold">MOCK · Amadeus-ready</span>
+</div>
+<p class="text-slate-600 mb-6" data-i18n="fl_sub">Cerca e confronta i risultati qui dentro. Nessun redirect obbligatorio.</p>
+<div class="rounded-2xl bg-white border p-6 space-y-4 shadow-sm">
+<div class="grid sm:grid-cols-2 gap-4">
+<div><label class="text-sm font-semibold" for="fl-from" data-i18n="fl_from">Da</label><input id="fl-from" type="text" value="Milano" class="mt-1 w-full px-4 py-3 rounded-xl border"/></div>
+<div><label class="text-sm font-semibold" for="fl-to" data-i18n="fl_to">A</label><input id="fl-to" type="text" value="Palermo" class="mt-1 w-full px-4 py-3 rounded-xl border"/></div>
+</div>
+<div class="grid sm:grid-cols-2 gap-4">
+<div><label class="text-sm font-semibold" for="fl-date" data-i18n="fl_date">Data</label><input id="fl-date" type="date" class="mt-1 w-full px-4 py-3 rounded-xl border"/></div>
+<div><label class="text-sm font-semibold" for="fl-pax" data-i18n="fl_pax">Passeggeri</label>
+<select id="fl-pax" class="mt-1 w-full px-4 py-3 rounded-xl border bg-white"><option>1</option><option selected>2</option><option>3</option><option>4</option></select></div>
+</div>
+<button type="button" onclick="searchFlights()" class="w-full py-3 rounded-full bg-brand-600 text-white font-semibold hover:bg-brand-700" data-i18n="fl_search">Cerca nel sito</button>
+<p class="text-xs text-slate-500" data-i18n="fl_note">Demo: dati simulati. Produzione: Edge Function → Amadeus Flight Offers Search.</p>
+</div>
+<div id="flight-results" class="mt-6 space-y-3"></div>
+</section>
+</div>
+
+<!-- CRUISES in-site -->
+<div id="page-cruises" class="page">
+<section class="py-12 max-w-3xl mx-auto px-4">
+<button type="button" onclick="go('home')" class="text-sm text-brand-600 font-semibold mb-3">← Home</button>
+<div class="flex flex-wrap items-center gap-2 mb-2">
+<h1 class="text-3xl font-extrabold" data-i18n="cr_title">Crociere</h1>
+<span class="api-badge px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 font-semibold">CATALOGO · SITE</span>
+</div>
+<p class="text-slate-600 mb-6" data-i18n="cr_sub">Offerte nel catalogo Smart Travel. Seleziona e aggiungi al piano senza lasciare il sito.</p>
+<div id="cruise-results" class="space-y-3"></div>
 </section>
 </div>
 
 <!-- LISTINGS -->
 <div id="page-listings" class="page">
 <section class="py-12 max-w-6xl mx-auto px-4">
+<button type="button" onclick="go('home')" class="text-sm text-brand-600 font-semibold mb-2">← Home</button>
 <div class="flex flex-wrap items-end justify-between gap-4 mb-8">
 <div>
-<button type="button" onclick="go('home')" class="text-sm text-brand-600 font-semibold mb-2">← Home</button>
-<h1 class="text-3xl font-extrabold" data-i18n="list_title">Inserzioni viaggio</h1>
-<p class="text-slate-600 mt-1" data-i18n="list_sub">Filtra, apri i dettagli e prenota sulle piattaforme partner.</p>
+<h1 class="text-3xl font-extrabold" data-i18n="list_title">Inserzioni</h1>
+<p class="text-slate-600 mt-1" data-i18n="list_sub">Dettaglio e selezione nel sito; prenotazione partner solo come passo finale opzionale.</p>
 </div>
-<div class="flex flex-wrap gap-2">
-<label class="sr-only" for="list-filter">Filtro</label>
-<select id="list-filter" onchange="renderListings()" class="px-3 py-2 rounded-xl border border-slate-200 text-sm bg-white">
+<div class="flex gap-2">
+<select id="list-filter" onchange="renderListings()" class="px-3 py-2 rounded-xl border text-sm bg-white">
 <option value="all" data-i18n="f_all">Tutte</option>
-<option value="city">City break</option>
+<option value="city">City</option>
 <option value="beach">Mare</option>
 <option value="cruise">Crociera</option>
 <option value="adventure">Avventura</option>
 </select>
-<label class="sr-only" for="list-q">Cerca</label>
-<input id="list-q" type="search" oninput="renderListings()" placeholder="Cerca destinazione…" class="px-3 py-2 rounded-xl border border-slate-200 text-sm w-48" data-i18n-ph="ph_search"/>
+<input id="list-q" type="search" oninput="renderListings()" class="px-3 py-2 rounded-xl border text-sm w-44" data-i18n-ph="ph_search" placeholder="Cerca…"/>
 </div>
 </div>
 <div id="listings-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
-<div id="listing-detail" class="hidden mt-8 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm" role="region" aria-live="polite"></div>
-</section>
-</div>
-
-<!-- FLIGHTS -->
-<div id="page-flights" class="page">
-<section class="py-12 max-w-3xl mx-auto px-4">
-<button type="button" onclick="go('home')" class="text-sm text-brand-600 font-semibold mb-3">← Home</button>
-<h1 class="text-3xl font-extrabold mb-2" data-i18n="fl_title">Voli</h1>
-<p class="text-slate-600 mb-6" data-i18n="fl_sub">Cerca e apri la prenotazione su Skyscanner o Google Flights.</p>
-<div class="rounded-2xl bg-white border border-slate-200 p-6 space-y-4 shadow-sm">
-<div class="grid sm:grid-cols-2 gap-4">
-<div>
-<label class="text-sm font-semibold" for="fl-from" data-i18n="fl_from">Da</label>
-<input id="fl-from" type="text" placeholder="Milano" class="mt-1 w-full px-4 py-3 rounded-xl border border-slate-200"/>
-</div>
-<div>
-<label class="text-sm font-semibold" for="fl-to" data-i18n="fl_to">A</label>
-<input id="fl-to" type="text" placeholder="Palermo" class="mt-1 w-full px-4 py-3 rounded-xl border border-slate-200"/>
-</div>
-</div>
-<div class="flex flex-wrap gap-3">
-<button type="button" onclick="openFlights('sky')" class="px-5 py-3 rounded-full bg-brand-600 text-white font-semibold text-sm hover:bg-brand-700">Skyscanner</button>
-<button type="button" onclick="openFlights('gf')" class="px-5 py-3 rounded-full border-2 border-brand-600 text-brand-700 font-semibold text-sm hover:bg-brand-50">Google Flights</button>
-</div>
-</div>
-<div class="mt-6 grid sm:grid-cols-2 gap-3">
-<a href="https://www.skyscanner.it/" target="_blank" rel="noopener noreferrer" class="listing rounded-xl border border-slate-200 p-4 block hover:bg-slate-50"><div class="font-bold">Skyscanner</div><div class="text-xs text-slate-500 mt-1" data-i18n="fl_sky">Low cost e full service</div></a>
-<a href="https://www.google.com/travel/flights" target="_blank" rel="noopener noreferrer" class="listing rounded-xl border border-slate-200 p-4 block hover:bg-slate-50"><div class="font-bold">Google Flights</div><div class="text-xs text-slate-500 mt-1" data-i18n="fl_gf">Calendario prezzi</div></a>
-<a href="https://www.kayak.it/flights" target="_blank" rel="noopener noreferrer" class="listing rounded-xl border border-slate-200 p-4 block hover:bg-slate-50"><div class="font-bold">Kayak</div><div class="text-xs text-slate-500 mt-1">Meta-search</div></a>
-<a href="https://www.edreams.it/" target="_blank" rel="noopener noreferrer" class="listing rounded-xl border border-slate-200 p-4 block hover:bg-slate-50"><div class="font-bold">eDreams</div><div class="text-xs text-slate-500 mt-1">Volo + hotel</div></a>
-</div>
-</section>
-</div>
-
-<!-- CRUISES -->
-<div id="page-cruises" class="page">
-<section class="py-12 max-w-3xl mx-auto px-4">
-<button type="button" onclick="go('home')" class="text-sm text-brand-600 font-semibold mb-3">← Home</button>
-<h1 class="text-3xl font-extrabold mb-2" data-i18n="cr_title">Crociere</h1>
-<p class="text-slate-600 mb-6" data-i18n="cr_sub">Compagnie e aggregatori con prenotazione diretta.</p>
-<div class="grid sm:grid-cols-2 gap-4">
-<a href="https://www.costacrociere.it/" target="_blank" rel="noopener noreferrer" class="listing rounded-2xl border border-slate-200 p-5 block bg-white"><div class="font-bold text-lg">Costa Crociere</div><p class="text-sm text-slate-500 mt-1" data-i18n="cr_costa">Mediterraneo e oltre</p><span class="inline-block mt-3 text-sm font-semibold text-brand-600" data-i18n="book_now">Prenota →</span></a>
-<a href="https://www.msccrociere.it/" target="_blank" rel="noopener noreferrer" class="listing rounded-2xl border border-slate-200 p-5 block bg-white"><div class="font-bold text-lg">MSC Crociere</div><p class="text-sm text-slate-500 mt-1">Flotta moderna</p><span class="inline-block mt-3 text-sm font-semibold text-brand-600" data-i18n="book_now">Prenota →</span></a>
-<a href="https://www.royalcaribbean.com/" target="_blank" rel="noopener noreferrer" class="listing rounded-2xl border border-slate-200 p-5 block bg-white"><div class="font-bold text-lg">Royal Caribbean</div><p class="text-sm text-slate-500 mt-1">Esperienze globali</p><span class="inline-block mt-3 text-sm font-semibold text-brand-600" data-i18n="book_now">Prenota →</span></a>
-<a href="https://www.cruisecritic.com/" target="_blank" rel="noopener noreferrer" class="listing rounded-2xl border border-slate-200 p-5 block bg-white"><div class="font-bold text-lg">Cruise Critic</div><p class="text-sm text-slate-500 mt-1" data-i18n="cr_cc">Recensioni e confronti</p><span class="inline-block mt-3 text-sm font-semibold text-brand-600" data-i18n="explore">Esplora →</span></a>
-</div>
+<div id="listing-detail" class="hidden mt-8 rounded-3xl border bg-white p-6 shadow-sm"></div>
 </section>
 </div>
 
@@ -272,607 +213,435 @@ input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid #
 <div id="page-plan" class="page">
 <section class="py-10">
 <div id="plan-box" class="max-w-2xl mx-auto px-4">
-<div class="mb-4 rounded-xl bg-brand-50 border border-brand-100 px-4 py-3 text-sm text-brand-900" data-i18n="demo_banner">Modalità demo: elabora il piano senza pagamento. Accesso libero a tutte le funzioni.</div>
+<div class="mb-4 rounded-xl bg-brand-50 border border-brand-100 px-4 py-3 text-sm text-brand-900" data-i18n="demo_banner">Demo libera. I risultati voli/crociere selezionati restano nel piano sul sito.</div>
 <div class="flex flex-wrap justify-between items-center gap-2 mb-6">
 <h1 class="text-2xl font-extrabold" data-i18n="wiz_title">Configura il viaggio</h1>
 <span id="plan-badge" class="text-xs font-semibold px-3 py-1 rounded-full bg-brand-100 text-brand-800">Demo</span>
 </div>
-<div class="flex gap-1 mb-6" role="progressbar" aria-valuemin="1" aria-valuemax="4" aria-valuenow="1" id="plan-progress">
-<div id="pg1" class="h-1.5 flex-1 rounded-full bg-brand-500"></div>
-<div id="pg2" class="h-1.5 flex-1 rounded-full bg-slate-200"></div>
-<div id="pg3" class="h-1.5 flex-1 rounded-full bg-slate-200"></div>
-<div id="pg4" class="h-1.5 flex-1 rounded-full bg-slate-200"></div>
-</div>
-
+<div id="selected-box" class="hidden mb-4 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-900"></div>
+<div class="flex gap-1 mb-6"><div id="pg1" class="h-1.5 flex-1 rounded-full bg-brand-500"></div><div id="pg2" class="h-1.5 flex-1 rounded-full bg-slate-200"></div><div id="pg3" class="h-1.5 flex-1 rounded-full bg-slate-200"></div><div id="pg4" class="h-1.5 flex-1 rounded-full bg-slate-200"></div></div>
 <div id="ws1" class="wizard-step active space-y-4">
-<div><label class="text-sm font-semibold" for="w-peo" data-i18n="q_people">Viaggiatori</label>
-<select id="w-peo" class="mt-1 w-full px-4 py-3 rounded-xl border border-slate-200 bg-white"><option>1</option><option selected>2</option><option>3</option><option>4</option><option>5+</option></select></div>
-<div><label class="text-sm font-semibold" for="w-dest" data-i18n="q_dest">Destinazione</label>
-<input id="w-dest" type="text" class="mt-1 w-full px-4 py-3 rounded-xl border border-slate-200" placeholder="Trapani, Bled, Lisbona…" data-i18n-ph="ph_dest" autocomplete="off"/></div>
-<div><label class="text-sm font-semibold" for="w-when" data-i18n="q_when">Periodo</label>
-<select id="w-when" class="mt-1 w-full px-4 py-3 rounded-xl border border-slate-200 bg-white"><option data-i18n="o_flex">Date flessibili</option><option>Entro 30 giorni</option><option>Entro 90 giorni</option></select></div>
-<div><label class="text-sm font-semibold" for="w-days" data-i18n="q_days">Durata</label>
-<select id="w-days" class="mt-1 w-full px-4 py-3 rounded-xl border border-slate-200 bg-white"><option>2–3 giorni</option><option selected>4–7 giorni</option><option>8–14 giorni</option><option>15+ giorni</option></select></div>
-<button type="button" onclick="wiz(2)" class="w-full py-3 rounded-full bg-brand-600 text-white font-semibold hover:bg-brand-700" data-i18n="next">Continua</button>
+<div><label class="text-sm font-semibold" data-i18n="q_people">Viaggiatori</label><select id="w-peo" class="mt-1 w-full px-4 py-3 rounded-xl border bg-white"><option>1</option><option selected>2</option><option>3</option><option>4</option><option>5+</option></select></div>
+<div><label class="text-sm font-semibold" data-i18n="q_dest">Destinazione</label><input id="w-dest" type="text" class="mt-1 w-full px-4 py-3 rounded-xl border" data-i18n-ph="ph_dest" placeholder="Trapani, Palermo…"/></div>
+<div><label class="text-sm font-semibold" data-i18n="q_days">Durata</label><select id="w-days" class="mt-1 w-full px-4 py-3 rounded-xl border bg-white"><option>2–3 giorni</option><option selected>4–7 giorni</option><option>8–14 giorni</option><option>15+ giorni</option></select></div>
+<button type="button" onclick="wiz(2)" class="w-full py-3 rounded-full bg-brand-600 text-white font-semibold" data-i18n="next">Continua</button>
 </div>
-
 <div id="ws2" class="wizard-step space-y-4">
-<div><label class="text-sm font-semibold" for="w-tr" data-i18n="q_transport">Mezzo</label>
-<select id="w-tr" class="mt-1 w-full px-4 py-3 rounded-xl border border-slate-200 bg-white"><option>Aereo</option><option>Treno</option><option>Traghetto</option><option>Auto / road trip</option><option selected>Altro</option></select></div>
-<div><label class="text-sm font-semibold" for="w-st" data-i18n="q_stops">Soste</label>
-<select id="w-st" class="mt-1 w-full px-4 py-3 rounded-xl border border-slate-200 bg-white"><option>Ogni ~2 ore</option><option selected>Ogni ~3 ore</option><option>Solo centri principali</option><option>Nessuna preferenza</option></select></div>
-<div><label class="text-sm font-semibold" for="w-bud" data-i18n="q_budget">Budget (€)</label>
-<input id="w-bud" type="number" min="50" placeholder="800" class="mt-1 w-full px-4 py-3 rounded-xl border border-slate-200"/></div>
-<div class="flex gap-3">
-<button type="button" onclick="wiz(1)" class="flex-1 py-3 rounded-full border border-slate-200 font-semibold hover:bg-slate-50" data-i18n="back">Indietro</button>
-<button type="button" onclick="wiz(3)" class="flex-1 py-3 rounded-full bg-brand-600 text-white font-semibold hover:bg-brand-700" data-i18n="next">Continua</button>
+<div><label class="text-sm font-semibold" data-i18n="q_transport">Mezzo</label><select id="w-tr" class="mt-1 w-full px-4 py-3 rounded-xl border bg-white"><option>Aereo</option><option>Treno</option><option>Traghetto</option><option>Auto / road trip</option><option selected>Altro</option></select></div>
+<div><label class="text-sm font-semibold" data-i18n="q_budget">Budget (€)</label><input id="w-bud" type="number" min="50" placeholder="800" class="mt-1 w-full px-4 py-3 rounded-xl border"/></div>
+<div class="flex gap-3"><button type="button" onclick="wiz(1)" class="flex-1 py-3 rounded-full border font-semibold" data-i18n="back">Indietro</button><button type="button" onclick="wiz(3)" class="flex-1 py-3 rounded-full bg-brand-600 text-white font-semibold" data-i18n="next">Continua</button></div>
 </div>
-</div>
-
 <div id="ws3" class="wizard-step space-y-4">
-<div><label class="text-sm font-semibold" for="w-style" data-i18n="q_style">Fascia</label>
-<select id="w-style" class="mt-1 w-full px-4 py-3 rounded-xl border border-slate-200 bg-white"><option>Economica</option><option selected>Intermedia</option><option>Comfort</option><option>Alta gamma</option></select></div>
-<div><label class="text-sm font-semibold" for="w-int" data-i18n="q_int">Interessi</label>
-<select id="w-int" class="mt-1 w-full px-4 py-3 rounded-xl border border-slate-200 bg-white"><option>Cultura</option><option>Natura</option><option>Mare</option><option>Cibo</option><option selected>Combinata</option></select></div>
-<div><label class="text-sm font-semibold" for="w-stay" data-i18n="q_stay">Alloggio</label>
-<select id="w-stay" class="mt-1 w-full px-4 py-3 rounded-xl border border-slate-200 bg-white"><option selected>Hotel + Airbnb</option><option>Solo hotel</option><option>Solo Airbnb</option></select></div>
-<div class="flex gap-3">
-<button type="button" onclick="wiz(2)" class="flex-1 py-3 rounded-full border border-slate-200 font-semibold hover:bg-slate-50" data-i18n="back">Indietro</button>
-<button type="button" onclick="wiz(4)" class="flex-1 py-3 rounded-full bg-brand-600 text-white font-semibold hover:bg-brand-700" data-i18n="generate">Elabora piano</button>
+<div><label class="text-sm font-semibold" data-i18n="q_style">Fascia</label><select id="w-style" class="mt-1 w-full px-4 py-3 rounded-xl border bg-white"><option>Economica</option><option selected>Intermedia</option><option>Comfort</option><option>Alta gamma</option></select></div>
+<div><label class="text-sm font-semibold" data-i18n="q_int">Interessi</label><select id="w-int" class="mt-1 w-full px-4 py-3 rounded-xl border bg-white"><option>Cultura</option><option>Natura</option><option>Mare</option><option selected>Combinata</option></select></div>
+<div class="flex gap-3"><button type="button" onclick="wiz(2)" class="flex-1 py-3 rounded-full border font-semibold" data-i18n="back">Indietro</button><button type="button" onclick="wiz(4)" class="flex-1 py-3 rounded-full bg-brand-600 text-white font-semibold" data-i18n="generate">Elabora piano</button></div>
 </div>
-</div>
-
 <div id="ws4" class="wizard-step space-y-5">
-<div class="rounded-2xl bg-brand-50 border border-brand-100 p-4">
-<div class="font-bold text-brand-900" data-i18n="result_title">Piano elaborato</div>
-<p class="text-sm text-brand-800 mt-1" data-i18n="result_sub">Itinerario, alloggi, trasporti e link di prenotazione.</p>
-</div>
+<div class="rounded-2xl bg-brand-50 border border-brand-100 p-4"><div class="font-bold text-brand-900" data-i18n="result_title">Piano elaborato</div><p class="text-sm text-brand-800 mt-1" data-i18n="result_sub">Itinerario e opzioni selezionate restano su Smart Travel.</p></div>
 <div id="plan-out"></div>
-<div class="flex flex-col sm:flex-row gap-3">
-<button type="button" onclick="resetWizard()" class="flex-1 py-3 rounded-full border border-slate-200 font-semibold hover:bg-slate-50" data-i18n="restart">Nuova</button>
-<button type="button" onclick="go('ai')" class="flex-1 py-3 rounded-full bg-brand-600 text-white font-semibold hover:bg-brand-700">ST AI</button>
-</div>
+<div class="flex gap-3"><button type="button" onclick="resetWizard()" class="flex-1 py-3 rounded-full border font-semibold" data-i18n="restart">Nuova</button><button type="button" onclick="go('ai')" class="flex-1 py-3 rounded-full bg-brand-600 text-white font-semibold">ST AI</button></div>
 </div>
 </div>
 </section>
 </div>
 
-<!-- ST AI -->
 <div id="page-ai" class="page">
 <section class="py-12 max-w-2xl mx-auto px-4">
 <button type="button" onclick="go('home')" class="text-sm text-brand-600 font-semibold mb-3">← Home</button>
 <div class="flex items-center gap-3 mb-4">
 <span class="w-11 h-11 rounded-2xl bg-gradient-to-br from-brand-600 to-accent-600 text-white font-bold flex items-center justify-center text-sm">ST</span>
-<div>
-<h1 class="text-2xl font-extrabold">ST AI</h1>
-<p class="text-sm text-slate-500" data-i18n="ai_sub">Assistente Smart Travel per itinerari e budget.</p>
+<div><h1 class="text-2xl font-extrabold">ST AI</h1><p class="text-sm text-slate-500" data-i18n="ai_sub">Assistente nel sito</p></div>
 </div>
-</div>
-<div class="rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-sm">
-<div id="chat-log" class="h-80 overflow-y-auto p-4 space-y-3 bg-slate-50" role="log" aria-live="polite">
-<div class="chat-b bg-white border rounded-2xl rounded-tl-sm px-4 py-2.5 text-sm shadow-sm" data-i18n="ai_hello">Ciao, sono ST AI. Chiedimi destinazioni, budget o come prenotare voli e crociere.</div>
-</div>
+<div class="rounded-2xl border bg-white overflow-hidden shadow-sm">
+<div id="chat-log" class="h-80 overflow-y-auto p-4 space-y-3 bg-slate-50"><div class="chat-b bg-white border rounded-2xl rounded-tl-sm px-4 py-2.5 text-sm shadow-sm" data-i18n="ai_hello">Ciao, sono ST AI. Cerco e confronto restando su Smart Travel.</div></div>
 <div class="p-3 border-t flex gap-2">
-<label class="sr-only" for="chat-in">Messaggio</label>
-<input id="chat-in" type="text" class="flex-1 px-4 py-2.5 rounded-xl border text-sm" placeholder="Messaggio…" data-i18n-ph="ai_ph" autocomplete="off"/>
-<button type="button" onclick="sendChat()" class="px-5 py-2.5 rounded-xl bg-brand-600 text-white text-sm font-semibold hover:bg-brand-700" data-i18n="send">Invia</button>
+<input id="chat-in" type="text" class="flex-1 px-4 py-2.5 rounded-xl border text-sm" data-i18n-ph="ai_ph" placeholder="Messaggio…"/>
+<button type="button" onclick="sendChat()" class="px-5 py-2.5 rounded-xl bg-brand-600 text-white text-sm font-semibold" data-i18n="send">Invia</button>
 </div>
 </div>
 </section>
 </div>
 
-<!-- PREZZI -->
 <div id="page-prezzi" class="page">
 <section class="py-14 max-w-4xl mx-auto px-4">
 <button type="button" onclick="go('home')" class="text-sm text-brand-600 font-semibold mb-3">← Home</button>
 <h1 class="text-3xl font-extrabold text-center mb-8" data-i18n="price_title">Piani</h1>
 <div class="grid sm:grid-cols-3 gap-4">
-<div class="rounded-2xl border bg-white p-5 shadow-sm">
-<div class="text-xs font-semibold text-slate-500 uppercase" data-i18n="p1_name">Analisi singola</div>
-<div class="text-3xl font-extrabold mt-2">2,00 €</div>
-<button type="button" onclick="buy('compare','Analisi singola','2,00 €')" class="mt-4 w-full py-2.5 rounded-full border-2 border-brand-600 text-brand-700 font-semibold text-sm hover:bg-brand-50" data-i18n="buy">Attiva</button>
+<div class="rounded-2xl border bg-white p-5"><div class="text-xs font-semibold text-slate-500 uppercase" data-i18n="p1_name">Analisi</div><div class="text-3xl font-extrabold mt-2">2,00 €</div><button type="button" onclick="buy('compare','Analisi','2,00 €')" class="mt-4 w-full py-2.5 rounded-full border-2 border-brand-600 text-brand-700 font-semibold text-sm" data-i18n="buy">Attiva</button></div>
+<div class="rounded-2xl bg-brand-600 text-white p-5 relative"><div class="absolute -top-2 left-1/2 -translate-x-1/2 text-[10px] font-bold bg-amber-400 text-amber-950 px-2 py-0.5 rounded-full" data-i18n="popular">Consigliato</div><div class="text-xs font-semibold text-brand-100 uppercase" data-i18n="p3_name">Mensile</div><div class="text-3xl font-extrabold mt-2">14,90 €</div><button type="button" onclick="buy('monthly','Mensile','14,90 €')" class="mt-4 w-full py-2.5 rounded-full bg-white text-brand-800 font-semibold text-sm" data-i18n="buy">Attiva</button></div>
+<div class="rounded-2xl border bg-white p-5"><div class="text-xs font-semibold text-slate-500 uppercase" data-i18n="p2_name">10 piani</div><div class="text-3xl font-extrabold mt-2">19,90 €</div><button type="button" onclick="buy('pack10','10 piani','19,90 €')" class="mt-4 w-full py-2.5 rounded-full border-2 border-brand-600 text-brand-700 font-semibold text-sm" data-i18n="buy">Attiva</button></div>
 </div>
-<div class="rounded-2xl bg-brand-600 text-white p-5 relative shadow-lg">
-<div class="absolute -top-2 left-1/2 -translate-x-1/2 text-[10px] font-bold bg-amber-400 text-amber-950 px-2 py-0.5 rounded-full" data-i18n="popular">Consigliato</div>
-<div class="text-xs font-semibold text-brand-100 uppercase" data-i18n="p3_name">Mensile</div>
-<div class="text-3xl font-extrabold mt-2">14,90 €</div>
-<button type="button" onclick="buy('monthly','Abbonamento mensile','14,90 €')" class="mt-4 w-full py-2.5 rounded-full bg-white text-brand-800 font-semibold text-sm" data-i18n="buy">Attiva</button>
-</div>
-<div class="rounded-2xl border bg-white p-5 shadow-sm">
-<div class="text-xs font-semibold text-slate-500 uppercase" data-i18n="p2_name">10 piani</div>
-<div class="text-3xl font-extrabold mt-2">19,90 €</div>
-<button type="button" onclick="buy('pack10','Pacchetto 10 piani','19,90 €')" class="mt-4 w-full py-2.5 rounded-full border-2 border-brand-600 text-brand-700 font-semibold text-sm hover:bg-brand-50" data-i18n="buy">Attiva</button>
-</div>
-</div>
-<p class="text-center text-xs text-slate-500 mt-6" data-i18n="price_note">Demo sul dispositivo. Pubblicazione: Supabase Auth + subscriptions.</p>
-<button type="button" onclick="go('legal')" class="block mx-auto mt-4 text-sm text-brand-600 font-semibold" data-i18n="nav_legal">Policy →</button>
+<button type="button" onclick="go('legal')" class="block mx-auto mt-6 text-sm text-brand-600 font-semibold" data-i18n="nav_legal">Policy →</button>
 </section>
 </div>
 
-<!-- LEGAL -->
 <div id="page-legal" class="page">
-<section class="py-12 max-w-2xl mx-auto px-4 space-y-6 text-sm text-slate-600">
+<section class="py-12 max-w-2xl mx-auto px-4 space-y-4 text-sm text-slate-600">
 <button type="button" onclick="go('home')" class="text-brand-600 font-semibold text-sm">← Home</button>
 <h1 class="text-2xl font-extrabold text-slate-900" data-i18n="legal_title">Policy e privacy</h1>
-<div class="rounded-2xl border bg-white p-5 space-y-3 shadow-sm">
-<h2 class="font-bold text-slate-900" data-i18n="refund_h">Rimborsi</h2>
-<p data-i18n="refund_1">Analisi 2 €: non rimborsabile dopo elaborazione salvo guasto tecnico documentato.</p>
-<p data-i18n="refund_2">Pacchetto 10 piani: rimborso entro 14 giorni se usato al massimo 1 piano.</p>
-<p data-i18n="refund_3">Mensile: disdetta libera; pro-rata solo entro 48h dal primo addebito senza uso sostanziale.</p>
-</div>
-<div class="rounded-2xl border bg-white p-5 space-y-3 shadow-sm">
-<h2 class="font-bold text-slate-900" data-i18n="privacy_h">Privacy</h2>
-<p data-i18n="privacy_1">Titolare: Smart Travel (demo). In produzione i dati di account e piani saranno gestiti tramite Supabase.</p>
-<p data-i18n="privacy_2">In questa versione le preferenze restano sul tuo dispositivo (localStorage). Nessun dato inviato a server di terze parti oltre ai link di prenotazione che apri tu.</p>
+<div class="rounded-2xl border bg-white p-5 space-y-2 shadow-sm">
+<p data-i18n="refund_1">Analisi 2 €: non rimborsabile dopo elaborazione salvo guasto tecnico.</p>
+<p data-i18n="refund_2">Pacchetto 10 piani: rimborso 14 giorni se ≤1 piano usato.</p>
+<p data-i18n="refund_3">Mensile: disdetta libera; pro-rata solo entro 48h senza uso sostanziale.</p>
+<p data-i18n="privacy_1">Demo: dati su dispositivo. Produzione: Supabase Auth + subscriptions.</p>
 </div>
 </section>
 </div>
-
 </main>
 
-<footer class="border-t py-8 bg-white text-sm text-slate-500 mt-auto">
+<footer class="border-t py-8 bg-white text-sm text-slate-500">
 <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-3">
 <span class="font-bold text-slate-800">Smart Travel</span>
-<nav class="flex flex-wrap justify-center gap-4" aria-label="Footer">
-<button type="button" onclick="go('listings')" class="hover:text-slate-800" data-i18n="nav_listings">Inserzioni</button>
-<button type="button" onclick="go('flights')" class="hover:text-slate-800" data-i18n="nav_flights">Voli</button>
-<button type="button" onclick="go('cruises')" class="hover:text-slate-800" data-i18n="nav_cruises">Crociere</button>
-<button type="button" onclick="go('prezzi')" class="hover:text-slate-800" data-i18n="nav_pricing">Prezzi</button>
-<button type="button" onclick="go('legal')" class="hover:text-slate-800" data-i18n="nav_legal">Policy</button>
-</nav>
-<span>© 2026 · ST AI</span>
+<div class="flex flex-wrap gap-4">
+<button type="button" onclick="go('flights')" data-i18n="nav_flights">Voli</button>
+<button type="button" onclick="go('cruises')" data-i18n="nav_cruises">Crociere</button>
+<button type="button" onclick="go('prezzi')" data-i18n="nav_pricing">Prezzi</button>
+<button type="button" onclick="go('legal')" data-i18n="nav_legal">Policy</button>
+</div>
+<span>© 2026 · ST AI · API-ready</span>
 </div>
 </footer>
+
+<!-- API scaffold note (for developers) -->
+<script type="application/json" id="api-config">
+{
+  "mode": "mock",
+  "supabaseUrl": "",
+  "supabaseAnonKey": "",
+  "endpoints": {
+    "searchFlights": "/functions/v1/search-flights",
+    "searchHotels": "/functions/v1/search-hotels"
+  },
+  "provider": "amadeus",
+  "notes": "Set mode to live and fill Supabase URL/key when Edge Functions are deployed. Keys stay server-side only."
+}
+</script>
 
 <script>
 (function(){
 'use strict';
-
-var I18N = {
-it: {
+var I18N={
+it:{
 nav_home:'Home',nav_listings:'Inserzioni',nav_plan:'Pianifica',nav_flights:'Voli',nav_cruises:'Crociere',nav_pricing:'Prezzi',nav_cta:'Pianifica',nav_legal:'Policy',
-hero_badge:'Pianificazione + prenotazione',hero_t1:'Il tuo viaggio,',hero_t2:'organizzato e prenotabile.',
-hero_sub:'Crea itinerari su misura, esplora inserzioni e prenota voli, crociere, hotel e traghetti in un unico flusso.',
-hero_cta1:'Inizia a pianificare',hero_cta2:'Vedi inserzioni',hero_social:'4.9 · ST AI incluso',
-mock_title:'Itinerario Smart Travel',mock_ok:'Budget ok',mock_hint:'Apri un’inserzione per prenotare',
-cat_title:'Esplora e prenota',cat_list:'Destinazioni e pacchetti',cat_fl:'Skyscanner e Google Flights',cat_cr:'Costa, MSC, Royal',cat_pl:'Wizard + budget + ST AI',
-how1_t:'Configura',how1_d:'Destinazione, viaggiatori, budget e preferenze in pochi passi.',
-how2_t:'Confronta',how2_d:'Alloggi e trasporti ordinati per budget, con inserzioni prenotabili.',
-how3_t:'Prenota',how3_d:'Link diretti a voli, hotel, traghetti e crociere sulle piattaforme partner.',
-price_title:'Piani',price_sub:'Demo locale. In produzione: Supabase.',p1_name:'Analisi singola',p2_name:'10 piani',p3_name:'Mensile',buy:'Attiva',popular:'Consigliato',price_note:'Demo sul dispositivo. Pubblicazione: Supabase Auth + subscriptions.',
-list_title:'Inserzioni viaggio',list_sub:'Filtra, apri i dettagli e prenota sulle piattaforme partner.',f_all:'Tutte',ph_search:'Cerca destinazione…',
-fl_title:'Voli',fl_sub:'Cerca e apri la prenotazione su Skyscanner o Google Flights.',fl_from:'Da',fl_to:'A',fl_sky:'Low cost e full service',fl_gf:'Calendario prezzi',
-cr_title:'Crociere',cr_sub:'Compagnie e aggregatori con prenotazione diretta.',cr_costa:'Mediterraneo e oltre',cr_cc:'Recensioni e confronti',book_now:'Prenota →',explore:'Esplora →',
-demo_banner:'Modalità demo: elabora il piano senza pagamento. Accesso libero a tutte le funzioni.',wiz_title:'Configura il viaggio',
-q_people:'Viaggiatori',q_dest:'Destinazione',q_when:'Periodo',q_days:'Durata',q_transport:'Mezzo',q_stops:'Soste',q_budget:'Budget (€)',q_style:'Fascia',q_int:'Interessi',q_stay:'Alloggio',
-o_flex:'Date flessibili',next:'Continua',back:'Indietro',generate:'Elabora piano',result_title:'Piano elaborato',result_sub:'Itinerario, alloggi, trasporti e link di prenotazione.',restart:'Nuova',
-ai_sub:'Assistente Smart Travel per itinerari e budget.',ai_hello:'Ciao, sono ST AI. Chiedimi destinazioni, budget o come prenotare voli e crociere.',send:'Invia',ai_ph:'Messaggio…',ph_dest:'Trapani, Bled, Lisbona…',
-legal_title:'Policy e privacy',refund_h:'Rimborsi',refund_1:'Analisi 2 €: non rimborsabile dopo elaborazione salvo guasto tecnico documentato.',refund_2:'Pacchetto 10 piani: rimborso entro 14 giorni se usato al massimo 1 piano.',refund_3:'Mensile: disdetta libera; pro-rata solo entro 48h dal primo addebito senza uso sostanziale.',
-privacy_h:'Privacy',privacy_1:'Titolare: Smart Travel (demo). In produzione i dati di account e piani saranno gestiti tramite Supabase.',privacy_2:'In questa versione le preferenze restano sul tuo dispositivo (localStorage). Nessun dato inviato a server di terze parti oltre ai link di prenotazione che apri tu.',
-active_plan:'Piano attivo',from:'da',plan_this:'Pianifica questo',days_label:'giorni',fits_budget:'Allineato al budget',no_results:'Nessuna inserzione trovata. Prova un altro filtro.',
-day1:'Giorno 1',day2:'Giorno 2',day3:'Giorno 3',
-day1_t:'Arrivo, centro storico, cena tipica',day2_t:'Attrazione principale, pranzo, pernotto',day3_t:'Seconda tappa, rientro',
-legend:'Verde attrazioni · Fucsia ristorazione · Azzurro pernotto'
+hero_badge:'Tutto nel sito · API-ready',hero_t1:'Ricerca e piano',hero_t2:'senza uscire da Smart Travel.',
+hero_sub:'Voli, hotel e crociere con risultati mostrati qui. Pronto per Amadeus e Supabase a costo minimo.',
+hero_cta1:'Cerca voli',hero_cta2:'Pianifica viaggio',mock_title:'Risultati nel sito',mock_pick:'Selezionato per il piano',
+cat_fl:'Ricerca interna · Amadeus-ready',cat_cr:'Catalogo nel sito',cat_list:'Pacchetti e destinazioni',cat_pl:'Budget + itinerario + ST AI',
+api_title:'API a basso costo',api_sub:'Oggi: risultati mock nel sito. Domani: Amadeus (free tier) + Supabase Edge Functions senza redirect obbligatori.',
+api_1:'Voli/hotel: Amadeus Self-Service (quota gratis, poi pay-as-you-go)',api_2:'Backend: Supabase free tier (proxy chiavi, mai nel browser)',api_3:'Mappe: OpenStreetMap + Leaflet (0 €)',
+price_title:'Piani',price_sub:'Paghi per il valore sul sito, non per essere reindirizzato.',p1_name:'Analisi',p2_name:'10 piani',p3_name:'Mensile',buy:'Attiva',popular:'Consigliato',
+fl_title:'Voli',fl_sub:'Cerca e confronta i risultati qui dentro. Nessun redirect obbligatorio.',fl_from:'Da',fl_to:'A',fl_date:'Data',fl_pax:'Passeggeri',fl_search:'Cerca nel sito',
+fl_note:'Demo: dati simulati. Produzione: Edge Function → Amadeus Flight Offers Search.',fl_select:'Seleziona per il piano',fl_selected:'Aggiunto al piano',
+cr_title:'Crociere',cr_sub:'Offerte nel catalogo Smart Travel. Seleziona e aggiungi al piano senza lasciare il sito.',
+list_title:'Inserzioni',list_sub:'Dettaglio e selezione nel sito; prenotazione partner solo come passo finale opzionale.',f_all:'Tutte',ph_search:'Cerca…',
+demo_banner:'Demo libera. I risultati voli/crociere selezionati restano nel piano sul sito.',wiz_title:'Configura il viaggio',
+q_people:'Viaggiatori',q_dest:'Destinazione',q_days:'Durata',q_transport:'Mezzo',q_budget:'Budget (€)',q_style:'Fascia',q_int:'Interessi',
+next:'Continua',back:'Indietro',generate:'Elabora piano',result_title:'Piano elaborato',result_sub:'Itinerario e opzioni selezionate restano su Smart Travel.',restart:'Nuova',
+ai_sub:'Assistente nel sito',ai_hello:'Ciao, sono ST AI. Cerco e confronto restando su Smart Travel.',send:'Invia',ai_ph:'Messaggio…',ph_dest:'Trapani, Palermo…',
+legal_title:'Policy e privacy',refund_1:'Analisi 2 €: non rimborsabile dopo elaborazione salvo guasto tecnico.',refund_2:'Pacchetto 10 piani: rimborso 14 giorni se ≤1 piano usato.',
+refund_3:'Mensile: disdetta libera; pro-rata solo entro 48h senza uso sostanziale.',privacy_1:'Demo: dati su dispositivo. Produzione: Supabase Auth + subscriptions.',
+active_plan:'Piano attivo',from:'da',plan_this:'Usa nel piano',days_label:'giorni',fits_budget:'Allineato al budget',no_results:'Nessun risultato',
+sel_flight:'Volo selezionato',sel_cruise:'Crociera selezionata',direct:'Diretto',stops:'scalo'
 },
-en: {
+en:{
 nav_home:'Home',nav_listings:'Listings',nav_plan:'Plan',nav_flights:'Flights',nav_cruises:'Cruises',nav_pricing:'Pricing',nav_cta:'Plan',nav_legal:'Policy',
-hero_badge:'Planning + booking',hero_t1:'Your trip,',hero_t2:'organised and bookable.',
-hero_sub:'Build tailored itineraries, browse listings and book flights, cruises, hotels and ferries in one flow.',
-hero_cta1:'Start planning',hero_cta2:'Browse listings',hero_social:'4.9 · ST AI included',
-mock_title:'Smart Travel itinerary',mock_ok:'On budget',mock_hint:'Open a listing to book',
-cat_title:'Explore & book',cat_list:'Destinations and packages',cat_fl:'Skyscanner and Google Flights',cat_cr:'Costa, MSC, Royal',cat_pl:'Wizard + budget + ST AI',
-how1_t:'Configure',how1_d:'Destination, travellers, budget and preferences in a few steps.',
-how2_t:'Compare',how2_d:'Stays and transport ranked by budget, with bookable listings.',
-how3_t:'Book',how3_d:'Direct links to flights, hotels, ferries and cruises on partner sites.',
-price_title:'Plans',price_sub:'Local demo. Production: Supabase.',p1_name:'Single analysis',p2_name:'10 plans',p3_name:'Monthly',buy:'Activate',popular:'Recommended',price_note:'Device demo. Launch: Supabase Auth + subscriptions.',
-list_title:'Travel listings',list_sub:'Filter, open details and book on partner platforms.',f_all:'All',ph_search:'Search destination…',
-fl_title:'Flights',fl_sub:'Search and open booking on Skyscanner or Google Flights.',fl_from:'From',fl_to:'To',fl_sky:'Low-cost and full-service',fl_gf:'Price calendar',
-cr_title:'Cruises',cr_sub:'Lines and aggregators with direct booking.',cr_costa:'Mediterranean and beyond',cr_cc:'Reviews and comparisons',book_now:'Book →',explore:'Explore →',
-demo_banner:'Demo mode: generate plans without payment. Full access to all features.',wiz_title:'Configure your trip',
-q_people:'Travellers',q_dest:'Destination',q_when:'Period',q_days:'Duration',q_transport:'Transport',q_stops:'Stops',q_budget:'Budget (€)',q_style:'Tier',q_int:'Interests',q_stay:'Stay',
-o_flex:'Flexible dates',next:'Continue',back:'Back',generate:'Generate plan',result_title:'Plan ready',result_sub:'Itinerary, stays, transport and booking links.',restart:'New',
-ai_sub:'Smart Travel assistant for itineraries and budget.',ai_hello:'Hi, I am ST AI. Ask about destinations, budget or how to book flights and cruises.',send:'Send',ai_ph:'Message…',ph_dest:'Trapani, Bled, Lisbon…',
-legal_title:'Policy & privacy',refund_h:'Refunds',refund_1:'€2 analysis: non-refundable after generation except documented technical failure.',refund_2:'10-plan pack: refund within 14 days if at most 1 plan was used.',refund_3:'Monthly: cancel anytime; pro-rata only within 48h of first charge without substantial use.',
-privacy_h:'Privacy',privacy_1:'Controller: Smart Travel (demo). In production, account and plans will be managed via Supabase.',privacy_2:'In this version preferences stay on your device (localStorage). No data is sent to third-party servers except booking links you open yourself.',
-active_plan:'Active plan',from:'from',plan_this:'Plan this',days_label:'days',fits_budget:'Fits budget',no_results:'No listings found. Try another filter.',
-day1:'Day 1',day2:'Day 2',day3:'Day 3',
-day1_t:'Arrival, old town, local dinner',day2_t:'Main sight, lunch, overnight',day3_t:'Second stop, return',
-legend:'Green sights · Fuchsia dining · Blue stay'
+hero_badge:'All in-site · API-ready',hero_t1:'Search and plan',hero_t2:'without leaving Smart Travel.',
+hero_sub:'Flights, hotels and cruises with results shown here. Ready for low-cost Amadeus and Supabase.',
+hero_cta1:'Search flights',hero_cta2:'Plan a trip',mock_title:'In-site results',mock_pick:'Selected for plan',
+cat_fl:'In-site search · Amadeus-ready',cat_cr:'On-site catalogue',cat_list:'Packages and destinations',cat_pl:'Budget + itinerary + ST AI',
+api_title:'Low-cost APIs',api_sub:'Today: mock results on-site. Tomorrow: Amadeus free tier + Supabase Edge Functions, no forced redirects.',
+api_1:'Flights/hotels: Amadeus Self-Service (free quota, then pay-as-you-go)',api_2:'Backend: Supabase free tier (key proxy, never in the browser)',api_3:'Maps: OpenStreetMap + Leaflet (€0)',
+price_title:'Plans',price_sub:'You pay for value on the site, not for being redirected.',p1_name:'Analysis',p2_name:'10 plans',p3_name:'Monthly',buy:'Activate',popular:'Recommended',
+fl_title:'Flights',fl_sub:'Search and compare results here. No forced redirect.',fl_from:'From',fl_to:'To',fl_date:'Date',fl_pax:'Passengers',fl_search:'Search on site',
+fl_note:'Demo: simulated data. Production: Edge Function → Amadeus Flight Offers Search.',fl_select:'Select for plan',fl_selected:'Added to plan',
+cr_title:'Cruises',cr_sub:'Offers in the Smart Travel catalogue. Select and add to plan without leaving.',
+list_title:'Listings',list_sub:'Details and selection on-site; partner booking only as optional final step.',f_all:'All',ph_search:'Search…',
+demo_banner:'Open demo. Selected flights/cruises stay in your on-site plan.',wiz_title:'Configure your trip',
+q_people:'Travellers',q_dest:'Destination',q_days:'Duration',q_transport:'Transport',q_budget:'Budget (€)',q_style:'Tier',q_int:'Interests',
+next:'Continue',back:'Back',generate:'Generate plan',result_title:'Plan ready',result_sub:'Itinerary and selected options stay on Smart Travel.',restart:'New',
+ai_sub:'In-site assistant',ai_hello:'Hi, I am ST AI. I search and compare while staying on Smart Travel.',send:'Send',ai_ph:'Message…',ph_dest:'Trapani, Palermo…',
+legal_title:'Policy & privacy',refund_1:'€2 analysis: non-refundable after generation except technical failure.',refund_2:'10-plan pack: refund within 14 days if ≤1 plan used.',
+refund_3:'Monthly: cancel anytime; pro-rata only within 48h without substantial use.',privacy_1:'Demo: on-device data. Production: Supabase Auth + subscriptions.',
+active_plan:'Active plan',from:'from',plan_this:'Use in plan',days_label:'days',fits_budget:'Fits budget',no_results:'No results',
+sel_flight:'Selected flight',sel_cruise:'Selected cruise',direct:'Direct',stops:'stop'
 }
 };
 
-var lang = 'it';
-try { lang = localStorage.getItem('st_lang') || 'it'; } catch (e) { lang = 'it'; }
-if (lang !== 'en' && lang !== 'it') lang = 'it';
+var lang='it';
+try{lang=localStorage.getItem('st_lang')||'it'}catch(e){}
+if(lang!=='en')lang='it';
+var selected={flight:null,cruise:null};
 
-function t(k) {
-  var d = I18N[lang] || I18N.it;
-  if (d[k] != null) return d[k];
-  if (I18N.en[k] != null) return I18N.en[k];
-  return k;
+function t(k){var d=I18N[lang]||I18N.it;return d[k]!=null?d[k]:(I18N.en[k]!=null?I18N.en[k]:k)}
+function esc(s){var d=document.createElement('div');d.textContent=s==null?'':String(s);return d.innerHTML}
+function applyLang(){
+  document.documentElement.lang=lang;
+  var c=document.getElementById('cur-lang');if(c)c.textContent=lang.toUpperCase();
+  document.querySelectorAll('[data-i18n]').forEach(function(el){var v=t(el.getAttribute('data-i18n'));if(v)el.textContent=v});
+  document.querySelectorAll('[data-i18n-ph]').forEach(function(el){var v=t(el.getAttribute('data-i18n-ph'));if(v)el.placeholder=v});
+  try{localStorage.setItem('st_lang',lang)}catch(e){}
+  document.title=lang==='it'?'Smart Travel – Pianifica e prenota nel sito':'Smart Travel – Plan and book on-site';
+  renderListings();renderCruises();renderSelected();
 }
-
-function applyLang() {
-  document.documentElement.lang = lang;
-  var cur = document.getElementById('cur-lang');
-  if (cur) cur.textContent = lang.toUpperCase();
-  document.querySelectorAll('[data-i18n]').forEach(function (el) {
-    var v = t(el.getAttribute('data-i18n'));
-    if (v) el.textContent = v;
-  });
-  document.querySelectorAll('[data-i18n-ph]').forEach(function (el) {
-    var v = t(el.getAttribute('data-i18n-ph'));
-    if (v) el.placeholder = v;
-  });
-  document.querySelectorAll('option[data-i18n]').forEach(function (el) {
-    var v = t(el.getAttribute('data-i18n'));
-    if (v) el.textContent = v;
-  });
-  try { localStorage.setItem('st_lang', lang); } catch (e) {}
-  document.title = lang === 'it'
-    ? 'Smart Travel – Pianifica e prenota il tuo viaggio'
-    : 'Smart Travel – Plan and book your trip';
-  try { renderListings(); } catch (e) {}
-}
-
-function toggleLang(e) {
-  if (e) { e.preventDefault(); e.stopPropagation(); }
-  var m = document.getElementById('lang-menu');
-  var btn = document.getElementById('lang-btn');
-  if (!m) return;
-  m.classList.toggle('open');
-  if (btn) btn.setAttribute('aria-expanded', m.classList.contains('open') ? 'true' : 'false');
-}
-
-function setLang(code) {
-  lang = (code === 'en') ? 'en' : 'it';
-  var m = document.getElementById('lang-menu');
-  if (m) m.classList.remove('open');
-  var btn = document.getElementById('lang-btn');
-  if (btn) btn.setAttribute('aria-expanded', 'false');
-  applyLang();
-}
-
-function toggleMobile(e) {
-  if (e) { e.preventDefault(); e.stopPropagation(); }
-  var m = document.getElementById('mobile-menu');
-  if (m) m.classList.toggle('open');
-}
-function closeMobile() {
-  var m = document.getElementById('mobile-menu');
-  if (m) m.classList.remove('open');
-}
-
-document.addEventListener('click', function (e) {
-  var menu = document.getElementById('lang-menu');
-  var btn = document.getElementById('lang-btn');
-  if (menu && btn && !menu.contains(e.target) && !btn.contains(e.target)) {
-    menu.classList.remove('open');
-    btn.setAttribute('aria-expanded', 'false');
-  }
+function toggleLang(e){if(e){e.preventDefault();e.stopPropagation()}document.getElementById('lang-menu').classList.toggle('open')}
+function setLang(code){lang=code==='en'?'en':'it';document.getElementById('lang-menu').classList.remove('open');applyLang()}
+function toggleMobile(e){if(e){e.preventDefault();e.stopPropagation()}document.getElementById('mobile-menu').classList.toggle('open')}
+function closeMobile(){var m=document.getElementById('mobile-menu');if(m)m.classList.remove('open')}
+document.addEventListener('click',function(e){
+  var menu=document.getElementById('lang-menu'),btn=document.getElementById('lang-btn');
+  if(menu&&btn&&!menu.contains(e.target)&&!btn.contains(e.target))menu.classList.remove('open');
 });
 
-function go(id) {
+function go(id){
   closeMobile();
-  document.querySelectorAll('.page').forEach(function (p) { p.classList.remove('active'); });
-  var el = document.getElementById('page-' + id);
-  if (!el) {
-    console.warn('Missing page:', id);
-    el = document.getElementById('page-home');
-  }
-  if (el) el.classList.add('active');
-  window.scrollTo(0, 0);
-  if (id === 'listings') renderListings();
-  if (id === 'plan') refreshAccess();
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
+  var el=document.getElementById('page-'+id)||document.getElementById('page-home');
+  if(el)el.classList.add('active');
+  window.scrollTo(0,0);
+  if(id==='listings')renderListings();
+  if(id==='cruises')renderCruises();
+  if(id==='plan'){refreshAccess();renderSelected()}
   return false;
 }
-
-function buy(id, name, price) {
-  try {
-    localStorage.setItem('st_plan', JSON.stringify({ id: id, name: name, price: price, at: new Date().toISOString() }));
-  } catch (e) {}
-  alert(t('active_plan') + ': ' + name + ' (' + price + ')');
+function buy(id,name,price){
+  try{localStorage.setItem('st_plan',JSON.stringify({id:id,name:name,price:price,at:new Date().toISOString()}))}catch(e){}
+  alert(t('active_plan')+': '+name+' ('+price+')');
   go('plan');
 }
-
-function refreshAccess() {
-  var p = null;
-  try { p = JSON.parse(localStorage.getItem('st_plan') || 'null'); } catch (e) { p = null; }
-  var b = document.getElementById('plan-badge');
-  if (!b) return;
-  if (p && p.name) {
-    b.textContent = p.name + ' · ' + (p.price || '');
-    b.className = 'text-xs font-semibold px-3 py-1 rounded-full bg-emerald-100 text-emerald-800';
-  } else {
-    b.textContent = 'Demo';
-    b.className = 'text-xs font-semibold px-3 py-1 rounded-full bg-brand-100 text-brand-800';
-  }
+function refreshAccess(){
+  var p=null;try{p=JSON.parse(localStorage.getItem('st_plan')||'null')}catch(e){}
+  var b=document.getElementById('plan-badge');if(!b)return;
+  if(p&&p.name){b.textContent=p.name+' · '+(p.price||'');b.className='text-xs font-semibold px-3 py-1 rounded-full bg-emerald-100 text-emerald-800'}
+  else{b.textContent='Demo';b.className='text-xs font-semibold px-3 py-1 rounded-full bg-brand-100 text-brand-800'}
 }
 
-var LISTINGS = [
-  { id: 'trapani', title: 'Trapani & Costa Ovest', titleEn: 'Trapani & West Coast', cat: 'beach', days: 5, price: 520, img: 'https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=600&q=80', desc: 'Saline, Erice, San Vito Lo Capo.', descEn: 'Salt pans, Erice, San Vito Lo Capo.', bookHotel: 'https://www.booking.com/searchresults.html?ss=Trapani', bookAir: 'https://www.airbnb.it/s/Trapani/homes', bookFlight: 'https://www.skyscanner.it/trasporti/voli/', bookFerry: 'https://www.directferries.it/' },
-  { id: 'bled', title: 'Lago di Bled', titleEn: 'Lake Bled', cat: 'adventure', days: 4, price: 480, img: 'https://images.unsplash.com/photo-1516550893923-42d28e5677af?w=600&q=80', desc: 'Lago, castello e gola di Vintgar.', descEn: 'Lake, castle and Vintgar gorge.', bookHotel: 'https://www.booking.com/searchresults.html?ss=Bled', bookAir: 'https://www.airbnb.it/s/Bled/homes', bookFlight: 'https://www.skyscanner.it/trasporti/voli/', bookFerry: '' },
-  { id: 'lisbon', title: 'Lisbona city break', titleEn: 'Lisbon city break', cat: 'city', days: 3, price: 390, img: 'https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=600&q=80', desc: 'Alfama, Belém e tram 28.', descEn: 'Alfama, Belém and tram 28.', bookHotel: 'https://www.booking.com/searchresults.html?ss=Lisbon', bookAir: 'https://www.airbnb.it/s/Lisbon/homes', bookFlight: 'https://www.skyscanner.it/trasporti/voli/', bookFerry: '' },
-  { id: 'med-cruise', title: 'Crociera Mediterraneo', titleEn: 'Mediterranean cruise', cat: 'cruise', days: 7, price: 890, img: 'https://images.unsplash.com/photo-1548574505-5e239809ee19?w=600&q=80', desc: '7 notti, scali IT e GR.', descEn: '7 nights, IT and GR ports.', bookHotel: 'https://www.costacrociere.it/', bookAir: '', bookFlight: 'https://www.skyscanner.it/', bookFerry: 'https://www.msccrociere.it/' },
-  { id: 'amalfi', title: 'Costiera Amalfitana', titleEn: 'Amalfi Coast', cat: 'beach', days: 5, price: 750, img: 'https://images.unsplash.com/photo-1535189043414-cfca9a35b5c7?w=600&q=80', desc: 'Positano, Amalfi, Ravello.', descEn: 'Positano, Amalfi, Ravello.', bookHotel: 'https://www.booking.com/searchresults.html?ss=Amalfi', bookAir: 'https://www.airbnb.it/s/Amalfi/homes', bookFlight: 'https://www.skyscanner.it/trasporti/voli/', bookFerry: 'https://www.directferries.it/' },
-  { id: 'paris', title: 'Parigi essenziale', titleEn: 'Paris essentials', cat: 'city', days: 4, price: 560, img: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=600&q=80', desc: 'Musei, quartieri, ristoranti.', descEn: 'Museums, districts, dining.', bookHotel: 'https://www.booking.com/searchresults.html?ss=Paris', bookAir: 'https://www.airbnb.it/s/Paris/homes', bookFlight: 'https://www.skyscanner.it/trasporti/voli/', bookFerry: '' },
-  { id: 'rome', title: 'Roma classica', titleEn: 'Classic Rome', cat: 'city', days: 4, price: 450, img: 'https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=600&q=80', desc: 'Colosseo, Vaticano, Trastevere.', descEn: 'Colosseum, Vatican, Trastevere.', bookHotel: 'https://www.booking.com/searchresults.html?ss=Rome', bookAir: 'https://www.airbnb.it/s/Rome/homes', bookFlight: 'https://www.skyscanner.it/trasporti/voli/', bookFerry: '' },
-  { id: 'santorini', title: 'Santorini', titleEn: 'Santorini', cat: 'beach', days: 5, price: 820, img: 'https://images.unsplash.com/photo-1613395877344-13d4a8e0d49e?w=600&q=80', desc: 'Caldera, tramonti, villaggi bianchi.', descEn: 'Caldera, sunsets, white villages.', bookHotel: 'https://www.booking.com/searchresults.html?ss=Santorini', bookAir: 'https://www.airbnb.it/s/Santorini/homes', bookFlight: 'https://www.skyscanner.it/trasporti/voli/', bookFerry: 'https://www.directferries.it/' }
-];
-
-function esc(s) {
-  var d = document.createElement('div');
-  d.textContent = s == null ? '' : String(s);
-  return d.innerHTML;
+/* —— API layer: mock now, swap to Supabase later —— */
+function getApiConfig(){
+  try{return JSON.parse(document.getElementById('api-config').textContent)}catch(e){return{mode:'mock'}}
 }
-
-function renderListings() {
-  var grid = document.getElementById('listings-grid');
-  if (!grid) return;
-  var filterEl = document.getElementById('list-filter');
-  var qEl = document.getElementById('list-q');
-  var f = (filterEl && filterEl.value) ? filterEl.value : 'all';
-  var q = (qEl && qEl.value) ? qEl.value.toLowerCase().trim() : '';
-  var items = LISTINGS.filter(function (L) {
-    if (f !== 'all' && L.cat !== f) return false;
-    var title = (lang === 'en' ? L.titleEn : L.title).toLowerCase();
-    var desc = (lang === 'en' ? L.descEn : L.desc).toLowerCase();
-    if (!q) return true;
-    return title.indexOf(q) >= 0 || desc.indexOf(q) >= 0 || L.id.indexOf(q) >= 0 || L.cat.indexOf(q) >= 0;
-  });
-  if (!items.length) {
-    grid.innerHTML = '<p class="text-slate-500 col-span-full py-8 text-center">' + esc(t('no_results')) + '</p>';
-    return;
-  }
-  grid.innerHTML = items.map(function (L) {
-    var title = lang === 'en' ? L.titleEn : L.title;
-    var desc = lang === 'en' ? L.descEn : L.desc;
-    return '<button type="button" data-id="' + esc(L.id) + '" class="listing-btn listing text-left rounded-2xl border border-slate-200 bg-white overflow-hidden w-full">' +
-      '<div class="h-36 overflow-hidden bg-slate-100"><img src="' + esc(L.img) + '" alt="' + esc(title) + '" class="w-full h-full object-cover" loading="lazy" onerror="this.style.display=\'none\'"/></div>' +
-      '<div class="p-4"><div class="font-bold">' + esc(title) + '</div>' +
-      '<p class="text-sm text-slate-500 mt-1">' + esc(desc) + '</p>' +
-      '<div class="mt-3 flex justify-between items-center text-sm"><span class="font-semibold text-brand-700">' + esc(t('from')) + ' ' + L.price + ' €</span>' +
-      '<span class="text-slate-400">' + L.days + ' ' + esc(t('days_label')) + '</span></div></div></button>';
-  }).join('');
-  grid.querySelectorAll('.listing-btn').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      openListing(btn.getAttribute('data-id'));
+async function apiSearchFlights(query){
+  var cfg=getApiConfig();
+  if(cfg.mode==='live'&&cfg.supabaseUrl&&cfg.endpoints&&cfg.endpoints.searchFlights){
+    var res=await fetch(cfg.supabaseUrl+cfg.endpoints.searchFlights,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.supabaseAnonKey},
+      body:JSON.stringify(query)
     });
-  });
-}
-
-function openListing(id) {
-  var L = null;
-  for (var i = 0; i < LISTINGS.length; i++) {
-    if (LISTINGS[i].id === id) { L = LISTINGS[i]; break; }
+    if(!res.ok)throw new Error('API error');
+    return await res.json();
   }
-  if (!L) return;
-  var title = lang === 'en' ? L.titleEn : L.title;
-  var desc = lang === 'en' ? L.descEn : L.desc;
-  var box = document.getElementById('listing-detail');
-  if (!box) return;
-  box.classList.remove('hidden');
-  var links = '';
-  if (L.bookHotel) links += '<a href="' + esc(L.bookHotel) + '" target="_blank" rel="noopener noreferrer" class="px-4 py-2.5 rounded-full bg-brand-600 text-white text-sm font-semibold hover:bg-brand-700">Hotel / Booking</a>';
-  if (L.bookAir) links += '<a href="' + esc(L.bookAir) + '" target="_blank" rel="noopener noreferrer" class="px-4 py-2.5 rounded-full border-2 border-rose-500 text-rose-700 text-sm font-semibold hover:bg-rose-50">Airbnb</a>';
-  if (L.bookFlight) links += '<a href="' + esc(L.bookFlight) + '" target="_blank" rel="noopener noreferrer" class="px-4 py-2.5 rounded-full border-2 border-sky-500 text-sky-700 text-sm font-semibold hover:bg-sky-50">' + esc(t('nav_flights')) + '</a>';
-  if (L.bookFerry) links += '<a href="' + esc(L.bookFerry) + '" target="_blank" rel="noopener noreferrer" class="px-4 py-2.5 rounded-full border-2 border-emerald-500 text-emerald-700 text-sm font-semibold hover:bg-emerald-50">' + (lang === 'it' ? 'Traghetto / Crociera' : 'Ferry / Cruise') + '</a>';
-  links += '<button type="button" class="plan-this-btn px-4 py-2.5 rounded-full bg-slate-900 text-white text-sm font-semibold hover:bg-slate-800" data-dest="' + esc(title) + '">' + esc(t('plan_this')) + '</button>';
-  box.innerHTML = '<div class="flex flex-col sm:flex-row gap-6">' +
-    '<img src="' + esc(L.img) + '" alt="" class="w-full sm:w-56 h-40 object-cover rounded-2xl bg-slate-100" loading="lazy"/>' +
-    '<div class="flex-1"><h2 class="text-2xl font-extrabold">' + esc(title) + '</h2>' +
-    '<p class="text-slate-600 mt-2">' + esc(desc) + '</p>' +
-    '<p class="mt-2 text-sm text-slate-500">' + L.days + ' ' + esc(t('days_label')) + ' · ' + esc(t('from')) + ' <strong>' + L.price + ' €</strong></p>' +
-    '<div class="mt-4 flex flex-wrap gap-2">' + links + '</div></div></div>';
-  var planBtn = box.querySelector('.plan-this-btn');
-  if (planBtn) {
-    planBtn.addEventListener('click', function () {
-      go('plan');
-      var dest = document.getElementById('w-dest');
-      if (dest) dest.value = planBtn.getAttribute('data-dest') || '';
-      resetWizardToStep1();
-    });
-  }
-  try { box.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } catch (e) {}
-}
-
-function openFlights(which) {
-  var fromEl = document.getElementById('fl-from');
-  var toEl = document.getElementById('fl-to');
-  var from = (fromEl && fromEl.value.trim()) || 'Milano';
-  var to = (toEl && toEl.value.trim()) || 'Palermo';
-  var url;
-  if (which === 'gf') {
-    url = 'https://www.google.com/travel/flights?q=Flights%20to%20' + encodeURIComponent(to) + '%20from%20' + encodeURIComponent(from);
-  } else {
-    url = 'https://www.skyscanner.it/trasporti/voli/?adultsv1=1&ref=home&rtn=1';
-  }
-  window.open(url, '_blank', 'noopener,noreferrer');
-}
-
-function wiz(n) {
-  n = parseInt(n, 10);
-  if (isNaN(n) || n < 1 || n > 4) return;
-  if (n === 2) {
-    var dest = document.getElementById('w-dest');
-    if (dest && !dest.value.trim()) {
-      dest.focus();
-      dest.classList.add('ring-2', 'ring-red-400');
-      setTimeout(function () { dest.classList.remove('ring-2', 'ring-red-400'); }, 1500);
-      return;
-    }
-  }
-  document.querySelectorAll('.wizard-step').forEach(function (s) { s.classList.remove('active'); });
-  var step = document.getElementById('ws' + n);
-  if (step) step.classList.add('active');
-  for (var i = 1; i <= 4; i++) {
-    var p = document.getElementById('pg' + i);
-    if (p) p.className = 'h-1.5 flex-1 rounded-full ' + (i <= n ? 'bg-brand-500' : 'bg-slate-200');
-  }
-  var prog = document.getElementById('plan-progress');
-  if (prog) prog.setAttribute('aria-valuenow', String(n));
-  var box = document.getElementById('plan-box');
-  if (box) box.className = n === 4 ? 'max-w-4xl mx-auto px-4' : 'max-w-2xl mx-auto px-4';
-  if (n === 4) buildPlan();
-}
-
-function resetWizardToStep1() {
-  var box = document.getElementById('plan-box');
-  if (box) box.className = 'max-w-2xl mx-auto px-4';
-  document.querySelectorAll('.wizard-step').forEach(function (s) { s.classList.remove('active'); });
-  var s1 = document.getElementById('ws1');
-  if (s1) s1.classList.add('active');
-  for (var i = 1; i <= 4; i++) {
-    var p = document.getElementById('pg' + i);
-    if (p) p.className = 'h-1.5 flex-1 rounded-full ' + (i === 1 ? 'bg-brand-500' : 'bg-slate-200');
-  }
-}
-
-function resetWizard() {
-  resetWizardToStep1();
-  var dest = document.getElementById('w-dest');
-  if (dest) dest.value = '';
-  var bud = document.getElementById('w-bud');
-  if (bud) bud.value = '';
-  var out = document.getElementById('plan-out');
-  if (out) out.innerHTML = '';
-}
-
-function buildPlan() {
-  var destEl = document.getElementById('w-dest');
-  var d = (destEl && destEl.value.trim()) || 'Trapani';
-  var trEl = document.getElementById('w-tr');
-  var tr = trEl ? trEl.value : 'Altro';
-  var budEl = document.getElementById('w-bud');
-  var bud = parseInt(budEl && budEl.value, 10);
-  if (isNaN(bud) || bud < 50) bud = 800;
-  var daysEl = document.getElementById('w-days');
-  var days = daysEl ? daysEl.value : '4–7 giorni';
-  var peoEl = document.getElementById('w-peo');
-  var peo = peoEl ? peoEl.value : '2';
-  var styleEl = document.getElementById('w-style');
-  var style = styleEl ? styleEl.value : 'Intermedia';
-  var nNights = 5;
-  if (days.indexOf('2–3') === 0) nNights = 2;
-  else if (days.indexOf('4–7') === 0) nNights = 5;
-  else if (days.indexOf('8–14') === 0) nNights = 10;
-  else nNights = 14;
-  var maxNight = Math.max(40, Math.floor(bud * 0.35 / nNights));
-  var q = encodeURIComponent(d);
-  var booking = 'https://www.booking.com/searchresults.html?ss=' + q;
-  var airbnb = 'https://www.airbnb.it/s/' + q + '/homes';
-  var sky = 'https://www.skyscanner.it/trasporti/voli/';
-  var ferry = 'https://www.directferries.it/';
-  var train = 'https://www.trenitalia.com/';
-  var hotels = [
-    { n: 'Hotel centro · ' + d, p: 78 },
-    { n: 'B&B consigliato', p: 62 },
-    { n: 'Appartamento Airbnb', p: 55 },
-    { n: 'Hotel Airone', p: 95 }
+  // MOCK (same shape expected from Amadeus normalizer)
+  var from=query.from||'Milano', to=query.to||'Palermo', pax=query.passengers||2;
+  return [
+    {id:'f1',carrier:'Ryanair',from:from,to:to,depart:'06:45',arrive:'08:25',duration:'1h 40m',stops:0,price:49*pax,cabin:'Economy'},
+    {id:'f2',carrier:'ITA Airways',from:from,to:to,depart:'09:20',arrive:'11:05',duration:'1h 45m',stops:0,price:89*pax,cabin:'Economy'},
+    {id:'f3',carrier:'easyJet',from:from,to:to,depart:'13:10',arrive:'16:40',duration:'3h 30m',stops:1,price:72*pax,cabin:'Economy'},
+    {id:'f4',carrier:'Wizz Air',from:from,to:to,depart:'18:50',arrive:'20:35',duration:'1h 45m',stops:0,price:61*pax,cabin:'Economy'}
   ];
-  hotels.forEach(function (h) { h.ok = h.p <= maxNight; });
-
-  var html = '';
-  html += '<div class="rounded-2xl border bg-white p-5 mb-4 shadow-sm"><div class="flex flex-wrap gap-2 text-sm mb-3">';
-  html += '<span class="px-3 py-1 rounded-full bg-slate-100 font-medium">' + esc(d) + '</span>';
-  html += '<span class="px-3 py-1 rounded-full bg-slate-100">' + esc(peo) + '</span>';
-  html += '<span class="px-3 py-1 rounded-full bg-slate-100">' + esc(days) + '</span>';
-  html += '<span class="px-3 py-1 rounded-full bg-slate-100">' + bud + ' €</span>';
-  html += '<span class="px-3 py-1 rounded-full bg-slate-100">' + esc(tr) + '</span></div>';
-  html += '<p class="text-sm text-emerald-800 bg-emerald-50 border border-emerald-100 rounded-xl p-3"><strong>' + esc(t('fits_budget')) + ':</strong> max ~' + maxNight + ' €/notte · ' + esc(style) + '</p></div>';
-
-  html += '<div class="flex flex-wrap gap-2 mb-4" role="tablist">';
-  html += '<button type="button" onclick="showTab(\'t1\')" id="tb1" class="px-4 py-2 rounded-full text-sm font-semibold bg-brand-600 text-white" role="tab">Itinerario</button>';
-  html += '<button type="button" onclick="showTab(\'t2\')" id="tb2" class="px-4 py-2 rounded-full text-sm font-semibold bg-slate-100" role="tab">Alloggi</button>';
-  html += '<button type="button" onclick="showTab(\'t3\')" id="tb3" class="px-4 py-2 rounded-full text-sm font-semibold bg-slate-100" role="tab">' + (lang === 'it' ? 'Trasporti' : 'Transport') + '</button></div>';
-
-  html += '<div id="t1" class="tabp space-y-3"><div class="rounded-2xl border bg-white p-5 shadow-sm">';
-  html += '<div class="text-sm space-y-2 text-slate-700">';
-  html += '<p><strong>' + esc(t('day1')) + ':</strong> ' + esc(t('day1_t')) + '</p>';
-  html += '<p><strong>' + esc(t('day2')) + ':</strong> ' + esc(t('day2_t')) + '</p>';
-  html += '<p><strong>' + esc(t('day3')) + ':</strong> ' + esc(t('day3_t')) + '</p></div>';
-  html += '<div class="mt-4 h-40 map-bg rounded-xl relative border">';
-  html += '<span class="absolute left-[25%] top-[40%] w-3 h-3 rounded-full bg-emerald-500 border-2 border-white"></span>';
-  html += '<span class="absolute left-[55%] top-[35%] w-3 h-3 rounded-full bg-fuchsia-500 border-2 border-white"></span>';
-  html += '<span class="absolute left-[70%] top-[55%] w-3 h-3 rounded-full bg-sky-500 border-2 border-white"></span></div>';
-  html += '<p class="text-xs text-slate-500 mt-2">' + esc(t('legend')) + '</p></div></div>';
-
-  html += '<div id="t2" class="tabp hidden space-y-3">';
-  hotels.forEach(function (h) {
-    html += '<div class="rounded-2xl border ' + (h.ok ? 'border-emerald-300' : 'border-slate-200') + ' bg-white p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm">';
-    html += '<div><div class="font-bold">' + esc(h.n) + '</div><div class="text-sm text-brand-700 font-semibold">' + esc(t('from')) + ' ' + h.p + ' €/notte</div>';
-    if (h.ok) html += '<span class="text-xs text-emerald-700 font-semibold">' + esc(t('fits_budget')) + '</span>';
-    html += '</div><a href="' + booking + '" target="_blank" rel="noopener noreferrer" class="px-4 py-2 rounded-full bg-brand-600 text-white text-sm font-semibold text-center hover:bg-brand-700">' + esc(t('book_now').replace('→', '').trim() || 'Prenota') + '</a></div>';
-  });
-  html += '<div class="flex flex-wrap gap-2"><a href="' + booking + '" target="_blank" rel="noopener noreferrer" class="px-4 py-2 rounded-full border-2 border-sky-500 text-sky-700 text-sm font-semibold">Booking.com</a>';
-  html += '<a href="' + airbnb + '" target="_blank" rel="noopener noreferrer" class="px-4 py-2 rounded-full border-2 border-rose-500 text-rose-700 text-sm font-semibold">Airbnb</a></div></div>';
-
-  html += '<div id="t3" class="tabp hidden space-y-3">';
-  html += '<a href="' + sky + '" target="_blank" rel="noopener noreferrer" class="block rounded-2xl border p-4 listing bg-white"><div class="font-bold">✈️ ' + esc(t('nav_flights')) + ' · Skyscanner</div></a>';
-  html += '<a href="' + train + '" target="_blank" rel="noopener noreferrer" class="block rounded-2xl border p-4 listing bg-white"><div class="font-bold">🚆 Trenitalia</div></a>';
-  html += '<a href="' + ferry + '" target="_blank" rel="noopener noreferrer" class="block rounded-2xl border p-4 listing bg-white"><div class="font-bold">⛴️ Direct Ferries</div></a>';
-  html += '<a href="https://www.costacrociere.it/" target="_blank" rel="noopener noreferrer" class="block rounded-2xl border p-4 listing bg-white"><div class="font-bold">🚢 ' + esc(t('nav_cruises')) + '</div></a>';
-  html += '<a href="https://www.google.com/maps/dir/?api=1&destination=' + q + '" target="_blank" rel="noopener noreferrer" class="block rounded-2xl border p-4 listing bg-white"><div class="font-bold">🗺️ Google Maps</div></a></div>';
-
-  var out = document.getElementById('plan-out');
-  if (out) out.innerHTML = html;
 }
 
-function showTab(id) {
-  document.querySelectorAll('.tabp').forEach(function (x) { x.classList.add('hidden'); });
-  var el = document.getElementById(id);
-  if (el) el.classList.remove('hidden');
-  ['t1', 't2', 't3'].forEach(function (x) {
-    var b = document.getElementById('tb' + x.slice(1));
-    if (b) b.className = 'px-4 py-2 rounded-full text-sm font-semibold ' + (x === id ? 'bg-brand-600 text-white' : 'bg-slate-100');
-  });
+async function searchFlights(){
+  var box=document.getElementById('flight-results');
+  if(!box)return;
+  var from=(document.getElementById('fl-from').value||'Milano').trim();
+  var to=(document.getElementById('fl-to').value||'Palermo').trim();
+  var pax=parseInt(document.getElementById('fl-pax').value,10)||2;
+  box.innerHTML='<p class="text-sm text-slate-500 animate-pulse">…</p>';
+  try{
+    var rows=await apiSearchFlights({from:from,to:to,passengers:pax,date:(document.getElementById('fl-date')||{}).value});
+    if(!rows.length){box.innerHTML='<p class="text-slate-500">'+esc(t('no_results'))+'</p>';return}
+    box.innerHTML=rows.map(function(r){
+      return '<div class="rounded-2xl border bg-white p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm listing">'+
+        '<div><div class="font-bold">'+esc(r.carrier)+'</div>'+
+        '<div class="text-sm text-slate-600 mt-1">'+esc(r.from)+' → '+esc(r.to)+' · '+esc(r.depart)+'–'+esc(r.arrive)+'</div>'+
+        '<div class="text-xs text-slate-500 mt-1">'+esc(r.duration)+' · '+(r.stops?r.stops+' '+t('stops'):t('direct'))+'</div></div>'+
+        '<div class="text-right"><div class="text-xl font-extrabold text-brand-700">'+r.price+' €</div>'+
+        '<button type="button" data-fid="'+esc(r.id)+'" class="mt-2 px-4 py-2 rounded-full bg-brand-600 text-white text-sm font-semibold flight-pick">'+esc(t('fl_select'))+'</button></div></div>';
+    }).join('');
+    box.querySelectorAll('.flight-pick').forEach(function(btn){
+      btn.addEventListener('click',function(){
+        var id=btn.getAttribute('data-fid');
+        var row=rows.find(function(x){return x.id===id});
+        if(!row)return;
+        selected.flight=row;
+        try{localStorage.setItem('st_selected',JSON.stringify(selected))}catch(e){}
+        btn.textContent=t('fl_selected');
+        btn.classList.add('bg-emerald-600');
+        renderSelected();
+      });
+    });
+  }catch(err){
+    box.innerHTML='<p class="text-red-600 text-sm">'+esc(err.message||'Error')+'</p>';
+  }
 }
 
-function sendChat() {
-  var inp = document.getElementById('chat-in');
-  if (!inp) return;
-  var text = inp.value.trim();
-  if (!text) return;
-  var log = document.getElementById('chat-log');
-  if (!log) return;
-  log.innerHTML += '<div class="chat-b ml-auto bg-brand-600 text-white rounded-2xl rounded-tr-sm px-4 py-2.5 text-sm">' + esc(text) + '</div>';
-  inp.value = '';
-  setTimeout(function () {
-    var m = text.toLowerCase();
-    var r = lang === 'it'
-      ? 'Usa Pianifica per l’itinerario o Inserzioni per prenotare. Sono ST AI di Smart Travel.'
-      : 'Use Plan for itineraries or Listings to book. I am ST AI by Smart Travel.';
-    if (/volo|flight|aereo/.test(m)) r = lang === 'it' ? 'Apri la sezione Voli oppure Skyscanner dal piano elaborato.' : 'Open Flights or Skyscanner from your generated plan.';
-    if (/crociera|cruise/.test(m)) r = lang === 'it' ? 'Nella sezione Crociere trovi Costa, MSC e Royal.' : 'In Cruises you will find Costa, MSC and Royal.';
-    if (/budget|prezzo|price/.test(m)) r = lang === 'it' ? 'Imposta il budget nel wizard: le opzioni allineate vengono evidenziate.' : 'Set your budget in the wizard: matching options are highlighted.';
-    if (/hotel|allogg|airbnb/.test(m)) r = lang === 'it' ? 'Nelle Inserzioni o nel piano trovi link a Booking e Airbnb.' : 'In Listings or your plan you will find Booking and Airbnb links.';
-    log.innerHTML += '<div class="chat-b bg-white border rounded-2xl rounded-tl-sm px-4 py-2.5 text-sm shadow-sm">' + esc(r) + '</div>';
-    log.scrollTop = log.scrollHeight;
-  }, 350);
-  log.scrollTop = log.scrollHeight;
-}
-
-var chatIn = document.getElementById('chat-in');
-if (chatIn) {
-  chatIn.addEventListener('keypress', function (e) {
-    if (e.key === 'Enter') sendChat();
+var CRUISES=[
+  {id:'c1',name:'Mediterraneo 7 notti',nameEn:'Mediterranean 7 nights',line:'Costa',ports:'Genova · Barcelona · Palermo',price:690,days:7},
+  {id:'c2',name:'Grecia e isole',nameEn:'Greece & islands',line:'MSC',ports:'Bari · Corfù · Santorini',price:820,days:7},
+  {id:'c3',name:'Western Med short',nameEn:'Western Med short',line:'MSC',ports:'Civitavecchia · Marsiglia',price:540,days:5}
+];
+function renderCruises(){
+  var box=document.getElementById('cruise-results');if(!box)return;
+  box.innerHTML=CRUISES.map(function(c){
+    var name=lang==='en'?c.nameEn:c.name;
+    return '<div class="rounded-2xl border bg-white p-5 listing shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">'+
+      '<div><div class="font-bold text-lg">'+esc(name)+'</div><div class="text-sm text-slate-500 mt-1">'+esc(c.line)+' · '+esc(c.ports)+'</div>'+
+      '<div class="text-xs text-slate-400 mt-1">'+c.days+' '+esc(t('days_label'))+'</div></div>'+
+      '<div class="text-right"><div class="text-xl font-extrabold text-brand-700">'+t('from')+' '+c.price+' €</div>'+
+      '<button type="button" data-cid="'+esc(c.id)+'" class="mt-2 px-4 py-2 rounded-full bg-brand-600 text-white text-sm font-semibold cruise-pick">'+esc(t('fl_select'))+'</button></div></div>';
+  }).join('');
+  box.querySelectorAll('.cruise-pick').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var id=btn.getAttribute('data-cid');
+      var row=CRUISES.find(function(x){return x.id===id});
+      if(!row)return;
+      selected.cruise=row;
+      try{localStorage.setItem('st_selected',JSON.stringify(selected))}catch(e){}
+      btn.textContent=t('fl_selected');
+      btn.classList.add('bg-emerald-600');
+      renderSelected();
+    });
   });
 }
 
-window.go = go;
-window.buy = buy;
-window.setLang = setLang;
-window.toggleLang = toggleLang;
-window.toggleMobile = toggleMobile;
-window.closeMobile = closeMobile;
-window.wiz = wiz;
-window.showTab = showTab;
-window.sendChat = sendChat;
-window.openListing = openListing;
-window.openFlights = openFlights;
-window.renderListings = renderListings;
-window.resetWizard = resetWizard;
+function renderSelected(){
+  try{selected=JSON.parse(localStorage.getItem('st_selected')||'null')||selected}catch(e){}
+  var box=document.getElementById('selected-box');
+  if(!box)return;
+  var parts=[];
+  if(selected.flight)parts.push(t('sel_flight')+': '+selected.flight.carrier+' '+selected.flight.from+'→'+selected.flight.to+' · '+selected.flight.price+' €');
+  if(selected.cruise){
+    var cn=lang==='en'?selected.cruise.nameEn:selected.cruise.name;
+    parts.push(t('sel_cruise')+': '+selected.cruise.line+' · '+cn+' · '+selected.cruise.price+' €');
+  }
+  if(!parts.length){box.classList.add('hidden');box.innerHTML='';return}
+  box.classList.remove('hidden');
+  box.innerHTML=parts.map(function(p){return '<div>'+esc(p)+'</div>'}).join('');
+}
 
+var LISTINGS=[
+  {id:'trapani',title:'Trapani & Costa Ovest',titleEn:'Trapani & West Coast',cat:'beach',days:5,price:520,img:'https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=600&q=80',desc:'Saline, Erice, San Vito.',descEn:'Salt pans, Erice, San Vito.'},
+  {id:'bled',title:'Lago di Bled',titleEn:'Lake Bled',cat:'adventure',days:4,price:480,img:'https://images.unsplash.com/photo-1516550893923-42d28e5677af?w=600&q=80',desc:'Lago e Vintgar.',descEn:'Lake and Vintgar.'},
+  {id:'lisbon',title:'Lisbona',titleEn:'Lisbon',cat:'city',days:3,price:390,img:'https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=600&q=80',desc:'Alfama e Belém.',descEn:'Alfama and Belém.'},
+  {id:'amalfi',title:'Costiera Amalfitana',titleEn:'Amalfi Coast',cat:'beach',days:5,price:750,img:'https://images.unsplash.com/photo-1535189043414-cfca9a35b5c7?w=600&q=80',desc:'Positano, Amalfi.',descEn:'Positano, Amalfi.'},
+  {id:'rome',title:'Roma',titleEn:'Rome',cat:'city',days:4,price:450,img:'https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=600&q=80',desc:'Colosseo, Vaticano.',descEn:'Colosseum, Vatican.'},
+  {id:'med',title:'Crociera Med',titleEn:'Med cruise',cat:'cruise',days:7,price:890,img:'https://images.unsplash.com/photo-1548574505-5e239809ee19?w=600&q=80',desc:'7 notti Mediterraneo.',descEn:'7-night Mediterranean.'}
+];
+function renderListings(){
+  var grid=document.getElementById('listings-grid');if(!grid)return;
+  var f=(document.getElementById('list-filter')||{}).value||'all';
+  var q=((document.getElementById('list-q')||{}).value||'').toLowerCase();
+  var items=LISTINGS.filter(function(L){
+    if(f!=='all'&&L.cat!==f)return false;
+    var title=(lang==='en'?L.titleEn:L.title).toLowerCase();
+    return !q||title.indexOf(q)>=0||L.id.indexOf(q)>=0;
+  });
+  if(!items.length){grid.innerHTML='<p class="text-slate-500 col-span-full text-center py-8">'+esc(t('no_results'))+'</p>';return}
+  grid.innerHTML=items.map(function(L){
+    var title=lang==='en'?L.titleEn:L.title;
+    var desc=lang==='en'?L.descEn:L.desc;
+    return '<button type="button" data-id="'+esc(L.id)+'" class="listing-btn listing text-left rounded-2xl border bg-white overflow-hidden w-full">'+
+      '<div class="h-36 bg-slate-100"><img src="'+esc(L.img)+'" alt="" class="w-full h-full object-cover" loading="lazy"/></div>'+
+      '<div class="p-4"><div class="font-bold">'+esc(title)+'</div><p class="text-sm text-slate-500 mt-1">'+esc(desc)+'</p>'+
+      '<div class="mt-3 flex justify-between text-sm"><span class="font-semibold text-brand-700">'+esc(t('from'))+' '+L.price+' €</span><span class="text-slate-400">'+L.days+' '+esc(t('days_label'))+'</span></div></div></button>';
+  }).join('');
+  grid.querySelectorAll('.listing-btn').forEach(function(btn){
+    btn.addEventListener('click',function(){openListing(btn.getAttribute('data-id'))});
+  });
+}
+function openListing(id){
+  var L=LISTINGS.find(function(x){return x.id===id});if(!L)return;
+  var title=lang==='en'?L.titleEn:L.title;
+  var desc=lang==='en'?L.descEn:L.desc;
+  var box=document.getElementById('listing-detail');
+  box.classList.remove('hidden');
+  box.innerHTML='<div class="flex flex-col sm:flex-row gap-6">'+
+    '<img src="'+esc(L.img)+'" class="w-full sm:w-56 h-40 object-cover rounded-2xl" alt=""/>'+
+    '<div class="flex-1"><h2 class="text-2xl font-extrabold">'+esc(title)+'</h2><p class="text-slate-600 mt-2">'+esc(desc)+'</p>'+
+    '<p class="mt-2 text-sm text-slate-500">'+L.days+' '+esc(t('days_label'))+' · '+esc(t('from'))+' <strong>'+L.price+' €</strong></p>'+
+    '<div class="mt-4 flex flex-wrap gap-2">'+
+    '<button type="button" class="use-plan px-4 py-2.5 rounded-full bg-brand-600 text-white text-sm font-semibold" data-dest="'+esc(title)+'">'+esc(t('plan_this'))+'</button>'+
+    '<button type="button" onclick="go(\'flights\')" class="px-4 py-2.5 rounded-full border-2 border-sky-500 text-sky-700 text-sm font-semibold">'+esc(t('nav_flights'))+'</button>'+
+    '</div></div></div>';
+  var ub=box.querySelector('.use-plan');
+  if(ub)ub.addEventListener('click',function(){
+    go('plan');
+    var d=document.getElementById('w-dest');if(d)d.value=ub.getAttribute('data-dest')||'';
+    resetWizardToStep1();
+  });
+  try{box.scrollIntoView({behavior:'smooth',block:'nearest'})}catch(e){}
+}
+
+function wiz(n){
+  n=parseInt(n,10);if(n<1||n>4)return;
+  if(n===2){var dest=document.getElementById('w-dest');if(dest&&!dest.value.trim()){dest.focus();return}}
+  document.querySelectorAll('.wizard-step').forEach(function(s){s.classList.remove('active')});
+  document.getElementById('ws'+n).classList.add('active');
+  for(var i=1;i<=4;i++){var p=document.getElementById('pg'+i);if(p)p.className='h-1.5 flex-1 rounded-full '+(i<=n?'bg-brand-500':'bg-slate-200')}
+  var box=document.getElementById('plan-box');
+  if(box)box.className=n===4?'max-w-4xl mx-auto px-4':'max-w-2xl mx-auto px-4';
+  if(n===4)buildPlan();
+}
+function resetWizardToStep1(){
+  var box=document.getElementById('plan-box');if(box)box.className='max-w-2xl mx-auto px-4';
+  document.querySelectorAll('.wizard-step').forEach(function(s){s.classList.remove('active')});
+  document.getElementById('ws1').classList.add('active');
+  for(var i=1;i<=4;i++){var p=document.getElementById('pg'+i);if(p)p.className='h-1.5 flex-1 rounded-full '+(i===1?'bg-brand-500':'bg-slate-200')}
+}
+function resetWizard(){resetWizardToStep1();var d=document.getElementById('w-dest');if(d)d.value='';var b=document.getElementById('w-bud');if(b)b.value='';var o=document.getElementById('plan-out');if(o)o.innerHTML=''}
+
+function buildPlan(){
+  var d=(document.getElementById('w-dest').value||'Trapani').trim();
+  var bud=parseInt(document.getElementById('w-bud').value,10)||800;
+  var days=document.getElementById('w-days').value;
+  var peo=document.getElementById('w-peo').value;
+  var tr=document.getElementById('w-tr').value;
+  var html='<div class="rounded-2xl border bg-white p-5 mb-4 shadow-sm flex flex-wrap gap-2 text-sm">';
+  html+='<span class="px-3 py-1 rounded-full bg-slate-100 font-medium">'+esc(d)+'</span>';
+  html+='<span class="px-3 py-1 rounded-full bg-slate-100">'+esc(peo)+'</span>';
+  html+='<span class="px-3 py-1 rounded-full bg-slate-100">'+esc(days)+'</span>';
+  html+='<span class="px-3 py-1 rounded-full bg-slate-100">'+bud+' €</span>';
+  html+='<span class="px-3 py-1 rounded-full bg-slate-100">'+esc(tr)+'</span></div>';
+  if(selected.flight){
+    html+='<div class="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 mb-3 text-sm"><strong>'+esc(t('sel_flight'))+':</strong> '+esc(selected.flight.carrier)+' · '+esc(selected.flight.from)+'→'+esc(selected.flight.to)+' · <strong>'+selected.flight.price+' €</strong></div>';
+  }
+  if(selected.cruise){
+    var cn=lang==='en'?selected.cruise.nameEn:selected.cruise.name;
+    html+='<div class="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 mb-3 text-sm"><strong>'+esc(t('sel_cruise'))+':</strong> '+esc(selected.cruise.line)+' · '+esc(cn)+' · <strong>'+selected.cruise.price+' €</strong></div>';
+  }
+  html+='<div class="rounded-2xl border bg-white p-5 shadow-sm text-sm space-y-2">';
+  html+='<p><strong>'+(lang==='it'?'Giorno 1':'Day 1')+':</strong> '+(lang==='it'?'Arrivo e centro':'Arrival and centre')+'</p>';
+  html+='<p><strong>'+(lang==='it'?'Giorno 2':'Day 2')+':</strong> '+(lang==='it'?'Attrazione principale e pernotto':'Main sight and overnight')+'</p>';
+  html+='<p><strong>'+(lang==='it'?'Giorno 3':'Day 3')+':</strong> '+(lang==='it'?'Seconda tappa / rientro':'Second stop / return')+'</p>';
+  html+='<div class="mt-3 h-32 map-bg rounded-xl relative border"><span class="absolute left-[30%] top-[40%] w-3 h-3 rounded-full bg-emerald-500 border-2 border-white"></span><span class="absolute left-[60%] top-[45%] w-3 h-3 rounded-full bg-sky-500 border-2 border-white"></span></div>';
+  html+='<p class="text-xs text-slate-500 mt-2">'+esc(t('fits_budget'))+' · max ~'+Math.max(40,Math.floor(bud*0.35/5))+' €/notte</p></div>';
+  html+='<div class="mt-4 flex flex-wrap gap-2"><button type="button" onclick="go(\'flights\')" class="px-4 py-2 rounded-full border text-sm font-semibold">'+esc(t('nav_flights'))+'</button>';
+  html+='<button type="button" onclick="go(\'cruises\')" class="px-4 py-2 rounded-full border text-sm font-semibold">'+esc(t('nav_cruises'))+'</button></div>';
+  document.getElementById('plan-out').innerHTML=html;
+}
+
+function sendChat(){
+  var inp=document.getElementById('chat-in'),text=inp.value.trim();if(!text)return;
+  var log=document.getElementById('chat-log');
+  log.innerHTML+='<div class="chat-b ml-auto bg-brand-600 text-white rounded-2xl rounded-tr-sm px-4 py-2.5 text-sm">'+esc(text)+'</div>';
+  inp.value='';
+  setTimeout(function(){
+    var m=text.toLowerCase(),r=lang==='it'?'Usa Voli o Crociere: i risultati restano su Smart Travel.':'Use Flights or Cruises: results stay on Smart Travel.';
+    if(/volo|flight/.test(m))r=lang==='it'?'Apri Voli → Cerca nel sito → Seleziona per il piano.':'Open Flights → Search on site → Select for plan.';
+    if(/api|amadeus|supabase/.test(m))r=lang==='it'?'In produzione: Supabase Edge Function + Amadeus free tier.':'In production: Supabase Edge Function + Amadeus free tier.';
+    log.innerHTML+='<div class="chat-b bg-white border rounded-2xl rounded-tl-sm px-4 py-2.5 text-sm shadow-sm">'+esc(r)+'</div>';
+    log.scrollTop=log.scrollHeight;
+  },300);
+  log.scrollTop=log.scrollHeight;
+}
+document.getElementById('chat-in').addEventListener('keypress',function(e){if(e.key==='Enter')sendChat()});
+
+window.go=go;window.buy=buy;window.setLang=setLang;window.toggleLang=toggleLang;
+window.toggleMobile=toggleMobile;window.closeMobile=closeMobile;
+window.wiz=wiz;window.sendChat=sendChat;window.searchFlights=searchFlights;
+window.renderListings=renderListings;window.renderCruises=renderCruises;window.resetWizard=resetWizard;
+
+try{selected=JSON.parse(localStorage.getItem('st_selected')||'null')||{flight:null,cruise:null}}catch(e){selected={flight:null,cruise:null}}
 applyLang();
 refreshAccess();
 })();
