@@ -48,7 +48,7 @@ header.sticky{z-index:9999!important}
 </a>
 <nav class="hidden lg:flex items-center gap-0.5 text-sm font-medium">
 <button type="button" onclick="go('home')" class="px-3 py-2 rounded-lg text-slate-600 hover:bg-brand-50" data-i18n="nav_home">Home</button>
-<button type="button" onclick="go('listings')" class="px-3 py-2 rounded-lg text-slate-600 hover:bg-brand-50" data-i18n="nav_listings">Inserzioni</button>
+<button type="button" onclick="go('listings')" class="px-3 py-2 rounded-lg text-slate-600 hover:bg-brand-50" data-i18n="nav_listings">Destinazioni</button>
 <button type="button" onclick="go('plan')" class="px-3 py-2 rounded-lg text-slate-600 hover:bg-brand-50" data-i18n="nav_plan">Pianifica</button>
 <button type="button" onclick="go('flights')" class="px-3 py-2 rounded-lg text-slate-600 hover:bg-brand-50" data-i18n="nav_flights">Voli</button>
 <button type="button" onclick="go('cruises')" class="px-3 py-2 rounded-lg text-slate-600 hover:bg-brand-50" data-i18n="nav_cruises">Crociere</button>
@@ -73,7 +73,7 @@ header.sticky{z-index:9999!important}
 <button type="button" onclick="go('flights');closeMobile()" class="block w-full text-left px-3 py-2" data-i18n="nav_flights">Voli</button>
 <button type="button" onclick="go('cruises');closeMobile()" class="block w-full text-left px-3 py-2" data-i18n="nav_cruises">Crociere</button>
 <button type="button" onclick="go('ai');closeMobile()" class="block w-full text-left px-3 py-2">ST AI</button>
-<button type="button" onclick="go('listings');closeMobile()" class="block w-full text-left px-3 py-2" data-i18n="nav_listings">Inserzioni</button>
+<button type="button" onclick="go('listings');closeMobile()" class="block w-full text-left px-3 py-2" data-i18n="nav_listings">Destinazioni</button>
 <button type="button" onclick="go('prezzi');closeMobile()" class="block w-full text-left px-3 py-2" data-i18n="nav_pricing">Prezzi</button>
 </div>
 </header>
@@ -108,7 +108,7 @@ header.sticky{z-index:9999!important}
 <button type="button" onclick="go('plan')" class="card-h text-left rounded-2xl border p-5 transition"><div class="font-bold" data-i18n="nav_plan">Pianifica</div><p class="text-sm text-slate-500 mt-1" data-i18n="cat_pl">Interessi → tappe → PDF</p></button>
 <button type="button" onclick="go('ai')" class="card-h text-left rounded-2xl border p-5 transition"><div class="font-bold">ST AI</div><p class="text-sm text-slate-500 mt-1" data-i18n="cat_ai">Domande su dove, come, quando</p></button>
 <button type="button" onclick="go('flights')" class="card-h text-left rounded-2xl border p-5 transition"><div class="font-bold" data-i18n="nav_flights">Voli</div><p class="text-sm text-slate-500 mt-1" data-i18n="cat_fl">Ricerca nel sito</p></button>
-<button type="button" onclick="go('listings')" class="card-h text-left rounded-2xl border p-5 transition"><div class="font-bold" data-i18n="nav_listings">Inserzioni</div><p class="text-sm text-slate-500 mt-1" data-i18n="cat_list">Pacchetti destinazione</p></button>
+<button type="button" onclick="go('listings')" class="card-h text-left rounded-2xl border p-5 transition"><div class="font-bold" data-i18n="nav_listings">Destinazioni</div><p class="text-sm text-slate-500 mt-1" data-i18n="cat_list">Pacchetti destinazione</p></button>
 </div>
 </section>
 <section class="py-12 bg-slate-900 text-white">
@@ -314,9 +314,22 @@ header.sticky{z-index:9999!important}
 <div id="page-listings" class="page">
 <section class="py-12 max-w-6xl mx-auto px-4">
 <button type="button" onclick="go('home')" class="text-sm text-brand-600 font-semibold mb-2">← Home</button>
-<h1 class="text-3xl font-extrabold mb-4" data-i18n="list_title">Inserzioni</h1>
-<div class="flex gap-2 mb-4"><select id="list-filter" onchange="renderListings()" class="px-3 py-2 rounded-xl border text-sm"><option value="all">Tutte</option><option value="city">City</option><option value="beach">Mare</option><option value="adventure">Avventura</option></select>
-<input id="list-q" type="search" oninput="renderListings()" onkeyup="renderListings()" class="px-3 py-2 rounded-xl border text-sm min-w-[12rem]" placeholder="Cerca destinazione…"/></div>
+<h1 class="text-3xl font-extrabold mb-4" data-i18n="list_title">Destinazioni</h1>
+<p class="text-slate-600 text-sm mb-4" data-i18n="list_sub">Cerca città e destinazioni. ST AI suggerisce mete anche se scrivi in modo libero.</p>
+<div class="flex flex-wrap gap-2 mb-2 items-center">
+<select id="list-filter" onchange="renderListings()" class="px-3 py-2 rounded-xl border text-sm bg-white">
+<option value="all" data-i18n="f_all">Tutte</option>
+<option value="city">City</option>
+<option value="beach">Mare</option>
+<option value="adventure">Avventura</option>
+<option value="cruise">Crociera</option>
+</select>
+<div class="flex-1 min-w-[14rem] flex gap-2">
+<input id="list-q" type="search" oninput="onDestSearchInput()" class="flex-1 px-4 py-2 rounded-xl border text-sm" placeholder="Es. Napoli, mare Sicilia, laghi…" data-i18n-ph="dest_search_ph"/>
+<button type="button" onclick="aiDestSearch()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-brand-600 to-accent-600 text-white text-sm font-semibold shrink-0" data-i18n="dest_ai_btn">ST AI</button>
+</div>
+</div>
+<p id="ai-dest-hint" class="text-xs text-slate-500 mb-4 hidden"></p>
 <div id="listings-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
 <div id="listing-detail" class="hidden mt-6 rounded-2xl border bg-white p-5"></div>
 </section>
@@ -384,11 +397,11 @@ header.sticky{z-index:9999!important}
 'use strict';
 var I18N={
 it:{
-nav_home:'Home',nav_listings:'Inserzioni',nav_plan:'Pianifica',nav_flights:'Voli',nav_cruises:'Crociere',nav_pricing:'Prezzi',nav_cta:'Pianifica',
+nav_home:'Home',nav_listings:'Destinazioni',nav_plan:'Pianifica',nav_flights:'Voli',nav_cruises:'Crociere',nav_pricing:'Prezzi',nav_cta:'Pianifica',
 hero_badge:'Itinerari · Mappa · PDF · ST AI',hero_t1:'Pianificazione completa,',hero_t2:'su misura per i tuoi interessi.',
 hero_sub:'ST AI approfondisce dove, come e quando. Il piano include tappe giornaliere, mappa e export PDF.',
-hero_cta1:'Avvia pianificazione',hero_cta2:'Parla con ST AI',home_map_label:'Anteprima mappa itinerario',home_search_ph:'Cerca inserzioni: Trapani, Roma, Bled…',home_search_btn:'Cerca',notes_ai:'Approfondisci con ST AI',notes_ai_hint:'ST AI legge le note e propone domande o tappe da aggiungere al piano.',
-cat_pl:'Interessi → tappe → PDF',cat_ai:'Domande su dove, come, quando',cat_fl:'Ricerca nel sito',cat_list:'Pacchetti destinazione',
+hero_cta1:'Avvia pianificazione',hero_cta2:'Parla con ST AI',home_map_label:'Anteprima mappa itinerario',home_search_ph:'Cerca città o destinazione (ST AI)…',home_search_btn:'Cerca',notes_ai:'Approfondisci con ST AI',notes_ai_hint:'ST AI legge le note e propone domande o tappe da aggiungere al piano.',
+cat_pl:'Interessi → tappe → PDF',cat_ai:'Domande su dove, come, quando',cat_fl:'Ricerca nel sito',cat_list:'Città e mete con ST AI',
 p1_name:'Analisi',p2_name:'10 piani',p3_name:'Mensile',buy:'Attiva',
 demo_banner:'Wizard completo: interessi, ritmo, orari. Output con mappa, tappe e PDF.',wiz_title:'Pianificazione viaggio',
 wiz_s1:'1/5 · Dove e con chi',wiz_s2:'2/5 · Come ti muovi',wiz_s3:'3/5 · Interessi (guidano le tappe)',wiz_s4:'4/5 · Età, animali, alloggio',
@@ -402,7 +415,7 @@ o_morning:'Mattina presto',o_day:'Giornata intera',o_sunset:'Pomeriggio / tramon
 next:'Continua',back:'Indietro',generate:'Genera piano completo',result_title:'Piano di viaggio completo',
 result_sub:'Tappe per interesse, mappa e orari indicativi.',restart:'Nuova',
 fl_title:'Voli',fl_sub:'Risultati nel sito (mock → Amadeus).',fl_search:'Cerca nel sito',fl_select:'Seleziona per il piano',fl_selected:'Aggiunto',
-cr_title:'Crociere',list_title:'Inserzioni',
+cr_title:'Crociere',list_title:'Destinazioni',list_sub:'Cerca città e destinazioni. ST AI suggerisce mete anche se scrivi in modo libero.',dest_search_ph:'Es. Napoli, mare Sicilia, laghi…',dest_ai_btn:'ST AI',dest_ai_suggest:'ST AI suggerisce:',dest_ai_none:'Nessuna meta trovata: prova un’altra descrizione.',f_all:'Tutte',
 ai_sub:'Intervista guidata: interessi, dove, come, quando',ai_hello:'Ciao, sono ST AI. Posso farti domande mirate su interessi, ritmo e orari per costruire un itinerario preciso. Clicca «Avvia intervista interessi» oppure scrivi liberamente.',
 ai_start:'Avvia intervista interessi',send:'Invia',ai_ph:'Rispondi o chiedi…',
 legal_title:'Policy',refund_1:'Analisi 2 €: non rimborsabile dopo elaborazione salvo guasto tecnico.',privacy_1:'Demo su dispositivo. Produzione: Supabase.',
@@ -412,11 +425,11 @@ map_legend:'● → tappe · ● → ristoro · ● → base',
 day:'Giorno',poi:'Tappa',export_ok:'PDF generato',price_title:'Piani'
 },
 en:{
-nav_home:'Home',nav_listings:'Listings',nav_plan:'Plan',nav_flights:'Flights',nav_cruises:'Cruises',nav_pricing:'Pricing',nav_cta:'Plan',
+nav_home:'Home',nav_listings:'Destinations',list_sub:'Search cities and destinations. ST AI suggests places even from free-text.',dest_search_ph:'E.g. Naples, Sicily sea, lakes…',dest_ai_btn:'ST AI',dest_ai_suggest:'ST AI suggests:',dest_ai_none:'No place found: try another description.',f_all:'All',nav_plan:'Plan',nav_flights:'Flights',nav_cruises:'Cruises',nav_pricing:'Pricing',nav_cta:'Plan',
 hero_badge:'Itineraries · Map · PDF · ST AI',hero_t1:'Complete planning,',hero_t2:'tailored to your interests.',
 hero_sub:'ST AI digs into where, how and when. The plan includes daily stops, map and PDF export.',
-hero_cta1:'Start planning',hero_cta2:'Talk to ST AI',home_map_label:'Itinerary map preview',home_search_ph:'Search listings: Trapani, Rome, Bled…',home_search_btn:'Search',notes_ai:'Deepen with ST AI',notes_ai_hint:'ST AI reads your notes and suggests questions or stops for the plan.',
-cat_pl:'Interests → stops → PDF',cat_ai:'Questions on where, how, when',cat_fl:'On-site search',cat_list:'Destination packages',
+hero_cta1:'Start planning',hero_cta2:'Talk to ST AI',home_map_label:'Itinerary map preview',home_search_ph:'Search city or destination (ST AI)…',home_search_btn:'Search',notes_ai:'Deepen with ST AI',notes_ai_hint:'ST AI reads your notes and suggests questions or stops for the plan.',
+cat_pl:'Interests → stops → PDF',cat_ai:'Questions on where, how, when',cat_fl:'On-site search',cat_list:'Cities & places with ST AI',
 p1_name:'Analysis',p2_name:'10 plans',p3_name:'Monthly',buy:'Activate',
 demo_banner:'Full wizard: interests, pace, times. Output with map, stops and PDF.',wiz_title:'Trip planning',
 wiz_s1:'1/5 · Where and who',wiz_s2:'2/5 · How you move',wiz_s3:'3/5 · Interests (drive the stops)',wiz_s4:'4/5 · Ages, pets, stay',
@@ -430,7 +443,7 @@ o_morning:'Early morning',o_day:'Full day',o_sunset:'Afternoon / sunset',
 next:'Continue',back:'Back',generate:'Generate full plan',result_title:'Complete travel plan',
 result_sub:'Interest-based stops, map and indicative times.',restart:'New',
 fl_title:'Flights',fl_sub:'On-site results (mock → Amadeus).',fl_search:'Search on site',fl_select:'Select for plan',fl_selected:'Added',
-cr_title:'Cruises',list_title:'Listings',
+cr_title:'Cruises',list_title:'Destinations',list_sub:'Search cities and destinations. ST AI suggests places even from free-text.',dest_search_ph:'E.g. Naples, Sicily sea, lakes…',dest_ai_btn:'ST AI',dest_ai_suggest:'ST AI suggests:',dest_ai_none:'No place found: try another description.',f_all:'All',
 ai_sub:'Guided interview: interests, where, how, when',ai_hello:'Hi, I am ST AI. I can ask targeted questions on interests, pace and times to build a precise itinerary. Click «Start interest interview» or type freely.',
 ai_start:'Start interest interview',send:'Send',ai_ph:'Reply or ask…',
 legal_title:'Policy',refund_1:'€2 analysis: non-refundable after generation except technical failure.',privacy_1:'Demo on device. Production: Supabase.',
@@ -901,12 +914,12 @@ function renderSelected(){
   box.classList.remove('hidden');box.innerHTML=parts.join(' · ');
 }
 var LISTINGS=[
-  {id:'trapani',title:'Trapani',titleEn:'Trapani',cat:'beach',days:5,price:520,img:'https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=600&q=80',desc:'Costa ovest Sicilia',descEn:'West Sicily coast',tags:'sicilia mare spiaggia'},
-  {id:'bled',title:'Bled',titleEn:'Bled',cat:'adventure',days:4,price:480,img:'https://images.unsplash.com/photo-1516550893923-42d28e5677af?w=600&q=80',desc:'Lago di Bled',descEn:'Lake Bled',tags:'slovenia lago natura'},
-  {id:'roma',title:'Roma',titleEn:'Rome',cat:'city',days:4,price:450,img:'https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=600&q=80',desc:'Città eterna',descEn:'Eternal city',tags:'lazio colosseo'},
-  {id:'napoli',title:'Napoli',titleEn:'Naples',cat:'city',days:4,price:420,img:'https://images.unsplash.com/photo-1534113414509-0e04223d2488?w=600&q=80',desc:'Golfo e centro storico',descEn:'Bay and old town',tags:'campania vesuvio pizza'},
-  {id:'palermo',title:'Palermo',titleEn:'Palermo',cat:'city',days:4,price:400,img:'https://images.unsplash.com/photo-1587595431973-160d0d94add1?w=600&q=80',desc:'Mercati e cultura',descEn:'Markets and culture',tags:'sicilia'},
-  {id:'amalfi',title:'Amalfi',titleEn:'Amalfi',cat:'beach',days:5,price:750,img:'https://images.unsplash.com/photo-1535189043414-cfca9a35b5c7?w=600&q=80',desc:'Costiera amalfitana',descEn:'Amalfi coast',tags:'campania mare'}
+  {id:'trapani',title:'Trapani',titleEn:'Trapani',cat:'beach',days:5,price:520,img:'https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=600&q=80',desc:'Costa ovest Sicilia',descEn:'West Sicily coast',tags:'sicilia mare spiaggia sole ovest trapani egadi'},
+  {id:'bled',title:'Bled',titleEn:'Bled',cat:'adventure',days:4,price:480,img:'https://images.unsplash.com/photo-1516550893923-42d28e5677af?w=600&q=80',desc:'Lago di Bled',descEn:'Lake Bled',tags:'slovenia lago natura montagne bled alpi'},
+  {id:'roma',title:'Roma',titleEn:'Rome',cat:'city',days:4,price:450,img:'https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=600&q=80',desc:'Città eterna',descEn:'Eternal city',tags:'lazio colosseo roma città arte storia vaticano'},
+  {id:'napoli',title:'Napoli',titleEn:'Naples',cat:'city',days:4,price:420,img:'https://images.unsplash.com/photo-1534113414509-0e04223d2488?w=600&q=80',desc:'Golfo e centro storico',descEn:'Bay and old town',tags:'campania vesuvio pizza napoli golfo pompei città'},
+  {id:'palermo',title:'Palermo',titleEn:'Palermo',cat:'city',days:4,price:400,img:'https://images.unsplash.com/photo-1587595431973-160d0d94add1?w=600&q=80',desc:'Mercati e cultura',descEn:'Markets and culture',tags:'sicilia palermo mercati cultura città'},
+  {id:'amalfi',title:'Amalfi',titleEn:'Amalfi',cat:'beach',days:5,price:750,img:'https://images.unsplash.com/photo-1535189043414-cfca9a35b5c7?w=600&q=80',desc:'Costiera amalfitana',descEn:'Amalfi coast',tags:'campania mare costiera amalfi positano spiaggia'}
 ];
 function renderListings(){
   var grid=document.getElementById('listings-grid');
@@ -918,13 +931,8 @@ function renderListings(){
   var items=LISTINGS.filter(function(L){
     if(f!=='all'&&L.cat!==f)return false;
     if(!q)return true;
-    var title=(L.title||'').toLowerCase();
-    var titleEn=(L.titleEn||'').toLowerCase();
-    var desc=(L.desc||'').toLowerCase();
-    var tags=(L.tags||'').toLowerCase();
-    var id=(L.id||'').toLowerCase();
-    return title.indexOf(q)>=0||titleEn.indexOf(q)>=0||desc.indexOf(q)>=0||tags.indexOf(q)>=0||id.indexOf(q)>=0;
-  });
+    return scoreDest(L,q)>0;
+  }).sort(function(a,b){return scoreDest(b,q)-scoreDest(a,q);});
   var detail=document.getElementById('listing-detail');
   if(detail&&q){detail.classList.add('hidden');detail.innerHTML='';}
   if(!items.length){
@@ -963,6 +971,93 @@ function openListing(id){
 }
 
 
+
+function onDestSearchInput(){
+  renderListings();
+  var hint=document.getElementById('ai-dest-hint');
+  if(hint) hint.classList.add('hidden');
+}
+function scoreDest(L, q){
+  if(!q) return 1;
+  var s=0;
+  var title=(L.title||'').toLowerCase();
+  var titleEn=(L.titleEn||'').toLowerCase();
+  var desc=((lang==='en'?L.descEn:L.desc)||'').toLowerCase();
+  var tags=(L.tags||'').toLowerCase();
+  var id=(L.id||'').toLowerCase();
+  var parts=q.toLowerCase().split(/[\s,;.]+/).filter(Boolean);
+  if(title===q||titleEn===q||id===q) s+=100;
+  if(title.indexOf(q)>=0||titleEn.indexOf(q)>=0||id.indexOf(q)>=0) s+=50;
+  parts.forEach(function(w){
+    if(w.length<2) return;
+    if(title.indexOf(w)>=0||titleEn.indexOf(w)>=0) s+=20;
+    if(id.indexOf(w)>=0) s+=15;
+    if(tags.indexOf(w)>=0) s+=12;
+    if(desc.indexOf(w)>=0) s+=8;
+    // semantic-ish
+    if((w==='mare'||w==='sea'||w==='spiaggia'||w==='beach')&&(L.cat==='beach'||tags.indexOf('mare')>=0)) s+=18;
+    if((w==='lago'||w==='lake'||w==='montagna'||w==='natura'||w==='nature')&&(L.cat==='adventure'||tags.indexOf('lago')>=0||tags.indexOf('natura')>=0)) s+=18;
+    if((w==='citta'||w==='città'||w==='city'||w==='arte'||w==='cultura')&&L.cat==='city') s+=16;
+    if((w==='crociera'||w==='cruise')&&L.cat==='cruise') s+=20;
+    if((w==='sicilia'||w==='sicily')&&tags.indexOf('sicilia')>=0) s+=14;
+    if((w==='campania'||w==='napoli'||w==='naples')&&(tags.indexOf('campania')>=0||id==='napoli')) s+=14;
+  });
+  return s;
+}
+function aiDestSearch(){
+  var qEl=document.getElementById('list-q')||document.getElementById('home-search');
+  var q=(qEl&&qEl.value||'').trim();
+  var hint=document.getElementById('ai-dest-hint');
+  if(!q){
+    if(hint){hint.textContent=lang==='it'?'Scrivi una città, una regione o un tipo di meta (es. «mare Sicilia», «laghi»).':'Type a city, region or place type (e.g. "Sicily sea", "lakes").';hint.classList.remove('hidden');}
+    return;
+  }
+  // ensure on destinazioni page
+  var grid=document.getElementById('listings-grid');
+  if(!grid){
+    go('listings');
+    setTimeout(function(){aiDestSearch();},80);
+    return;
+  }
+  var lq=document.getElementById('list-q');
+  if(lq&&qEl!==lq) lq.value=q;
+  var ranked=LISTINGS.map(function(L){return {L:L,s:scoreDest(L,q)};}).filter(function(x){return x.s>0;}).sort(function(a,b){return b.s-a.s;});
+  if(!ranked.length){
+    // fuzzy: show closest by any tag word
+    ranked=LISTINGS.map(function(L){return {L:L,s:scoreDest(L,q)};}).sort(function(a,b){return b.s-a.s;}).slice(0,3);
+  }
+  var top=ranked.filter(function(x){return x.s>=12;});
+  if(!top.length) top=ranked.slice(0,3);
+  var ids={};
+  top.forEach(function(x){ids[x.L.id]=1;});
+  // render only AI picks
+  var filterEl=document.getElementById('list-filter');
+  if(filterEl) filterEl.value='all';
+  var items=top.map(function(x){return x.L;});
+  if(!items.length){
+    grid.innerHTML='<p class="col-span-full text-center text-slate-500 py-10">'+esc(t('dest_ai_none'))+'</p>';
+    if(hint){hint.textContent=t('dest_ai_none');hint.classList.remove('hidden');}
+    return;
+  }
+  if(hint){
+    hint.innerHTML='<span class="font-semibold text-brand-700">'+esc(t('dest_ai_suggest'))+'</span> '+items.map(function(L){return esc(lang==='en'?L.titleEn:L.title);}).join(', ');
+    hint.classList.remove('hidden');
+  }
+  grid.innerHTML=items.map(function(L){
+    var title=lang==='en'?L.titleEn:L.title;
+    var desc=lang==='en'?L.descEn:L.desc;
+    return '<button type="button" data-id="'+esc(L.id)+'" class="lb listing text-left rounded-2xl border border-brand-200 bg-white overflow-hidden w-full shadow-sm ring-1 ring-brand-100">'+
+      '<div class="h-32 bg-slate-100"><img src="'+esc(L.img)+'" class="w-full h-full object-cover" alt="" loading="lazy"/></div>'+
+      '<div class="p-3"><div class="flex items-center gap-2"><span class="text-[10px] font-bold uppercase bg-brand-100 text-brand-800 px-2 py-0.5 rounded-full">ST AI</span><span class="font-bold">'+esc(title)+'</span></div>'+
+      '<div class="text-xs text-slate-500 mt-1">'+esc(desc)+'</div>'+
+      '<div class="text-sm font-semibold text-brand-700 mt-2">'+esc(t('from'))+' '+L.price+' €</div></div></button>';
+  }).join('');
+  grid.querySelectorAll('.lb').forEach(function(b){
+    b.addEventListener('click',function(){openListing(b.getAttribute('data-id'));});
+  });
+  if(items.length===1) openListing(items[0].id);
+}
+
 function searchFromHome(){
   var inp=document.getElementById('home-search');
   var q=(inp&&inp.value||'').trim();
@@ -975,14 +1070,9 @@ function searchFromHome(){
       lq.focus();
     }
     if(q){
-      var low=q.toLowerCase();
-      var hit=LISTINGS.find(function(L){
-        return (L.id||'').toLowerCase().indexOf(low)>=0||
-          (L.title||'').toLowerCase().indexOf(low)>=0||
-          (L.titleEn||'').toLowerCase().indexOf(low)>=0||
-          (L.tags||'').toLowerCase().indexOf(low)>=0;
-      });
-      if(hit)openListing(hit.id);
+      aiDestSearch();
+    } else {
+      renderListings();
     }
   },60);
 }
@@ -1025,6 +1115,8 @@ function notesToAI(){
 
 window.searchFromHome=searchFromHome;
 window.renderListings=renderListings;
+window.aiDestSearch=aiDestSearch;
+window.onDestSearchInput=onDestSearchInput;
 window.openListing=openListing;
 window.notesToAI=notesToAI;
 window.go=go;window.buy=buy;window.setLang=setLang;window.toggleLang=toggleLang;
