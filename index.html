@@ -28,6 +28,11 @@ body{font-family:Inter,system-ui,sans-serif}
 header.sticky{z-index:9999!important}
 .lang-menu{z-index:10000}
 .chat-b{max-width:90%}
+.api-status{display:inline-flex;align-items:center;gap:.4rem}
+.api-status:before{content:'';width:.5rem;height:.5rem;border-radius:999px;background:#94a3b8}
+.api-status.live:before{background:#10b981;box-shadow:0 0 0 3px rgba(16,185,129,.12)}
+.result-skeleton{animation:pulse 1.2s ease-in-out infinite alternate}
+@keyframes pulse{to{opacity:.45}}
 .poi-green{background:#10b981;border:2px solid #fff}
 .poi-pink{background:#d946ef;border:2px solid #fff}
 .poi-blue{background:#0ea5e9;border:2px solid #fff}
@@ -50,7 +55,7 @@ header.sticky{z-index:9999!important}
 <button type="button" onclick="go('home')" class="px-3 py-2 rounded-lg text-slate-600 hover:bg-brand-50" data-i18n="nav_home">Home</button>
 <button type="button" onclick="go('listings')" class="px-3 py-2 rounded-lg text-slate-600 hover:bg-brand-50" data-i18n="nav_listings">Esplora</button>
 <button type="button" onclick="go('plan')" class="px-3 py-2 rounded-lg text-slate-600 hover:bg-brand-50" data-i18n="nav_plan">Pianifica</button>
-<button type="button" onclick="go('flights')" class="px-3 py-2 rounded-lg text-slate-600 hover:bg-brand-50" data-i18n="nav_flights">Voli</button>
+<button type="button" onclick="go('flights')" class="px-3 py-2 rounded-lg text-slate-600 hover:bg-brand-50" data-i18n="nav_flights">Voli & Hotel</button>
 <button type="button" onclick="go('cruises')" class="px-3 py-2 rounded-lg text-slate-600 hover:bg-brand-50" data-i18n="nav_cruises">Crociere</button>
 <button type="button" onclick="go('ai')" class="px-3 py-2 rounded-lg text-slate-600 hover:bg-brand-50">ST AI</button>
 <button type="button" onclick="go('prezzi')" class="px-3 py-2 rounded-lg text-slate-600 hover:bg-brand-50" data-i18n="nav_pricing">Prezzi</button>
@@ -70,7 +75,7 @@ header.sticky{z-index:9999!important}
 <div id="mobile-menu" class="mobile-menu lg:hidden border-t bg-white px-4 py-3 space-y-1 text-sm">
 <button type="button" onclick="go('home');closeMobile()" class="block w-full text-left px-3 py-2" data-i18n="nav_home">Home</button>
 <button type="button" onclick="go('plan');closeMobile()" class="block w-full text-left px-3 py-2" data-i18n="nav_plan">Pianifica</button>
-<button type="button" onclick="go('flights');closeMobile()" class="block w-full text-left px-3 py-2" data-i18n="nav_flights">Voli</button>
+<button type="button" onclick="go('flights');closeMobile()" class="block w-full text-left px-3 py-2" data-i18n="nav_flights">Voli & Hotel</button>
 <button type="button" onclick="go('cruises');closeMobile()" class="block w-full text-left px-3 py-2" data-i18n="nav_cruises">Crociere</button>
 <button type="button" onclick="go('ai');closeMobile()" class="block w-full text-left px-3 py-2">ST AI</button>
 <button type="button" onclick="go('listings');closeMobile()" class="block w-full text-left px-3 py-2" data-i18n="nav_listings">Esplora</button>
@@ -107,7 +112,7 @@ header.sticky{z-index:9999!important}
 <div class="max-w-7xl mx-auto px-4 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
 <button type="button" onclick="go('plan')" class="card-h text-left rounded-2xl border p-5 transition"><div class="font-bold" data-i18n="nav_plan">Pianifica</div><p class="text-sm text-slate-500 mt-1" data-i18n="cat_pl">Interessi → tappe → PDF</p></button>
 <button type="button" onclick="go('ai')" class="card-h text-left rounded-2xl border p-5 transition"><div class="font-bold">ST AI</div><p class="text-sm text-slate-500 mt-1" data-i18n="cat_ai">Domande su dove, come, quando</p></button>
-<button type="button" onclick="go('flights')" class="card-h text-left rounded-2xl border p-5 transition"><div class="font-bold" data-i18n="nav_flights">Voli</div><p class="text-sm text-slate-500 mt-1" data-i18n="cat_fl">Ricerca nel sito</p></button>
+<button type="button" onclick="go('flights')" class="card-h text-left rounded-2xl border p-5 transition"><div class="font-bold" data-i18n="nav_flights">Voli & Hotel</div><p class="text-sm text-slate-500 mt-1" data-i18n="cat_fl">Prezzi e disponibilità nel sito</p></button>
 <button type="button" onclick="go('listings')" class="card-h text-left rounded-2xl border p-5 transition"><div class="font-bold" data-i18n="nav_listings">Esplora</div><p class="text-sm text-slate-500 mt-1" data-i18n="cat_list">Mete, stagioni e idee viaggio</p></button>
 </div>
 </section>
@@ -286,20 +291,55 @@ header.sticky{z-index:9999!important}
 </section>
 </div>
 
-<!-- FLIGHTS brief -->
+<!-- FLIGHTS + HOTELS -->
 <div id="page-flights" class="page">
-<section class="py-12 max-w-3xl mx-auto px-4">
+<section class="py-12 max-w-5xl mx-auto px-4">
 <button type="button" onclick="go('home')" class="text-sm text-brand-600 font-semibold mb-3 no-print">← Home</button>
-<h1 class="text-3xl font-extrabold mb-2" data-i18n="fl_title">Voli</h1>
-<p class="text-slate-600 mb-4" data-i18n="fl_sub">Risultati nel sito (mock → Amadeus).</p>
+<div class="flex flex-wrap items-end justify-between gap-3 mb-6">
+<div><h1 class="text-3xl font-extrabold mb-2" data-i18n="fl_title">Voli & Hotel</h1>
+<p class="text-slate-600" data-i18n="fl_sub">Confronta disponibilità e prezzi senza uscire dal sito.</p></div>
+<span id="travel-api-status" class="api-status text-xs font-semibold text-slate-500">Demo sicura</span>
+</div>
+<div class="grid lg:grid-cols-2 gap-6 items-start">
+<div>
+<h2 class="text-xl font-extrabold mb-3">✈️ <span data-i18n="flights_heading">Cerca voli</span></h2>
 <div class="rounded-2xl border bg-white p-5 space-y-3">
 <div class="grid sm:grid-cols-2 gap-3">
-<input id="fl-from" class="px-4 py-3 rounded-xl border" value="Milano" placeholder="Da"/>
-<input id="fl-to" class="px-4 py-3 rounded-xl border" value="Palermo" placeholder="A"/>
+<div><label class="text-xs font-semibold text-slate-500" for="fl-from" data-i18n="from_airport">Partenza (codice aeroporto)</label><input id="fl-from" class="mt-1 w-full px-4 py-3 rounded-xl border uppercase" value="MXP" maxlength="3" placeholder="MXP" list="airport-codes"/></div>
+<div><label class="text-xs font-semibold text-slate-500" for="fl-to" data-i18n="to_airport">Arrivo (codice aeroporto)</label><input id="fl-to" class="mt-1 w-full px-4 py-3 rounded-xl border uppercase" value="PMO" maxlength="3" placeholder="PMO" list="airport-codes"/></div>
+</div>
+<datalist id="airport-codes"><option value="MXP">Milano Malpensa</option><option value="LIN">Milano Linate</option><option value="BGY">Bergamo</option><option value="VCE">Venezia</option><option value="FCO">Roma Fiumicino</option><option value="CIA">Roma Ciampino</option><option value="NAP">Napoli</option><option value="PMO">Palermo</option><option value="CTA">Catania</option><option value="BLQ">Bologna</option></datalist>
+<div class="grid sm:grid-cols-2 gap-3">
+<div><label class="text-xs font-semibold text-slate-500" for="fl-depart" data-i18n="depart_date">Andata</label><input id="fl-depart" type="date" class="mt-1 w-full px-4 py-3 rounded-xl border"/></div>
+<div><label class="text-xs font-semibold text-slate-500" for="fl-return" data-i18n="return_date">Ritorno (opzionale)</label><input id="fl-return" type="date" class="mt-1 w-full px-4 py-3 rounded-xl border"/></div>
+</div>
+<div class="grid sm:grid-cols-2 gap-3">
+<div><label class="text-xs font-semibold text-slate-500" for="fl-adults" data-i18n="travellers">Viaggiatori</label><select id="fl-adults" class="mt-1 w-full px-4 py-3 rounded-xl border bg-white"><option>1</option><option selected>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></div>
+<div><label class="text-xs font-semibold text-slate-500" for="fl-cabin" data-i18n="cabin">Classe</label><select id="fl-cabin" class="mt-1 w-full px-4 py-3 rounded-xl border bg-white"><option value="economy">Economy</option><option value="premium_economy">Premium economy</option><option value="business">Business</option><option value="first">First</option></select></div>
 </div>
 <button type="button" onclick="searchFlights()" class="w-full py-3 rounded-full bg-brand-600 text-white font-semibold" data-i18n="fl_search">Cerca nel sito</button>
 </div>
 <div id="flight-results" class="mt-4 space-y-3"></div>
+</div>
+<div>
+<h2 class="text-xl font-extrabold mb-3">🏨 <span data-i18n="hotels_heading">Cerca hotel</span></h2>
+<div class="rounded-2xl border bg-white p-5 space-y-3">
+<div><label class="text-xs font-semibold text-slate-500" for="ht-dest" data-i18n="hotel_destination">Destinazione</label><input id="ht-dest" class="mt-1 w-full px-4 py-3 rounded-xl border" value="Palermo" placeholder="Palermo"/></div>
+<div class="grid sm:grid-cols-2 gap-3">
+<div><label class="text-xs font-semibold text-slate-500" for="ht-in" data-i18n="checkin">Check-in</label><input id="ht-in" type="date" class="mt-1 w-full px-4 py-3 rounded-xl border"/></div>
+<div><label class="text-xs font-semibold text-slate-500" for="ht-out" data-i18n="checkout">Check-out</label><input id="ht-out" type="date" class="mt-1 w-full px-4 py-3 rounded-xl border"/></div>
+</div>
+<div class="grid sm:grid-cols-2 gap-3">
+<div><label class="text-xs font-semibold text-slate-500" for="ht-guests" data-i18n="guests">Ospiti</label><select id="ht-guests" class="mt-1 w-full px-4 py-3 rounded-xl border bg-white"><option>1</option><option selected>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></div>
+<div><label class="text-xs font-semibold text-slate-500" for="ht-rooms" data-i18n="rooms">Camere</label><select id="ht-rooms" class="mt-1 w-full px-4 py-3 rounded-xl border bg-white"><option selected>1</option><option>2</option><option>3</option></select></div>
+</div>
+<label class="flex items-center gap-2 text-sm text-slate-600"><input id="ht-free-cancel" type="checkbox" class="rounded"/> <span data-i18n="free_cancel">Solo cancellazione gratuita</span></label>
+<button type="button" onclick="searchHotels()" class="w-full py-3 rounded-full bg-slate-900 text-white font-semibold" data-i18n="hotel_search">Cerca hotel</button>
+</div>
+<div id="hotel-results" class="mt-4 space-y-3"></div>
+</div>
+</div>
+<p class="mt-6 text-xs text-slate-500" data-i18n="travel_disclaimer">Prezzi e disponibilità possono cambiare fino alla conferma. La prenotazione verrà attivata in una fase successiva.</p>
 </section>
 </div>
 
@@ -387,6 +427,7 @@ header.sticky{z-index:9999!important}
 <button type="button" onclick="sendChat()" class="px-5 py-2.5 rounded-xl bg-brand-600 text-white text-sm font-semibold" data-i18n="send">Invia</button>
 </div>
 </div>
+<p class="mt-2 text-xs text-slate-500" data-i18n="ai_privacy">ST AI usa OpenAI solo quando invii un messaggio; non inserire dati sensibili.</p>
 <div id="ai-profile" class="mt-4 hidden rounded-2xl border bg-white p-4 text-sm"></div>
 </section>
 </div>
@@ -420,16 +461,18 @@ header.sticky{z-index:9999!important}
 </div>
 </footer>
 
+<script id="api-config" type="application/json">{"mode":"demo","supabaseUrl":"","supabasePublishableKey":""}</script>
+
 <script>
 (function(){
 'use strict';
 var I18N={
 it:{
-nav_home:'Home',nav_listings:'Esplora',explore_title:'Esplora mete',explore_sub:'Cerca una città, un tipo di viaggio o un interesse. ST AI propone mete e ti porta al piano.',explore_by_interest:'Esplora per interesse',explore_season:'Idee per stagione',explore_popular:'Mete in evidenza',explore_all:'Mostra tutte',explore_cta_t:'Hai già la meta?',explore_cta_d:'Passa alla pianificazione completa con interessi, età, animali e PDF.',int_sea:'Mare',int_nature:'Natura',int_culture:'Cultura',int_food:'Cibo',int_city:'Città',int_family:'Famiglia',sea_spring:'Primavera — città d’arte e temperature miti',sea_summer:'Estate — mare e costiere',sea_autumn:'Autunno — cibo e borghi',sea_winter:'Inverno — capitali e musei',nav_plan:'Pianifica',nav_flights:'Voli',nav_cruises:'Crociere',nav_pricing:'Prezzi',nav_cta:'Pianifica',
+nav_home:'Home',nav_listings:'Esplora',explore_title:'Esplora mete',explore_sub:'Cerca una città, un tipo di viaggio o un interesse. ST AI propone mete e ti porta al piano.',explore_by_interest:'Esplora per interesse',explore_season:'Idee per stagione',explore_popular:'Mete in evidenza',explore_all:'Mostra tutte',explore_cta_t:'Hai già la meta?',explore_cta_d:'Passa alla pianificazione completa con interessi, età, animali e PDF.',int_sea:'Mare',int_nature:'Natura',int_culture:'Cultura',int_food:'Cibo',int_city:'Città',int_family:'Famiglia',sea_spring:'Primavera — città d’arte e temperature miti',sea_summer:'Estate — mare e costiere',sea_autumn:'Autunno — cibo e borghi',sea_winter:'Inverno — capitali e musei',nav_plan:'Pianifica',nav_flights:'Voli & Hotel',nav_cruises:'Crociere',nav_pricing:'Prezzi',nav_cta:'Pianifica',
 hero_badge:'Itinerari · Mappa · PDF · ST AI',hero_t1:'Pianificazione completa,',hero_t2:'su misura per i tuoi interessi.',
 hero_sub:'ST AI approfondisce dove, come e quando. Il piano include tappe giornaliere, mappa e export PDF.',
 hero_cta1:'Avvia pianificazione',hero_cta2:'Parla con ST AI',home_map_label:'Anteprima mappa itinerario',home_search_ph:'Cerca città o destinazione (ST AI)…',home_search_btn:'Cerca',notes_ai:'Approfondisci con ST AI',notes_ai_hint:'ST AI legge le note e propone domande o tappe da aggiungere al piano.',
-cat_pl:'Interessi → tappe → PDF',cat_ai:'Domande su dove, come, quando',cat_fl:'Ricerca nel sito',cat_list:'Mete, stagioni e idee viaggio',
+cat_pl:'Interessi → tappe → PDF',cat_ai:'Domande su dove, come, quando',cat_fl:'Prezzi e disponibilità nel sito',cat_list:'Mete, stagioni e idee viaggio',
 p1_name:'Analisi',p2_name:'10 piani',p3_name:'Mensile',buy:'Attiva',
 demo_banner:'Wizard completo: interessi, ritmo, orari. Output con mappa, tappe e PDF.',wiz_title:'Pianificazione viaggio',
 wiz_s1:'1/5 · Dove e con chi',wiz_s2:'2/5 · Come ti muovi',wiz_s3:'3/5 · Interessi (guidano le tappe)',wiz_s4:'4/5 · Età, animali, alloggio',
@@ -442,10 +485,10 @@ o_local_food:'Cucina locale',o_quick:'Veloce / street food',o_fine:'Ristoranti c
 o_morning:'Mattina presto',o_day:'Giornata intera',o_sunset:'Pomeriggio / tramonto',
 next:'Continua',back:'Indietro',generate:'Genera piano completo',result_title:'Piano di viaggio completo',
 result_sub:'Tappe per interesse, mappa e orari indicativi.',restart:'Nuova',
-fl_title:'Voli',fl_sub:'Risultati nel sito (mock → Amadeus).',fl_search:'Cerca nel sito',fl_select:'Seleziona per il piano',fl_selected:'Aggiunto',
+fl_title:'Voli & Hotel',fl_sub:'Confronta disponibilità e prezzi senza uscire dal sito.',fl_search:'Cerca voli',fl_select:'Aggiungi al piano',fl_selected:'Aggiunto',flights_heading:'Cerca voli',from_airport:'Partenza (codice aeroporto)',to_airport:'Arrivo (codice aeroporto)',depart_date:'Andata',return_date:'Ritorno (opzionale)',travellers:'Viaggiatori',cabin:'Classe',hotels_heading:'Cerca hotel',hotel_destination:'Destinazione',checkin:'Check-in',checkout:'Check-out',guests:'Ospiti',rooms:'Camere',free_cancel:'Solo cancellazione gratuita',hotel_search:'Cerca hotel',travel_disclaimer:'Prezzi e disponibilità possono cambiare fino alla conferma. La prenotazione verrà attivata in una fase successiva.',loading:'Ricerca in corso…',api_error:'Servizio momentaneamente non disponibile. Riprova.',invalid_dates:'Controlla le date inserite.',no_offers:'Nessuna offerta trovata per questi criteri.',per_stay:'totale soggiorno',stops:'scali',direct:'diretto',
 cr_title:'Crociere',list_title:'Destinazioni',list_sub:'Cerca città e destinazioni. ST AI suggerisce mete anche se scrivi in modo libero.',dest_search_ph:'Es. Napoli, mare Sicilia, laghi…',dest_ai_btn:'Cerca con ST AI',dest_ai_suggest:'ST AI suggerisce:',dest_ai_none:'Nessuna meta trovata: prova un’altra descrizione.',f_all:'Tutte',
 ai_sub:'Intervista guidata: interessi, dove, come, quando',ai_hello:'Ciao, sono ST AI. Posso farti domande mirate su interessi, ritmo e orari per costruire un itinerario preciso. Clicca «Avvia intervista interessi» oppure scrivi liberamente.',
-ai_start:'Avvia intervista interessi',send:'Invia',ai_ph:'Rispondi o chiedi…',
+ai_start:'Avvia intervista interessi',send:'Invia',ai_ph:'Rispondi o chiedi…',ai_privacy:'ST AI usa OpenAI solo quando invii un messaggio; non inserire dati sensibili.',
 legal_title:'Policy',refund_1:'Analisi 2 €: non rimborsabile dopo elaborazione salvo guasto tecnico.',privacy_1:'Demo su dispositivo. Produzione: Supabase.',
 active_plan:'Piano attivo',from:'da',plan_this:'Usa nel piano',days_label:'giorni',fits_budget:'Allineato al budget',no_results:'Nessun risultato',
 morning:'Mattina',afternoon:'Pomeriggio',evening:'Sera',lunch:'Pranzo',dinner:'Cena',
@@ -453,11 +496,11 @@ map_legend:'● → tappe · ● → ristoro · ● → base',
 day:'Giorno',poi:'Tappa',export_ok:'PDF generato',price_title:'Piani'
 },
 en:{
-nav_home:'Home',nav_listings:'Explore',explore_title:'Explore places',explore_sub:'Search a city, trip type or interest. ST AI suggests places and takes you to the plan.',explore_by_interest:'Browse by interest',explore_season:'Seasonal ideas',explore_popular:'Featured places',explore_all:'Show all',explore_cta_t:'Already have a destination?',explore_cta_d:'Go to full planning with interests, ages, pets and PDF.',int_sea:'Sea',int_nature:'Nature',int_culture:'Culture',int_food:'Food',int_city:'City',int_family:'Family',sea_spring:'Spring — art cities and mild weather',sea_summer:'Summer — sea and coasts',sea_autumn:'Autumn — food and villages',sea_winter:'Winter — capitals and museums',list_sub:'Search cities and destinations. ST AI suggests places even from free-text.',dest_search_ph:'E.g. Naples, Sicily sea, lakes…',dest_ai_btn:'Search with ST AI',dest_ai_suggest:'ST AI suggests:',dest_ai_none:'No place found: try another description.',f_all:'All',nav_plan:'Plan',nav_flights:'Flights',nav_cruises:'Cruises',nav_pricing:'Pricing',nav_cta:'Plan',
+nav_home:'Home',nav_listings:'Explore',explore_title:'Explore places',explore_sub:'Search a city, trip type or interest. ST AI suggests places and takes you to the plan.',explore_by_interest:'Browse by interest',explore_season:'Seasonal ideas',explore_popular:'Featured places',explore_all:'Show all',explore_cta_t:'Already have a destination?',explore_cta_d:'Go to full planning with interests, ages, pets and PDF.',int_sea:'Sea',int_nature:'Nature',int_culture:'Culture',int_food:'Food',int_city:'City',int_family:'Family',sea_spring:'Spring — art cities and mild weather',sea_summer:'Summer — sea and coasts',sea_autumn:'Autumn — food and villages',sea_winter:'Winter — capitals and museums',list_sub:'Search cities and destinations. ST AI suggests places even from free-text.',dest_search_ph:'E.g. Naples, Sicily sea, lakes…',dest_ai_btn:'Search with ST AI',dest_ai_suggest:'ST AI suggests:',dest_ai_none:'No place found: try another description.',f_all:'All',nav_plan:'Plan',nav_flights:'Flights & Hotels',nav_cruises:'Cruises',nav_pricing:'Pricing',nav_cta:'Plan',
 hero_badge:'Itineraries · Map · PDF · ST AI',hero_t1:'Complete planning,',hero_t2:'tailored to your interests.',
 hero_sub:'ST AI digs into where, how and when. The plan includes daily stops, map and PDF export.',
 hero_cta1:'Start planning',hero_cta2:'Talk to ST AI',home_map_label:'Itinerary map preview',home_search_ph:'Search city or destination (ST AI)…',home_search_btn:'Search',notes_ai:'Deepen with ST AI',notes_ai_hint:'ST AI reads your notes and suggests questions or stops for the plan.',
-cat_pl:'Interests → stops → PDF',cat_ai:'Questions on where, how, when',cat_fl:'On-site search',cat_list:'Places, seasons and trip ideas',
+cat_pl:'Interests → stops → PDF',cat_ai:'Questions on where, how, when',cat_fl:'Live prices and availability',cat_list:'Places, seasons and trip ideas',
 p1_name:'Analysis',p2_name:'10 plans',p3_name:'Monthly',buy:'Activate',
 demo_banner:'Full wizard: interests, pace, times. Output with map, stops and PDF.',wiz_title:'Trip planning',
 wiz_s1:'1/5 · Where and who',wiz_s2:'2/5 · How you move',wiz_s3:'3/5 · Interests (drive the stops)',wiz_s4:'4/5 · Ages, pets, stay',
@@ -470,10 +513,10 @@ o_local_food:'Local cuisine',o_quick:'Quick / street food',o_fine:'Fine dining',
 o_morning:'Early morning',o_day:'Full day',o_sunset:'Afternoon / sunset',
 next:'Continue',back:'Back',generate:'Generate full plan',result_title:'Complete travel plan',
 result_sub:'Interest-based stops, map and indicative times.',restart:'New',
-fl_title:'Flights',fl_sub:'On-site results (mock → Amadeus).',fl_search:'Search on site',fl_select:'Select for plan',fl_selected:'Added',
+fl_title:'Flights & Hotels',fl_sub:'Compare availability and prices without leaving the site.',fl_search:'Search flights',fl_select:'Add to plan',fl_selected:'Added',flights_heading:'Search flights',from_airport:'Departure (airport code)',to_airport:'Arrival (airport code)',depart_date:'Outbound',return_date:'Return (optional)',travellers:'Travellers',cabin:'Cabin',hotels_heading:'Search hotels',hotel_destination:'Destination',checkin:'Check-in',checkout:'Check-out',guests:'Guests',rooms:'Rooms',free_cancel:'Free cancellation only',hotel_search:'Search hotels',travel_disclaimer:'Prices and availability can change until confirmation. Booking will be enabled in a later phase.',loading:'Searching…',api_error:'Service temporarily unavailable. Please try again.',invalid_dates:'Check the selected dates.',no_offers:'No offers found for these criteria.',per_stay:'total stay',stops:'stops',direct:'direct',
 cr_title:'Cruises',list_title:'Destinations',list_sub:'Search cities and destinations. ST AI suggests places even from free-text.',dest_search_ph:'E.g. Naples, Sicily sea, lakes…',dest_ai_btn:'Cerca con ST AI',dest_ai_suggest:'ST AI suggests:',dest_ai_none:'No place found: try another description.',f_all:'All',
 ai_sub:'Guided interview: interests, where, how, when',ai_hello:'Hi, I am ST AI. I can ask targeted questions on interests, pace and times to build a precise itinerary. Click «Start interest interview» or type freely.',
-ai_start:'Start interest interview',send:'Send',ai_ph:'Reply or ask…',
+ai_start:'Start interest interview',send:'Send',ai_ph:'Reply or ask…',ai_privacy:'ST AI uses OpenAI only when you send a message; do not enter sensitive data.',
 legal_title:'Policy',refund_1:'€2 analysis: non-refundable after generation except technical failure.',privacy_1:'Demo on device. Production: Supabase.',
 active_plan:'Active plan',from:'from',plan_this:'Use in plan',days_label:'days',fits_budget:'Fits budget',no_results:'No results',
 morning:'Morning',afternoon:'Afternoon',evening:'Evening',lunch:'Lunch',dinner:'Dinner',
@@ -484,10 +527,45 @@ day:'Day',poi:'Stop',export_ok:'PDF created',price_title:'Plans'
 
 var lang='it';try{lang=localStorage.getItem('st_lang')||'it'}catch(e){}
 if(lang!=='en')lang='it';
-var selected={flight:null,cruise:null};
+var selected={flight:null,hotel:null,cruise:null};
 var lastPlan=null;
 var planMap=null, homeMap=null;
 var aiState={step:0,active:false,answers:{}};
+var aiHistory=[];
+var API_CONFIG=(function(){
+  try{return JSON.parse((document.getElementById('api-config')||{}).textContent||'{}')}catch(e){return {mode:'demo'}}
+})();
+var API_LIVE=API_CONFIG.mode==='live'&&/^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(API_CONFIG.supabaseUrl||'');
+
+function apiEndpoint(name){return String(API_CONFIG.supabaseUrl||'').replace(/\/$/,'')+'/functions/v1/'+name}
+async function apiPost(name,payload){
+  if(!API_LIVE)throw new Error('DEMO_MODE');
+  var ctrl=new AbortController();
+  var timer=setTimeout(function(){ctrl.abort()},35000);
+  var headers={'Content-Type':'application/json'};
+  if(API_CONFIG.supabasePublishableKey)headers.apikey=API_CONFIG.supabasePublishableKey;
+  try{
+    var response=await fetch(apiEndpoint(name),{method:'POST',headers:headers,body:JSON.stringify(payload),signal:ctrl.signal});
+    var data={};try{data=await response.json()}catch(e){}
+    if(!response.ok)throw new Error((data&&data.error)||('HTTP '+response.status));
+    return data;
+  }finally{clearTimeout(timer)}
+}
+function isoDate(offset){var d=new Date();d.setDate(d.getDate()+offset);return d.toISOString().slice(0,10)}
+function initTravelForm(){
+  var fields=[['fl-depart',21],['fl-return',28],['ht-in',21],['ht-out',28]];
+  fields.forEach(function(item){var el=document.getElementById(item[0]);if(el&&!el.value){el.value=isoDate(item[1]);el.min=isoDate(1)}});
+  var status=document.getElementById('travel-api-status');
+  if(status){status.textContent=API_LIVE?(lang==='it'?'API collegate':'APIs connected'):(lang==='it'?'Demo sicura':'Safe demo');status.classList.toggle('live',API_LIVE)}
+}
+function getSafetyId(){
+  var id='';try{id=localStorage.getItem('st_safety_id')||''}catch(e){}
+  if(!/^[a-z0-9_-]{16,80}$/i.test(id)){
+    var bytes=new Uint8Array(16);crypto.getRandomValues(bytes);id=Array.from(bytes).map(function(b){return b.toString(16).padStart(2,'0')}).join('');
+    try{localStorage.setItem('st_safety_id',id)}catch(e){}
+  }
+  return id;
+}
 
 function t(k){var d=I18N[lang]||I18N.it;return d[k]!=null?d[k]:(I18N.en[k]!=null?I18N.en[k]:k)}
 function esc(s){var d=document.createElement('div');d.textContent=s==null?'':String(s);return d.innerHTML}
@@ -497,7 +575,7 @@ function applyLang(){
   document.querySelectorAll('[data-i18n]').forEach(function(el){var v=t(el.getAttribute('data-i18n'));if(v)el.textContent=v});
   document.querySelectorAll('[data-i18n-ph]').forEach(function(el){var v=t(el.getAttribute('data-i18n-ph'));if(v)el.placeholder=v});
   try{localStorage.setItem('st_lang',lang)}catch(e){}
-  renderListings();renderCruises();
+  renderListings();renderCruises();initTravelForm();
 }
 function toggleLang(e){if(e){e.preventDefault();e.stopPropagation()}document.getElementById('lang-menu').classList.toggle('open')}
 function setLang(code){lang=code==='en'?'en':'it';document.getElementById('lang-menu').classList.remove('open');applyLang()}
@@ -517,6 +595,7 @@ function go(id){
   if(id==='home')setTimeout(initHomeMap,200);
   if(id==='listings')renderListings();
   if(id==='cruises')renderCruises();
+  if(id==='flights')initTravelForm();
   if(id==='plan'){refreshAccess();renderSelected()}
   return false;
 }
@@ -542,12 +621,25 @@ function destCoords(name){
   for(var key in COORDS){if(k.indexOf(key)>=0)return COORDS[key]}
   return [41.9,12.5];
 }
+async function resolveDestinationCoords(name){
+  var key='st_geo_'+String(name||'').toLowerCase().trim();
+  try{var cached=JSON.parse(localStorage.getItem(key)||'null');if(cached&&Date.now()-cached.savedAt<2592000000)return [cached.lat,cached.lng]}catch(e){}
+  if(!API_LIVE)return destCoords(name);
+  try{
+    var data=await apiPost('geocode-place',{query:name,language:lang});
+    if(Number.isFinite(data.lat)&&Number.isFinite(data.lng)){
+      try{localStorage.setItem(key,JSON.stringify({lat:data.lat,lng:data.lng,savedAt:Date.now()}))}catch(e){}
+      return [data.lat,data.lng];
+    }
+  }catch(e){}
+  return destCoords(name);
+}
 
 function initHomeMap(){
   var el=document.getElementById('home-map');if(!el||typeof L==='undefined')return;
   if(homeMap){homeMap.remove();homeMap=null}
   homeMap=L.map(el).setView([41.9,12.5],5);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OSM',maxZoom:18}).addTo(homeMap);
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>',maxZoom:18}).addTo(homeMap);
   L.marker([38.02,12.54]).addTo(homeMap).bindPopup('Trapani');
   L.marker([41.9,12.5]).addTo(homeMap).bindPopup('Roma');
   L.marker([46.37,14.11]).addTo(homeMap).bindPopup('Bled');
@@ -685,7 +777,8 @@ function buildPlan(){
   if(access==='steps'||access==='wheelchair'||access==='stroller'){days.forEach(function(day){day.items=day.items.map(function(it){if(it.type==='poi')it.title=it.title+' · ✓ access';return it});});}
 
 
-  if(selected.flight)html+='<div class="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm mb-3">✈️ '+esc(selected.flight.carrier)+' '+esc(selected.flight.from)+'→'+esc(selected.flight.to)+' · '+selected.flight.price+' €</div>';
+  if(selected.flight)html+='<div class="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm mb-3">✈️ '+esc(selected.flight.carrier)+' '+esc(selected.flight.from)+'→'+esc(selected.flight.to)+' · '+esc(money(selected.flight.price,selected.flight.currency))+'</div>';
+  if(selected.hotel)html+='<div class="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm mb-3">🏨 '+esc(selected.hotel.name)+' · '+esc(money(selected.hotel.price,selected.hotel.currency))+'</div>';
   if(selected.cruise)html+='<div class="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm mb-3">🚢 '+esc(selected.cruise.line)+' · '+selected.cruise.price+' €</div>';
 
   html+='<div class="rounded-2xl border bg-white p-4 shadow-sm mb-4">';
@@ -715,6 +808,12 @@ function buildPlan(){
 
   document.getElementById('plan-out').innerHTML=html;
   setTimeout(function(){renderPlanMap(center,days)},150);
+  resolveDestinationCoords(dest).then(function(realCenter){
+    if(!lastPlan||lastPlan.dest!==dest)return;
+    lastPlan.center=realCenter;
+    renderPlanMap(realCenter,days);
+    try{localStorage.setItem('st_last_plan',JSON.stringify(lastPlan))}catch(e){}
+  });
   try{localStorage.setItem('st_last_plan',JSON.stringify(lastPlan))}catch(e){}
 }
 
@@ -722,7 +821,7 @@ function renderPlanMap(center,days){
   var el=document.getElementById('plan-map');if(!el||typeof L==='undefined')return;
   if(planMap){planMap.remove();planMap=null}
   planMap=L.map(el).setView(center,12);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap',maxZoom:18}).addTo(planMap);
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>',maxZoom:18}).addTo(planMap);
   // base stay blue
   L.circleMarker(center,{radius:10,color:'#fff',weight:2,fillColor:'#0ea5e9',fillOpacity:1}).addTo(planMap).bindPopup('Base / '+t('from'));
   var lat=center[0],lng=center[1];
@@ -795,31 +894,41 @@ function aiStartInterview(){
   if(prof){prof.classList.remove('hidden');prof.innerHTML='<div class="font-semibold mb-1">ST AI profile</div><div class="text-slate-500 text-xs">'+(lang==='it'?'Rispondi alle domande…':'Answer the questions…')+'</div>'}
 }
 
-function sendChat(){
+async function sendChat(){
   var inp=document.getElementById('chat-in');
   var text=(inp.value||'').trim();if(!text)return;
   var log=document.getElementById('chat-log');
   log.innerHTML+='<div class="chat-b ml-auto bg-brand-600 text-white rounded-2xl rounded-tr-sm px-4 py-2.5 text-sm">'+esc(text)+'</div>';
   inp.value='';
-  setTimeout(function(){
-    var reply='';
-    if(aiState.active&&aiState.step<AI_Q.length){
-      var cur=AI_Q[aiState.step];
-      aiState.answers[cur.id]=text;
-      aiState.step++;
-      // map answers into wizard fields when possible
-      applyAiAnswersToWizard();
-      if(aiState.step<AI_Q.length){
-        var nq=AI_Q[aiState.step];
-        reply=lang==='en'?nq.en:nq.it;
-      }else{
-        aiState.active=false;
-        reply=lang==='it'
-          ?'Perfetto. Ho aggiornato il profilo interessi. Apri «Pianifica» e genera il piano: le tappe seguiranno ciò che mi hai detto. Vuoi approfondire altro?'
-          :'Great. Interest profile updated. Open Plan and generate: stops will follow what you told me. Anything else to refine?';
-        renderAiProfile();
-      }
+  log.scrollTop=log.scrollHeight;
+  var reply='';
+  if(aiState.active&&aiState.step<AI_Q.length){
+    var cur=AI_Q[aiState.step];
+    aiState.answers[cur.id]=text;
+    aiState.step++;
+    applyAiAnswersToWizard();
+    if(aiState.step<AI_Q.length){
+      var nq=AI_Q[aiState.step];
+      reply=lang==='en'?nq.en:nq.it;
     }else{
+      aiState.active=false;
+      reply=lang==='it'
+        ?'Perfetto. Ho aggiornato il profilo interessi. Apri «Pianifica» e genera il piano: le tappe seguiranno ciò che mi hai detto. Vuoi approfondire altro?'
+        :'Great. Interest profile updated. Open Plan and generate: stops will follow what you told me. Anything else to refine?';
+      renderAiProfile();
+    }
+  }else if(API_LIVE){
+    var pending=document.createElement('div');
+    pending.className='chat-b bg-white border rounded-2xl rounded-tl-sm px-4 py-2.5 text-sm shadow-sm text-slate-400 result-skeleton';
+    pending.textContent=t('loading');log.appendChild(pending);log.scrollTop=log.scrollHeight;
+    try{
+      var aiData=await apiPost('ai-travel',{message:text,language:lang,history:aiHistory.slice(-8),travelContext:lastPlan||null,safetyIdentifier:getSafetyId()});
+      reply=aiData.reply||t('api_error');
+      aiHistory.push({role:'user',content:text},{role:'assistant',content:reply});
+      if(aiHistory.length>16)aiHistory=aiHistory.slice(-16);
+    }catch(e){reply=t('api_error')}
+    pending.remove();
+  }else{
       var m=text.toLowerCase();
       reply=lang==='it'?'Posso avviare l’intervista interessi, oppure aiutarti su ritmo, orari e destinazione. Scrivi pure.':'I can start the interest interview, or help with pace, times and destination.';
       if(/intervist|start|avvia/.test(m)){aiStartInterview();return}
@@ -827,10 +936,8 @@ function sendChat(){
       if(/mappa|map/.test(m))reply=lang==='it'?'La mappa appare nel piano con tappe verdi (interesse), fucsia (cibo) e blu (base).':'The map appears in the plan with green (interest), fuchsia (food) and blue (base) stops.';
       if(/quando|when/.test(m))reply=lang==='it'?'Dimmi stagione o mese e durata: li userò nel wizard.':'Tell me season or month and length: I will use them in the wizard.';
       if(/dove|where/.test(m))reply=lang==='it'?'Indicami città o tipo di paesaggio (mare, montagna, città d’arte).':'Give a city or landscape type (sea, mountain, historic city).';
-    }
-    log.innerHTML+='<div class="chat-b bg-white border rounded-2xl rounded-tl-sm px-4 py-2.5 text-sm shadow-sm">'+esc(reply)+'</div>';
-    log.scrollTop=log.scrollHeight;
-  },350);
+  }
+  log.innerHTML+='<div class="chat-b bg-white border rounded-2xl rounded-tl-sm px-4 py-2.5 text-sm shadow-sm">'+esc(reply)+'</div>';
   log.scrollTop=log.scrollHeight;
 }
 
@@ -896,23 +1003,81 @@ function renderAiProfile(){
     '<button type="button" onclick="go(\'plan\')" class="mt-3 px-4 py-2 rounded-full bg-brand-600 text-white text-sm font-semibold">'+esc(t('nav_plan'))+'</button>';
 }
 
-/* flights/cruises/listings minimal */
+/* live travel search with safe demo fallback */
+function money(value,currency){
+  try{return new Intl.NumberFormat(lang==='it'?'it-IT':'en-GB',{style:'currency',currency:currency||'EUR'}).format(Number(value)||0)}catch(e){return (Number(value)||0).toFixed(2)+' '+(currency||'EUR')}
+}
+function shortDateTime(value){
+  if(!value)return '';
+  try{return new Intl.DateTimeFormat(lang==='it'?'it-IT':'en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}).format(new Date(value))}catch(e){return value}
+}
+function loadingCard(){return '<div class="rounded-xl border bg-white p-5 text-sm text-slate-400 result-skeleton">'+esc(t('loading'))+'</div>'}
+function errorCard(message){return '<div class="rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800">'+esc(message||t('api_error'))+'</div>'}
 async function searchFlights(){
   var box=document.getElementById('flight-results');if(!box)return;
-  var from=(document.getElementById('fl-from').value||'Milano').trim();
-  var to=(document.getElementById('fl-to').value||'Palermo').trim();
-  var rows=[
-    {id:'f1',carrier:'Ryanair',from:from,to:to,depart:'06:45',price:49},
-    {id:'f2',carrier:'ITA',from:from,to:to,depart:'09:20',price:89},
-    {id:'f3',carrier:'easyJet',from:from,to:to,depart:'13:10',price:72}
-  ];
+  var from=(document.getElementById('fl-from').value||'MXP').trim().toUpperCase();
+  var to=(document.getElementById('fl-to').value||'PMO').trim().toUpperCase();
+  var departureDate=document.getElementById('fl-depart').value;
+  var returnDate=document.getElementById('fl-return').value;
+  var adults=parseInt(document.getElementById('fl-adults').value,10)||1;
+  var cabin=document.getElementById('fl-cabin').value;
+  if(!/^[A-Z]{3}$/.test(from)||!/^[A-Z]{3}$/.test(to)||!departureDate||(returnDate&&returnDate<=departureDate)){box.innerHTML=errorCard(t('invalid_dates'));return}
+  box.innerHTML=loadingCard();
+  var rows=[];
+  if(API_LIVE){
+    try{var data=await apiPost('travel-search',{kind:'flights',origin:from,destination:to,departureDate:departureDate,returnDate:returnDate||null,adults:adults,cabin:cabin,language:lang,currency:'EUR'});rows=data.results||[]}
+    catch(e){box.innerHTML=errorCard(e.message==='DEMO_MODE'?null:e.message);return}
+  }else{
+    rows=[
+      {id:'demo-f1',carrier:'Ryanair',from:from,to:to,depart:departureDate+'T06:45:00',arrive:departureDate+'T08:25:00',duration:'PT1H40M',stops:0,price:49.90,currency:'EUR'},
+      {id:'demo-f2',carrier:'ITA Airways',from:from,to:to,depart:departureDate+'T09:20:00',arrive:departureDate+'T11:05:00',duration:'PT1H45M',stops:0,price:89.00,currency:'EUR'},
+      {id:'demo-f3',carrier:'easyJet',from:from,to:to,depart:departureDate+'T13:10:00',arrive:departureDate+'T16:20:00',duration:'PT3H10M',stops:1,price:72.50,currency:'EUR'}
+    ];
+  }
+  if(!rows.length){box.innerHTML=errorCard(t('no_offers'));return}
   box.innerHTML=rows.map(function(r){
-    return '<div class="rounded-xl border bg-white p-4 flex justify-between items-center gap-3"><div><div class="font-bold">'+esc(r.carrier)+'</div><div class="text-sm text-slate-500">'+esc(r.from)+'→'+esc(r.to)+' · '+esc(r.depart)+'</div></div><div class="text-right"><div class="font-extrabold text-brand-700">'+r.price+' €</div><button type="button" class="fpick mt-1 text-sm text-brand-600 font-semibold" data-id="'+r.id+'">'+esc(t('fl_select'))+'</button></div></div>';
+    var stopLabel=Number(r.stops)===0?t('direct'):(r.stops+' '+t('stops'));
+    return '<div class="rounded-xl border bg-white p-4 flex justify-between items-center gap-3"><div><div class="font-bold">'+esc(r.carrier)+'</div><div class="text-sm text-slate-500">'+esc(r.from)+' → '+esc(r.to)+'</div><div class="text-xs text-slate-500 mt-1">'+esc(shortDateTime(r.depart))+' · '+esc(stopLabel)+'</div></div><div class="text-right"><div class="font-extrabold text-brand-700">'+esc(money(r.price,r.currency))+'</div><button type="button" class="fpick mt-1 text-sm text-brand-600 font-semibold" data-id="'+esc(r.id)+'">'+esc(t('fl_select'))+'</button></div></div>';
   }).join('');
   box.querySelectorAll('.fpick').forEach(function(btn){
     btn.addEventListener('click',function(){
       var r=rows.find(function(x){return x.id===btn.getAttribute('data-id')});
       selected.flight=r;try{localStorage.setItem('st_selected',JSON.stringify(selected))}catch(e){}
+      btn.textContent=t('fl_selected');renderSelected();
+    });
+  });
+}
+async function searchHotels(){
+  var box=document.getElementById('hotel-results');if(!box)return;
+  var destination=(document.getElementById('ht-dest').value||'Palermo').trim();
+  var checkIn=document.getElementById('ht-in').value;
+  var checkOut=document.getElementById('ht-out').value;
+  var guests=parseInt(document.getElementById('ht-guests').value,10)||1;
+  var rooms=parseInt(document.getElementById('ht-rooms').value,10)||1;
+  var freeCancellation=document.getElementById('ht-free-cancel').checked;
+  if(destination.length<2||!checkIn||!checkOut||checkOut<=checkIn||rooms>guests){box.innerHTML=errorCard(t('invalid_dates'));return}
+  box.innerHTML=loadingCard();
+  var rows=[];
+  if(API_LIVE){
+    try{var data=await apiPost('travel-search',{kind:'hotels',destination:destination,checkIn:checkIn,checkOut:checkOut,guests:guests,rooms:rooms,freeCancellation:freeCancellation,language:lang,currency:'EUR'});rows=data.results||[]}
+    catch(e){box.innerHTML=errorCard(e.message==='DEMO_MODE'?null:e.message);return}
+  }else{
+    rows=[
+      {id:'demo-h1',name:'Palazzo Centrale',rating:4,reviewScore:8.7,address:destination,price:438,currency:'EUR',image:''},
+      {id:'demo-h2',name:'Boutique Porto',rating:4,reviewScore:8.4,address:destination,price:356,currency:'EUR',image:''},
+      {id:'demo-h3',name:'City Rooms',rating:3,reviewScore:8.1,address:destination,price:249,currency:'EUR',image:''}
+    ];
+  }
+  if(!rows.length){box.innerHTML=errorCard(t('no_offers'));return}
+  box.innerHTML=rows.map(function(r){
+    var stars=r.rating?('★'.repeat(Math.max(1,Math.min(5,Math.round(r.rating))))):'';
+    var image=r.image?('<img src="'+esc(r.image)+'" alt="" class="w-20 h-20 rounded-xl object-cover bg-slate-100" loading="lazy" referrerpolicy="no-referrer"/>'):'<div class="w-20 h-20 rounded-xl bg-brand-50 flex items-center justify-center text-2xl">🏨</div>';
+    return '<div class="rounded-xl border bg-white p-4 flex gap-3">'+image+'<div class="min-w-0 flex-1"><div class="font-bold truncate">'+esc(r.name)+'</div><div class="text-amber-500 text-xs">'+esc(stars)+'</div><div class="text-xs text-slate-500 truncate">'+esc(r.address||destination)+(r.reviewScore?' · '+esc(r.reviewScore)+'/10':'')+'</div></div><div class="text-right shrink-0"><div class="font-extrabold text-brand-700">'+esc(money(r.price,r.currency))+'</div><div class="text-[11px] text-slate-400">'+esc(t('per_stay'))+'</div><button type="button" class="hpick mt-1 text-sm text-brand-600 font-semibold" data-id="'+esc(r.id)+'">'+esc(t('fl_select'))+'</button></div></div>';
+  }).join('');
+  box.querySelectorAll('.hpick').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var r=rows.find(function(x){return x.id===btn.getAttribute('data-id')});
+      selected.hotel=r;try{localStorage.setItem('st_selected',JSON.stringify(selected))}catch(e){}
       btn.textContent=t('fl_selected');renderSelected();
     });
   });
@@ -936,7 +1101,8 @@ function renderSelected(){
   try{selected=JSON.parse(localStorage.getItem('st_selected')||'null')||selected}catch(e){}
   var box=document.getElementById('selected-box');if(!box)return;
   var parts=[];
-  if(selected.flight)parts.push('✈️ '+selected.flight.carrier+' '+selected.flight.price+'€');
+  if(selected.flight)parts.push('✈️ '+selected.flight.carrier+' '+money(selected.flight.price,selected.flight.currency));
+  if(selected.hotel)parts.push('🏨 '+selected.hotel.name+' '+money(selected.hotel.price,selected.hotel.currency));
   if(selected.cruise)parts.push('🚢 '+selected.cruise.line+' '+selected.cruise.price+'€');
   if(!parts.length){box.classList.add('hidden');return}
   box.classList.remove('hidden');box.innerHTML=parts.join(' · ');
@@ -1163,7 +1329,7 @@ window.go=go;window.buy=buy;window.setLang=setLang;window.toggleLang=toggleLang;
 window.toggleMobile=toggleMobile;window.closeMobile=closeMobile;
 window.wiz=wiz;window.resetWizard=resetWizard;window.exportPDF=exportPDF;
 window.sendChat=sendChat;window.aiStartInterview=aiStartInterview;
-window.searchFlights=searchFlights;
+window.searchFlights=searchFlights;window.searchHotels=searchHotels;
 
 var petsSel=document.getElementById('w-pets');
 if(petsSel){
@@ -1171,7 +1337,8 @@ if(petsSel){
   petsSel.addEventListener('change',syncPets);syncPets();
 }
 document.getElementById('chat-in').addEventListener('keypress',function(e){if(e.key==='Enter')sendChat()});
-try{selected=JSON.parse(localStorage.getItem('st_selected')||'null')||{flight:null,cruise:null}}catch(e){}
+try{selected=JSON.parse(localStorage.getItem('st_selected')||'null')||{flight:null,hotel:null,cruise:null}}catch(e){}
+if(!Object.prototype.hasOwnProperty.call(selected,'hotel'))selected.hotel=null;
 applyLang();refreshAccess();
 setTimeout(initHomeMap,300);
 var hs=document.getElementById('home-search');if(hs)hs.addEventListener('keypress',function(e){if(e.key==='Enter')searchFromHome()});
