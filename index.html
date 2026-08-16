@@ -13,6 +13,10 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<!-- Google AdSense -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
+
 <style>
 body{font-family:Inter,system-ui,sans-serif}
 .glass{background:rgba(255,255,255,.95);backdrop-filter:blur(12px)}
@@ -36,8 +40,35 @@ header.sticky{z-index:9999!important}
 .poi-green{background:#10b981;border:2px solid #fff}
 .poi-pink{background:#d946ef;border:2px solid #fff}
 .poi-blue{background:#0ea5e9;border:2px solid #fff}
+
+/* AdSense blend style */
+.ad-slot{
+  display:block;
+  margin:1.25rem auto;
+  max-width:100%;
+  background:linear-gradient(180deg,#f8fafc 0%,#f1f5f9 100%);
+  border:1px solid #e2e8f0;
+  border-radius:1rem;
+  padding:12px 10px 8px;
+  text-align:center;
+  overflow:hidden;
+  box-shadow:0 1px 3px rgba(15,23,42,.04);
+}
+.ad-slot .ad-label{
+  display:block;
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  color:#94a3b8;
+  margin-bottom:6px;
+}
+.ad-slot ins{
+  display:block !important;
+  margin:0 auto;
+}
 @media print{
-  header,footer,.no-print{display:none!important}
+  header,footer,.no-print,.ad-slot{display:none!important}
   .page{display:block!important}
   #plan-print-area{display:block!important}
 }
@@ -108,6 +139,21 @@ header.sticky{z-index:9999!important}
 <div id="home-map" class="h-56 rounded-xl bg-slate-100"></div>
 </div>
 </section>
+
+<!-- AD 1: Home - dopo hero -->
+<div class="max-w-7xl mx-auto px-4 no-print">
+  <div class="ad-slot">
+    <span class="ad-label">Annuncio</span>
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+         data-ad-slot="1111111111"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+  </div>
+</div>
+
 <section class="py-10 bg-white border-y">
 <div class="max-w-7xl mx-auto px-4 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
 <button type="button" onclick="go('plan')" class="card-h text-left rounded-2xl border p-5 transition"><div class="font-bold" data-i18n="nav_plan">Pianifica</div><p class="text-sm text-slate-500 mt-1" data-i18n="cat_pl">Interessi → tappe → PDF</p></button>
@@ -130,6 +176,19 @@ header.sticky{z-index:9999!important}
 <section class="py-10">
 <div id="plan-box" class="max-w-2xl mx-auto px-4">
 <div class="mb-4 rounded-xl bg-brand-50 border border-brand-100 px-4 py-3 text-sm text-brand-900 no-print" data-i18n="demo_banner">Wizard completo: interessi, ritmo, orari. Output con mappa, tappe e PDF.</div>
+
+<!-- AD 2: Pianifica -->
+<div class="ad-slot no-print mb-4">
+  <span class="ad-label">Annuncio</span>
+  <ins class="adsbygoogle"
+       style="display:block"
+       data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+       data-ad-slot="2222222222"
+       data-ad-format="auto"
+       data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+
 <div class="flex flex-wrap justify-between items-center gap-2 mb-4">
 <h1 class="text-2xl font-extrabold" data-i18n="wiz_title">Pianificazione viaggio</h1>
 <span id="plan-badge" class="text-xs font-semibold px-3 py-1 rounded-full bg-brand-100 text-brand-800">Demo</span>
@@ -339,6 +398,19 @@ header.sticky{z-index:9999!important}
 <div id="hotel-results" class="mt-4 space-y-3"></div>
 </div>
 </div>
+
+<!-- AD 3: Voli & Hotel -->
+<div class="ad-slot no-print mt-8">
+  <span class="ad-label">Annuncio</span>
+  <ins class="adsbygoogle"
+       style="display:block"
+       data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+       data-ad-slot="3333333333"
+       data-ad-format="auto"
+       data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+
 <p class="mt-6 text-xs text-slate-500" data-i18n="travel_disclaimer">Prezzi e disponibilità possono cambiare fino alla conferma. La prenotazione verrà attivata in una fase successiva.</p>
 </section>
 </div>
@@ -364,6 +436,18 @@ header.sticky{z-index:9999!important}
 </div>
 <p id="ai-dest-hint" class="text-xs text-slate-500 mt-2 hidden"></p>
 <select id="list-filter" class="hidden"><option value="all">all</option></select>
+</div>
+
+<!-- AD 4: Esplora -->
+<div class="ad-slot no-print mb-8">
+  <span class="ad-label">Annuncio</span>
+  <ins class="adsbygoogle"
+       style="display:block"
+       data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+       data-ad-slot="4444444444"
+       data-ad-format="auto"
+       data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
 </div>
 
 <div class="mb-8">
@@ -469,6 +553,7 @@ header.sticky{z-index:9999!important}
 </script>
 
 <script>
+/* ... tutto lo script originale rimane identico ... */
 (function(){
 'use strict';
 var I18N={
