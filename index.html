@@ -106,7 +106,7 @@ body{font-family:Inter,system-ui,sans-serif}
 <section class="py-12 bg-slate-900 text-white">
 <div class="max-w-5xl mx-auto px-4 grid sm:grid-cols-3 gap-4">
 <div class="rounded-2xl bg-white/5 border border-white/10 p-5"><div class="text-xs uppercase text-slate-400" data-i18n="p1_name">Analisi</div><div class="text-3xl font-extrabold mt-1">2,00 €</div><button type="button" onclick="buy('compare','Analisi','2,00 €')" class="mt-4 w-full py-2 rounded-full bg-white text-slate-900 text-sm font-semibold" data-i18n="buy">Attiva</button></div>
-<div class="rounded-2xl bg-brand-500/20 border border-brand-400/40 p-5"><div class="text-xs uppercase text-brand-200" data-i18n="p3_name">Mensile</div><div class="text-3xl font-extrabold mt-1">14,90 €</div><button type="button" onclick="buy('monthly','Mensile','14,90 €')" class="mt-4 w-full py-2 rounded-full bg-white text-brand-800 text-sm font-semibold" data-i18n="buy">Attiva</button></div>
+<div class="rounded-2xl bg-brand-500/20 border border-brand-400/40 p-5"><div class="text-xs uppercase text-brand-200" data-i18n="p3_name">Mensile</div><div class="text-3xl font-extrabold mt-1">14,90 €</div><button type="button" onclick="buy('monthly','Mensile','14,90 €')" class="mt-4 w-full py-2.5 rounded-full bg-white text-slate-900 text-sm font-bold shadow-md hover:bg-slate-100 border border-slate-200" data-i18n="buy">Attiva</button></div>
 <div class="rounded-2xl bg-white/5 border border-white/10 p-5"><div class="text-xs uppercase text-slate-400" data-i18n="p2_name">10 piani</div><div class="text-3xl font-extrabold mt-1">19,90 €</div><button type="button" onclick="buy('pack10','10 piani','19,90 €')" class="mt-4 w-full py-2 rounded-full bg-white text-slate-900 text-sm font-semibold" data-i18n="buy">Attiva</button></div>
 </div>
 </section>
@@ -213,13 +213,45 @@ body{font-family:Inter,system-ui,sans-serif}
 </div>
 
 <div id="ws4" class="wizard-step space-y-4 no-print">
-<p class="text-sm text-slate-500" data-i18n="wiz_s4">4/5 · Alloggio e vincoli</p>
+<p class="text-sm text-slate-500" data-i18n="wiz_s4">4/5 · Età, animali, alloggio</p>
+<div class="grid sm:grid-cols-2 gap-3">
+<div><label class="text-sm font-semibold" data-i18n="q_age_adults">Adulti (18–64)</label>
+<select id="w-age-adults" class="mt-1 w-full px-4 py-3 rounded-xl border bg-white"><option>0</option><option selected>2</option><option>1</option><option>3</option><option>4</option><option>5+</option></select></div>
+<div><label class="text-sm font-semibold" data-i18n="q_age_senior">Over 65</label>
+<select id="w-age-senior" class="mt-1 w-full px-4 py-3 rounded-xl border bg-white"><option selected>0</option><option>1</option><option>2</option><option>3+</option></select></div>
+<div><label class="text-sm font-semibold" data-i18n="q_age_child">Bambini 0–12</label>
+<select id="w-age-child" class="mt-1 w-full px-4 py-3 rounded-xl border bg-white"><option selected>0</option><option>1</option><option>2</option><option>3</option><option>4+</option></select></div>
+<div><label class="text-sm font-semibold" data-i18n="q_age_teen">Ragazzi 13–17</label>
+<select id="w-age-teen" class="mt-1 w-full px-4 py-3 rounded-xl border bg-white"><option selected>0</option><option>1</option><option>2</option><option>3+</option></select></div>
+</div>
+<div><label class="text-sm font-semibold" data-i18n="q_pets">Animali al seguito</label>
+<select id="w-pets" class="mt-1 w-full px-4 py-3 rounded-xl border bg-white">
+<option value="none" selected data-i18n="o_pets_none">Nessuno</option>
+<option value="dog" data-i18n="o_pets_dog">Cane</option>
+<option value="cat" data-i18n="o_pets_cat">Gatto</option>
+<option value="other" data-i18n="o_pets_other">Altro animale</option>
+</select></div>
+<div id="pets-extra" class="hidden">
+<label class="text-sm font-semibold" data-i18n="q_pets_need">Esigenze pet-friendly</label>
+<select id="w-pets-need" class="mt-1 w-full px-4 py-3 rounded-xl border bg-white">
+<option value="hotel" data-i18n="o_pets_hotel">Alloggio che accetta animali</option>
+<option value="beach" data-i18n="o_pets_beach">Spiagge / parchi pet-friendly</option>
+<option value="both" selected data-i18n="o_pets_both">Alloggio + luoghi pet-friendly</option>
+</select>
+</div>
+<div><label class="text-sm font-semibold" data-i18n="q_access">Accessibilità / mobilità ridotta</label>
+<select id="w-access" class="mt-1 w-full px-4 py-3 rounded-xl border bg-white">
+<option value="none" selected data-i18n="o_access_none">Nessuna esigenza particolare</option>
+<option value="steps" data-i18n="o_access_steps">Evitare scale / percorsi impegnativi</option>
+<option value="wheelchair" data-i18n="o_access_wheel">Accesso carrozzina / ridotta mobilità</option>
+<option value="stroller" data-i18n="o_access_stroller">Passeggino / percorsi comodi</option>
+</select></div>
 <div><label class="text-sm font-semibold" data-i18n="q_stay">Tipo alloggio</label>
 <select id="w-stay" class="mt-1 w-full px-4 py-3 rounded-xl border bg-white"><option selected>Hotel + affitti</option><option>Solo hotel</option><option>Solo affitti brevi</option></select></div>
 <div><label class="text-sm font-semibold" data-i18n="q_style">Fascia</label>
 <select id="w-style" class="mt-1 w-full px-4 py-3 rounded-xl border bg-white"><option>Economica</option><option selected>Intermedia</option><option>Comfort</option><option>Alta gamma</option></select></div>
 <div><label class="text-sm font-semibold" data-i18n="q_notes">Note libere (opzionale)</label>
-<textarea id="w-notes" rows="2" class="mt-1 w-full px-4 py-3 rounded-xl border" placeholder="Es. no scale, viaggio romantico, con cane…"></textarea></div>
+<textarea id="w-notes" rows="2" class="mt-1 w-full px-4 py-3 rounded-xl border" placeholder="Es. viaggio romantico, allergie, orari particolari…"></textarea></div>
 <div class="flex gap-3"><button type="button" onclick="wiz(3)" class="flex-1 py-3 rounded-full border font-semibold" data-i18n="back">Indietro</button>
 <button type="button" onclick="wiz(5)" class="flex-1 py-3 rounded-full bg-brand-600 text-white font-semibold" data-i18n="generate">Genera piano completo</button></div>
 </div>
@@ -313,7 +345,7 @@ body{font-family:Inter,system-ui,sans-serif}
 <h1 class="text-3xl font-extrabold text-center mb-8" data-i18n="price_title">Piani</h1>
 <div class="grid sm:grid-cols-3 gap-4">
 <div class="rounded-2xl border bg-white p-5"><div class="text-xs font-semibold text-slate-500" data-i18n="p1_name">Analisi</div><div class="text-3xl font-extrabold mt-2">2,00 €</div><button type="button" onclick="buy('compare','Analisi','2,00 €')" class="mt-4 w-full py-2.5 rounded-full border-2 border-brand-600 text-brand-700 text-sm font-semibold" data-i18n="buy">Attiva</button></div>
-<div class="rounded-2xl bg-brand-600 text-white p-5"><div class="text-xs font-semibold text-brand-100" data-i18n="p3_name">Mensile</div><div class="text-3xl font-extrabold mt-2">14,90 €</div><button type="button" onclick="buy('monthly','Mensile','14,90 €')" class="mt-4 w-full py-2.5 rounded-full bg-white text-brand-800 text-sm font-semibold" data-i18n="buy">Attiva</button></div>
+<div class="rounded-2xl bg-brand-600 text-white p-5 shadow-lg"><div class="text-xs font-semibold text-white/90" data-i18n="p3_name">Mensile</div><div class="text-3xl font-extrabold mt-2 text-white">14,90 €</div><button type="button" onclick="buy('monthly','Mensile','14,90 €')" class="mt-4 w-full py-2.5 rounded-full bg-white text-slate-900 text-sm font-bold shadow-md hover:bg-slate-100 border border-slate-200" data-i18n="buy">Attiva</button></div>
 <div class="rounded-2xl border bg-white p-5"><div class="text-xs font-semibold text-slate-500" data-i18n="p2_name">10 piani</div><div class="text-3xl font-extrabold mt-2">19,90 €</div><button type="button" onclick="buy('pack10','10 piani','19,90 €')" class="mt-4 w-full py-2.5 rounded-full border-2 border-brand-600 text-brand-700 text-sm font-semibold" data-i18n="buy">Attiva</button></div>
 </div>
 </section>
@@ -348,10 +380,10 @@ hero_cta1:'Avvia pianificazione',hero_cta2:'Parla con ST AI',home_map_label:'Ant
 cat_pl:'Interessi → tappe → PDF',cat_ai:'Domande su dove, come, quando',cat_fl:'Ricerca nel sito',cat_list:'Pacchetti destinazione',
 p1_name:'Analisi',p2_name:'10 piani',p3_name:'Mensile',buy:'Attiva',
 demo_banner:'Wizard completo: interessi, ritmo, orari. Output con mappa, tappe e PDF.',wiz_title:'Pianificazione viaggio',
-wiz_s1:'1/5 · Dove e con chi',wiz_s2:'2/5 · Come ti muovi',wiz_s3:'3/5 · Interessi (guidano le tappe)',wiz_s4:'4/5 · Alloggio e vincoli',
+wiz_s1:'1/5 · Dove e con chi',wiz_s2:'2/5 · Come ti muovi',wiz_s3:'3/5 · Interessi (guidano le tappe)',wiz_s4:'4/5 · Età, animali, alloggio',
 q_people:'Viaggiatori',q_dest:'Destinazione (città o area)',q_when:'Quando',q_days:'Durata',q_transport:'Mezzo principale',
 q_local:'Spostamenti in destinazione',q_pace:'Ritmo di visita',q_budget:'Budget totale (€)',q_int:'Interesse principale',q_int2:'Secondo interesse',
-q_food:'Preferenze pasto',q_time:'Fascia oraria preferita per le visite',q_stay:'Tipo alloggio',q_style:'Fascia',q_notes:'Note libere (opzionale)',
+q_food:'Preferenze pasto',q_time:'Fascia oraria preferita per le visite',q_stay:'Tipo alloggio',q_style:'Fascia',q_age_adults:'Adulti (18–64)',q_age_senior:'Over 65',q_age_child:'Bambini 0–12',q_age_teen:'Ragazzi 13–17',q_pets:'Animali al seguito',o_pets_none:'Nessuno',o_pets_dog:'Cane',o_pets_cat:'Gatto',o_pets_other:'Altro animale',q_pets_need:'Esigenze pet-friendly',o_pets_hotel:'Alloggio che accetta animali',o_pets_beach:'Spiagge / parchi pet-friendly',o_pets_both:'Alloggio + luoghi pet-friendly',q_access:'Accessibilità / mobilità ridotta',o_access_none:'Nessuna esigenza particolare',o_access_steps:'Evitare scale / percorsi impegnativi',o_access_wheel:'Accesso carrozzina / ridotta mobilità',o_access_stroller:'Passeggino / percorsi comodi',q_notes:'Note libere (opzionale)',
 o_flex:'Date flessibili',o_walk:'A piedi / poco raggio',o_transit:'Mezzi pubblici',o_car:'Auto a noleggio',o_mix:'Misto',
 o_slow:'Rilassato (poche tappe/giorno)',o_balanced:'Equilibrato',o_intense:'Intenso (molte tappe)',
 o_local_food:'Cucina locale',o_quick:'Veloce / street food',o_fine:'Ristoranti curati',
@@ -376,10 +408,10 @@ hero_cta1:'Start planning',hero_cta2:'Talk to ST AI',home_map_label:'Itinerary m
 cat_pl:'Interests → stops → PDF',cat_ai:'Questions on where, how, when',cat_fl:'On-site search',cat_list:'Destination packages',
 p1_name:'Analysis',p2_name:'10 plans',p3_name:'Monthly',buy:'Activate',
 demo_banner:'Full wizard: interests, pace, times. Output with map, stops and PDF.',wiz_title:'Trip planning',
-wiz_s1:'1/5 · Where and who',wiz_s2:'2/5 · How you move',wiz_s3:'3/5 · Interests (drive the stops)',wiz_s4:'4/5 · Stay and constraints',
+wiz_s1:'1/5 · Where and who',wiz_s2:'2/5 · How you move',wiz_s3:'3/5 · Interests (drive the stops)',wiz_s4:'4/5 · Ages, pets, stay',
 q_people:'Travellers',q_dest:'Destination (city or area)',q_when:'When',q_days:'Duration',q_transport:'Main transport',
 q_local:'Local mobility',q_pace:'Visit pace',q_budget:'Total budget (€)',q_int:'Main interest',q_int2:'Second interest',
-q_food:'Meal preference',q_time:'Preferred visit time band',q_stay:'Stay type',q_style:'Tier',q_notes:'Free notes (optional)',
+q_food:'Meal preference',q_time:'Preferred visit time band',q_stay:'Stay type',q_style:'Tier',q_age_adults:'Adults (18–64)',q_age_senior:'Over 65',q_age_child:'Children 0–12',q_age_teen:'Teens 13–17',q_pets:'Pets travelling',o_pets_none:'None',o_pets_dog:'Dog',o_pets_cat:'Cat',o_pets_other:'Other pet',q_pets_need:'Pet-friendly needs',o_pets_hotel:'Pet-friendly stay',o_pets_beach:'Pet-friendly beaches/parks',o_pets_both:'Stay + pet-friendly places',q_access:'Accessibility / reduced mobility',o_access_none:'No special needs',o_access_steps:'Avoid stairs / hard paths',o_access_wheel:'Wheelchair / reduced mobility',o_access_stroller:'Stroller-friendly routes',q_notes:'Free notes (optional)',
 o_flex:'Flexible dates',o_walk:'Walk / short range',o_transit:'Public transport',o_car:'Rental car',o_mix:'Mixed',
 o_slow:'Relaxed (few stops/day)',o_balanced:'Balanced',o_intense:'Intense (many stops)',
 o_local_food:'Local cuisine',o_quick:'Quick / street food',o_fine:'Fine dining',
@@ -562,6 +594,13 @@ function buildPlan(){
   var timeBand=document.getElementById('w-time').value;
   var local=document.getElementById('w-local').value;
   var notes=(document.getElementById('w-notes').value||'').trim();
+  var ageAdults=(document.getElementById('w-age-adults')||{}).value||'2';
+  var ageSenior=(document.getElementById('w-age-senior')||{}).value||'0';
+  var ageChild=(document.getElementById('w-age-child')||{}).value||'0';
+  var ageTeen=(document.getElementById('w-age-teen')||{}).value||'0';
+  var pets=(document.getElementById('w-pets')||{}).value||'none';
+  var petsNeed=(document.getElementById('w-pets-need')||{}).value||'both';
+  var access=(document.getElementById('w-access')||{}).value||'none';
   var when=document.getElementById('w-when').value;
   var style=document.getElementById('w-style').value;
 
@@ -569,7 +608,7 @@ function buildPlan(){
   for(var d=1;d<=nDays;d++)days.push(buildDayPlan(d,int1,int2,pace,food,timeBand,dest));
 
   var center=destCoords(dest);
-  lastPlan={dest:dest,peo:peo,nDays:nDays,bud:bud,tr:tr,pace:pace,int1:int1,int2:int2,food:food,timeBand:timeBand,local:local,notes:notes,when:when,style:style,days:days,center:center,selected:selected};
+  lastPlan={dest:dest,peo:peo,nDays:nDays,bud:bud,tr:tr,pace:pace,int1:int1,int2:int2,food:food,timeBand:timeBand,local:local,notes:notes,when:when,style:style,ageAdults:ageAdults,ageSenior:ageSenior,ageChild:ageChild,ageTeen:ageTeen,pets:pets,petsNeed:petsNeed,access:access,days:days,center:center,selected:selected};
 
   var html='';
   html+='<div class="rounded-2xl border bg-white p-4 shadow-sm flex flex-wrap gap-2 text-sm mb-4">';
@@ -581,6 +620,18 @@ function buildPlan(){
   html+='<span class="px-3 py-1 rounded-full bg-violet-100 text-violet-800">'+esc(int1)+(int2&&int2!=='none'?' + '+esc(int2):'')+'</span>';
   html+='<span class="px-3 py-1 rounded-full bg-slate-100">'+esc(pace)+'</span></div>';
   if(notes)html+='<p class="text-sm text-slate-600 mb-3"><em>'+esc(notes)+'</em></p>';
+  html+='<div class="flex flex-wrap gap-2 text-xs mb-4">';
+  html+='<span class="px-2 py-1 rounded-full bg-slate-100">'+esc(t('q_age_adults'))+': '+esc(ageAdults)+'</span>';
+  if(ageSenior&&ageSenior!=='0')html+='<span class="px-2 py-1 rounded-full bg-slate-100">'+esc(t('q_age_senior'))+': '+esc(ageSenior)+'</span>';
+  if(ageChild&&ageChild!=='0')html+='<span class="px-2 py-1 rounded-full bg-sky-100 text-sky-800">'+esc(t('q_age_child'))+': '+esc(ageChild)+'</span>';
+  if(ageTeen&&ageTeen!=='0')html+='<span class="px-2 py-1 rounded-full bg-sky-100 text-sky-800">'+esc(t('q_age_teen'))+': '+esc(ageTeen)+'</span>';
+  if(pets&&pets!=='none')html+='<span class="px-2 py-1 rounded-full bg-amber-100 text-amber-900">🐾 '+esc(pets)+(petsNeed?(' · '+esc(petsNeed)):'')+'</span>';
+  if(access&&access!=='none')html+='<span class="px-2 py-1 rounded-full bg-violet-100 text-violet-800">'+esc(t('q_access'))+': '+esc(access)+'</span>';
+  html+='</div>';
+  if(ageChild&&ageChild!=='0'){days.forEach(function(day){day.items.push({time:'16:30',title:(lang==='it'?'Pausa famiglia / area soft':'Family soft break'),type:'poi',dur:45});});}
+  if(pets&&pets!=='none'){days.forEach(function(day){day.items.push({time:'17:15',title:(lang==='it'?'Area / passeggiata pet-friendly':'Pet-friendly walk area'),type:'poi',dur:40});});}
+  if(access==='steps'||access==='wheelchair'||access==='stroller'){days.forEach(function(day){day.items=day.items.map(function(it){if(it.type==='poi')it.title=it.title+' · ✓ access';return it});});}
+
 
   if(selected.flight)html+='<div class="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm mb-3">✈️ '+esc(selected.flight.carrier)+' '+esc(selected.flight.from)+'→'+esc(selected.flight.to)+' · '+selected.flight.price+' €</div>';
   if(selected.cruise)html+='<div class="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm mb-3">🚢 '+esc(selected.cruise.line)+' · '+selected.cruise.price+' €</div>';
@@ -669,7 +720,10 @@ var AI_Q=[
   {id:'when',it:'In che periodo preferisci partire e per quanti giorni?',en:'Which period do you prefer and for how many days?'},
   {id:'how',it:'Come preferisci muoverti in loco (a piedi, mezzi, auto) e che ritmo (rilassato / equilibrato / intenso)?',en:'How do you prefer to move locally (walk, transit, car) and what pace (relaxed / balanced / intense)?'},
   {id:'food',it:'Per i pasti: cucina locale, street food o ristoranti più curati?',en:'For meals: local cuisine, street food or finer restaurants?'},
-  {id:'time',it:'Preferisci visite al mattino, giornata intera o pomeriggio/tramonto?',en:'Prefer morning visits, full day, or afternoon/sunset?'}
+  {id:'time',it:'Preferisci visite al mattino, giornata intera o pomeriggio/tramonto?',en:'Prefer morning visits, full day, or afternoon/sunset?'},
+  {id:'ages',it:'Quanti adulti, bambini (0–12), ragazzi (13–17) e over 65 viaggiano?',en:'How many adults, children (0–12), teens (13–17) and over-65 are travelling?'},
+  {id:'pets',it:'Portate animali? Se sì: cane, gatto o altro, e vi serve alloggio/luoghi pet-friendly?',en:'Any pets? If yes: dog, cat or other, and do you need pet-friendly stay/places?'},
+  {id:'access',it:'Ci sono esigenze di accessibilità (scale, carrozzina, passeggino)?',en:'Any accessibility needs (stairs, wheelchair, stroller)?'}
 ];
 
 function aiStartInterview(){
@@ -751,6 +805,26 @@ function applyAiAnswersToWizard(){
     if(/mattin|morning/.test(tl))tm.value='morning';
     else if(/tramont|sunset|pomerig/.test(tl))tm.value='sunset';
     else tm.value='day';
+  }
+
+  if(a.pets){
+    var ps=document.getElementById('w-pets');if(ps){
+      var pl=a.pets.toLowerCase();
+      if(/nessun|none|no pet/.test(pl))ps.value='none';
+      else if(/gatt|cat/.test(pl))ps.value='cat';
+      else if(/cane|dog/.test(pl))ps.value='dog';
+      else if(/animale|pet|altro|other/.test(pl))ps.value='other';
+      var extra=document.getElementById('pets-extra');if(extra)extra.classList.toggle('hidden',ps.value==='none');
+    }
+  }
+  if(a.access){
+    var ac=document.getElementById('w-access');if(ac){
+      var al=a.access.toLowerCase();
+      if(/carrozz|wheel/.test(al))ac.value='wheelchair';
+      else if(/passegg|stroller/.test(al))ac.value='stroller';
+      else if(/scale|stair|impegn/.test(al))ac.value='steps';
+      else if(/nessun|none|no /.test(al))ac.value='none';
+    }
   }
 }
 
@@ -837,6 +911,11 @@ window.wiz=wiz;window.resetWizard=resetWizard;window.exportPDF=exportPDF;
 window.sendChat=sendChat;window.aiStartInterview=aiStartInterview;
 window.searchFlights=searchFlights;
 
+var petsSel=document.getElementById('w-pets');
+if(petsSel){
+  function syncPets(){var extra=document.getElementById('pets-extra');if(!extra)return;extra.classList.toggle('hidden', petsSel.value==='none');}
+  petsSel.addEventListener('change',syncPets);syncPets();
+}
 document.getElementById('chat-in').addEventListener('keypress',function(e){if(e.key==='Enter')sendChat()});
 try{selected=JSON.parse(localStorage.getItem('st_selected')||'null')||{flight:null,cruise:null}}catch(e){}
 applyLang();refreshAccess();
