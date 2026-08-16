@@ -22,7 +22,11 @@ body{font-family:Inter,system-ui,sans-serif}
 .wizard-step{display:none}.wizard-step.active{display:block;animation:fadeIn .3s ease}
 .card-h:hover{transform:translateY(-3px);box-shadow:0 14px 28px -10px rgba(37,99,235,.18)}
 .listing:hover{border-color:#93c5fd}
-#plan-map,#ai-map{height:280px;border-radius:12px;z-index:1}
+#plan-map,#home-map,#ai-map{height:280px;border-radius:12px;z-index:0;isolation:isolate;overflow:hidden}
+.leaflet-container{z-index:0!important}
+.leaflet-pane,.leaflet-control{z-index:1!important}
+header.sticky{z-index:9999!important}
+.lang-menu{z-index:10000}
 .chat-b{max-width:90%}
 .poi-green{background:#10b981;border:2px solid #fff}
 .poi-pink{background:#d946ef;border:2px solid #fff}
@@ -36,7 +40,7 @@ body{font-family:Inter,system-ui,sans-serif}
 </head>
 <body class="bg-slate-50 text-slate-800">
 
-<header class="sticky top-0 z-50 glass border-b border-slate-200/80 no-print">
+<header class="sticky top-0 glass border-b border-slate-200/80 no-print" style="z-index:9999">
 <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-2">
 <a href="#" onclick="go('home');return false" class="flex items-center gap-2">
 <span class="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-600 to-accent-600 text-white font-extrabold flex items-center justify-center text-xs">ST</span>
@@ -312,7 +316,7 @@ body{font-family:Inter,system-ui,sans-serif}
 <button type="button" onclick="go('home')" class="text-sm text-brand-600 font-semibold mb-2">← Home</button>
 <h1 class="text-3xl font-extrabold mb-4" data-i18n="list_title">Inserzioni</h1>
 <div class="flex gap-2 mb-4"><select id="list-filter" onchange="renderListings()" class="px-3 py-2 rounded-xl border text-sm"><option value="all">Tutte</option><option value="city">City</option><option value="beach">Mare</option><option value="adventure">Avventura</option></select>
-<input id="list-q" oninput="renderListings()" class="px-3 py-2 rounded-xl border text-sm" placeholder="Cerca"/></div>
+<input id="list-q" type="search" oninput="renderListings()" onkeyup="renderListings()" class="px-3 py-2 rounded-xl border text-sm min-w-[12rem]" placeholder="Cerca destinazione…"/></div>
 <div id="listings-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
 <div id="listing-detail" class="hidden mt-6 rounded-2xl border bg-white p-5"></div>
 </section>
@@ -897,26 +901,65 @@ function renderSelected(){
   box.classList.remove('hidden');box.innerHTML=parts.join(' · ');
 }
 var LISTINGS=[
-  {id:'trapani',title:'Trapani',titleEn:'Trapani',cat:'beach',days:5,price:520,img:'https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=600&q=80',desc:'Costa ovest',descEn:'West coast'},
-  {id:'bled',title:'Bled',titleEn:'Bled',cat:'adventure',days:4,price:480,img:'https://images.unsplash.com/photo-1516550893923-42d28e5677af?w=600&q=80',desc:'Lago',descEn:'Lake'},
-  {id:'roma',title:'Roma',titleEn:'Rome',cat:'city',days:4,price:450,img:'https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=600&q=80',desc:'Città eterna',descEn:'Eternal city'}
+  {id:'trapani',title:'Trapani',titleEn:'Trapani',cat:'beach',days:5,price:520,img:'https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=600&q=80',desc:'Costa ovest Sicilia',descEn:'West Sicily coast',tags:'sicilia mare spiaggia'},
+  {id:'bled',title:'Bled',titleEn:'Bled',cat:'adventure',days:4,price:480,img:'https://images.unsplash.com/photo-1516550893923-42d28e5677af?w=600&q=80',desc:'Lago di Bled',descEn:'Lake Bled',tags:'slovenia lago natura'},
+  {id:'roma',title:'Roma',titleEn:'Rome',cat:'city',days:4,price:450,img:'https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=600&q=80',desc:'Città eterna',descEn:'Eternal city',tags:'lazio colosseo'},
+  {id:'napoli',title:'Napoli',titleEn:'Naples',cat:'city',days:4,price:420,img:'https://images.unsplash.com/photo-1534113414509-0e04223d2488?w=600&q=80',desc:'Golfo e centro storico',descEn:'Bay and old town',tags:'campania vesuvio pizza'},
+  {id:'palermo',title:'Palermo',titleEn:'Palermo',cat:'city',days:4,price:400,img:'https://images.unsplash.com/photo-1587595431973-160d0d94add1?w=600&q=80',desc:'Mercati e cultura',descEn:'Markets and culture',tags:'sicilia'},
+  {id:'amalfi',title:'Amalfi',titleEn:'Amalfi',cat:'beach',days:5,price:750,img:'https://images.unsplash.com/photo-1535189043414-cfca9a35b5c7?w=600&q=80',desc:'Costiera amalfitana',descEn:'Amalfi coast',tags:'campania mare'}
 ];
 function renderListings(){
-  var grid=document.getElementById('listings-grid');if(!grid)return;
-  var f=(document.getElementById('list-filter')||{}).value||'all';
-  var q=((document.getElementById('list-q')||{}).value||'').toLowerCase();
-  var items=LISTINGS.filter(function(L){return (f==='all'||L.cat===f)&&(!q||L.title.toLowerCase().indexOf(q)>=0||L.id.indexOf(q)>=0)});
+  var grid=document.getElementById('listings-grid');
+  if(!grid)return;
+  var filterEl=document.getElementById('list-filter');
+  var qEl=document.getElementById('list-q');
+  var f=(filterEl&&filterEl.value)?filterEl.value:'all';
+  var q=(qEl&&qEl.value)?String(qEl.value).toLowerCase().trim():'';
+  var items=LISTINGS.filter(function(L){
+    if(f!=='all'&&L.cat!==f)return false;
+    if(!q)return true;
+    var title=(L.title||'').toLowerCase();
+    var titleEn=(L.titleEn||'').toLowerCase();
+    var desc=(L.desc||'').toLowerCase();
+    var tags=(L.tags||'').toLowerCase();
+    var id=(L.id||'').toLowerCase();
+    return title.indexOf(q)>=0||titleEn.indexOf(q)>=0||desc.indexOf(q)>=0||tags.indexOf(q)>=0||id.indexOf(q)>=0;
+  });
+  var detail=document.getElementById('listing-detail');
+  if(detail&&q){detail.classList.add('hidden');detail.innerHTML='';}
+  if(!items.length){
+    grid.innerHTML='<p class="col-span-full text-center text-slate-500 py-10">'+esc(t('no_results'))+(q?(' — «'+esc(q)+'»'):'')+'</p>';
+    return;
+  }
   grid.innerHTML=items.map(function(L){
     var title=lang==='en'?L.titleEn:L.title;
-    return '<button type="button" data-id="'+L.id+'" class="lb listing text-left rounded-2xl border bg-white overflow-hidden w-full"><div class="h-32"><img src="'+L.img+'" class="w-full h-full object-cover" alt=""/></div><div class="p-3 font-bold">'+esc(title)+'</div></button>';
-  }).join('')||('<p>'+esc(t('no_results'))+'</p>');
-  grid.querySelectorAll('.lb').forEach(function(b){b.addEventListener('click',function(){
-    var L=LISTINGS.find(function(x){return x.id===b.getAttribute('data-id')});
-    var box=document.getElementById('listing-detail');box.classList.remove('hidden');
-    var title=lang==='en'?L.titleEn:L.title;
-    box.innerHTML='<h2 class="text-xl font-extrabold">'+esc(title)+'</h2><p class="text-sm text-slate-600 mt-1">'+esc(lang==='en'?L.descEn:L.desc)+'</p><button type="button" class="mt-3 px-4 py-2 rounded-full bg-brand-600 text-white text-sm use">'+esc(t('plan_this'))+'</button>';
-    box.querySelector('.use').onclick=function(){go('plan');document.getElementById('w-dest').value=title};
-  })});
+    var desc=lang==='en'?L.descEn:L.desc;
+    return '<button type="button" data-id="'+esc(L.id)+'" class="lb listing text-left rounded-2xl border bg-white overflow-hidden w-full shadow-sm hover:shadow-md transition">'+
+      '<div class="h-32 bg-slate-100"><img src="'+esc(L.img)+'" class="w-full h-full object-cover" alt="" loading="lazy"/></div>'+
+      '<div class="p-3"><div class="font-bold">'+esc(title)+'</div><div class="text-xs text-slate-500 mt-1">'+esc(desc)+'</div>'+
+      '<div class="text-sm font-semibold text-brand-700 mt-2">'+esc(t('from'))+' '+L.price+' €</div></div></button>';
+  }).join('');
+  grid.querySelectorAll('.lb').forEach(function(b){
+    b.addEventListener('click',function(){openListing(b.getAttribute('data-id'));});
+  });
+}
+function openListing(id){
+  var L=LISTINGS.find(function(x){return x.id===id});
+  if(!L)return;
+  var box=document.getElementById('listing-detail');
+  if(!box)return;
+  box.classList.remove('hidden');
+  var title=lang==='en'?L.titleEn:L.title;
+  var desc=lang==='en'?L.descEn:L.desc;
+  box.innerHTML='<div class="flex flex-col sm:flex-row gap-4">'+
+    '<img src="'+esc(L.img)+'" class="w-full sm:w-48 h-36 object-cover rounded-xl" alt=""/>'+
+    '<div class="flex-1"><h2 class="text-xl font-extrabold">'+esc(title)+'</h2>'+
+    '<p class="text-sm text-slate-600 mt-1">'+esc(desc)+'</p>'+
+    '<p class="text-sm mt-2">'+L.days+' '+esc(t('days_label'))+' · <strong>'+esc(t('from'))+' '+L.price+' €</strong></p>'+
+    '<button type="button" class="mt-3 px-4 py-2 rounded-full bg-brand-600 text-white text-sm font-semibold use">'+esc(t('plan_this'))+'</button></div></div>';
+  var use=box.querySelector('.use');
+  if(use)use.onclick=function(){go('plan');var d=document.getElementById('w-dest');if(d)d.value=title;};
+  try{box.scrollIntoView({behavior:'smooth',block:'nearest'});}catch(e){}
 }
 
 
@@ -926,17 +969,22 @@ function searchFromHome(){
   go('listings');
   setTimeout(function(){
     var lq=document.getElementById('list-q');
-    if(lq){lq.value=q;renderListings();}
-    if(q&&typeof openListing==='function'){
-      // try match listing id/title
+    if(lq){
+      lq.value=q;
+      renderListings();
+      lq.focus();
+    }
+    if(q){
       var low=q.toLowerCase();
-      var hit=null;
-      if(typeof LISTINGS!=='undefined'){
-        hit=LISTINGS.find(function(L){return L.id.indexOf(low)>=0||L.title.toLowerCase().indexOf(low)>=0||(L.titleEn||'').toLowerCase().indexOf(low)>=0});
-      }
+      var hit=LISTINGS.find(function(L){
+        return (L.id||'').toLowerCase().indexOf(low)>=0||
+          (L.title||'').toLowerCase().indexOf(low)>=0||
+          (L.titleEn||'').toLowerCase().indexOf(low)>=0||
+          (L.tags||'').toLowerCase().indexOf(low)>=0;
+      });
       if(hit)openListing(hit.id);
     }
-  },50);
+  },60);
 }
 function notesToAI(){
   var notes=(document.getElementById('w-notes')||{}).value||'';
@@ -976,6 +1024,8 @@ function notesToAI(){
 }
 
 window.searchFromHome=searchFromHome;
+window.renderListings=renderListings;
+window.openListing=openListing;
 window.notesToAI=notesToAI;
 window.go=go;window.buy=buy;window.setLang=setLang;window.toggleLang=toggleLang;
 window.toggleMobile=toggleMobile;window.closeMobile=closeMobile;
