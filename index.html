@@ -48,7 +48,7 @@ header.sticky{z-index:9999!important}
 </a>
 <nav class="hidden lg:flex items-center gap-0.5 text-sm font-medium">
 <button type="button" onclick="go('home')" class="px-3 py-2 rounded-lg text-slate-600 hover:bg-brand-50" data-i18n="nav_home">Home</button>
-<button type="button" onclick="go('listings')" class="px-3 py-2 rounded-lg text-slate-600 hover:bg-brand-50" data-i18n="nav_listings">Destinazioni</button>
+<button type="button" onclick="go('listings')" class="px-3 py-2 rounded-lg text-slate-600 hover:bg-brand-50" data-i18n="nav_listings">Esplora</button>
 <button type="button" onclick="go('plan')" class="px-3 py-2 rounded-lg text-slate-600 hover:bg-brand-50" data-i18n="nav_plan">Pianifica</button>
 <button type="button" onclick="go('flights')" class="px-3 py-2 rounded-lg text-slate-600 hover:bg-brand-50" data-i18n="nav_flights">Voli</button>
 <button type="button" onclick="go('cruises')" class="px-3 py-2 rounded-lg text-slate-600 hover:bg-brand-50" data-i18n="nav_cruises">Crociere</button>
@@ -73,7 +73,7 @@ header.sticky{z-index:9999!important}
 <button type="button" onclick="go('flights');closeMobile()" class="block w-full text-left px-3 py-2" data-i18n="nav_flights">Voli</button>
 <button type="button" onclick="go('cruises');closeMobile()" class="block w-full text-left px-3 py-2" data-i18n="nav_cruises">Crociere</button>
 <button type="button" onclick="go('ai');closeMobile()" class="block w-full text-left px-3 py-2">ST AI</button>
-<button type="button" onclick="go('listings');closeMobile()" class="block w-full text-left px-3 py-2" data-i18n="nav_listings">Destinazioni</button>
+<button type="button" onclick="go('listings');closeMobile()" class="block w-full text-left px-3 py-2" data-i18n="nav_listings">Esplora</button>
 <button type="button" onclick="go('prezzi');closeMobile()" class="block w-full text-left px-3 py-2" data-i18n="nav_pricing">Prezzi</button>
 </div>
 </header>
@@ -108,7 +108,7 @@ header.sticky{z-index:9999!important}
 <button type="button" onclick="go('plan')" class="card-h text-left rounded-2xl border p-5 transition"><div class="font-bold" data-i18n="nav_plan">Pianifica</div><p class="text-sm text-slate-500 mt-1" data-i18n="cat_pl">Interessi → tappe → PDF</p></button>
 <button type="button" onclick="go('ai')" class="card-h text-left rounded-2xl border p-5 transition"><div class="font-bold">ST AI</div><p class="text-sm text-slate-500 mt-1" data-i18n="cat_ai">Domande su dove, come, quando</p></button>
 <button type="button" onclick="go('flights')" class="card-h text-left rounded-2xl border p-5 transition"><div class="font-bold" data-i18n="nav_flights">Voli</div><p class="text-sm text-slate-500 mt-1" data-i18n="cat_fl">Ricerca nel sito</p></button>
-<button type="button" onclick="go('listings')" class="card-h text-left rounded-2xl border p-5 transition"><div class="font-bold" data-i18n="nav_listings">Destinazioni</div><p class="text-sm text-slate-500 mt-1" data-i18n="cat_list">Pacchetti destinazione</p></button>
+<button type="button" onclick="go('listings')" class="card-h text-left rounded-2xl border p-5 transition"><div class="font-bold" data-i18n="nav_listings">Esplora</div><p class="text-sm text-slate-500 mt-1" data-i18n="cat_list">Mete, stagioni e idee viaggio</p></button>
 </div>
 </section>
 <section class="py-12 bg-slate-900 text-white">
@@ -312,30 +312,58 @@ header.sticky{z-index:9999!important}
 </div>
 
 <div id="page-listings" class="page">
-<section class="py-12 max-w-6xl mx-auto px-4">
-<button type="button" onclick="go('home')" class="text-sm text-brand-600 font-semibold mb-2">← Home</button>
-<h1 class="text-3xl font-extrabold mb-4" data-i18n="list_title">Destinazioni</h1>
-<p class="text-slate-600 text-sm mb-4" data-i18n="list_sub">Cerca città e destinazioni. ST AI suggerisce mete anche se scrivi in modo libero.</p>
-<div class="flex flex-wrap gap-2 mb-2 items-center">
-<select id="list-filter" onchange="renderListings()" class="px-3 py-2 rounded-xl border text-sm bg-white">
-<option value="all" data-i18n="f_all">Tutte</option>
-<option value="city">City</option>
-<option value="beach">Mare</option>
-<option value="adventure">Avventura</option>
-<option value="cruise">Crociera</option>
-</select>
-<div class="flex-1 min-w-[14rem] flex gap-2">
-<input id="list-q" type="search" oninput="onDestSearchInput()" class="flex-1 px-4 py-2 rounded-xl border text-sm" placeholder="Es. Napoli, mare Sicilia, laghi…" data-i18n-ph="dest_search_ph"/>
-<button type="button" onclick="aiDestSearch()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-brand-600 to-accent-600 text-white text-sm font-semibold shrink-0" data-i18n="dest_ai_btn">ST AI</button>
+<section class="py-12 max-w-5xl mx-auto px-4">
+<button type="button" onclick="go('home')" class="text-sm text-brand-600 font-semibold mb-3">← Home</button>
+<h1 class="text-3xl font-extrabold" data-i18n="explore_title">Esplora mete</h1>
+<p class="text-slate-600 mt-2 mb-6" data-i18n="explore_sub">Cerca una città, un tipo di viaggio o un interesse. ST AI propone mete e ti porta al piano.</p>
+
+<div class="rounded-2xl border bg-white p-4 shadow-sm mb-8">
+<div class="flex flex-col sm:flex-row gap-2">
+<input id="list-q" type="search" oninput="onDestSearchInput()" class="flex-1 px-4 py-3 rounded-xl border text-sm" placeholder="Es. Napoli, mare in Sicilia, laghi in primavera…" data-i18n-ph="dest_search_ph"/>
+<button type="button" onclick="aiDestSearch()" class="px-5 py-3 rounded-xl bg-gradient-to-r from-brand-600 to-accent-600 text-white text-sm font-semibold" data-i18n="dest_ai_btn">Cerca con ST AI</button>
 </div>
-</div>
-<p id="ai-dest-hint" class="text-xs text-slate-500 mb-4 hidden"></p>
-<div id="listings-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
-<div id="listing-detail" class="hidden mt-6 rounded-2xl border bg-white p-5"></div>
-</section>
+<p id="ai-dest-hint" class="text-xs text-slate-500 mt-2 hidden"></p>
+<select id="list-filter" class="hidden"><option value="all">all</option></select>
 </div>
 
-<!-- ST AI deep interview -->
+<div class="mb-8">
+<div class="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-3" data-i18n="explore_by_interest">Esplora per interesse</div>
+<div class="flex flex-wrap gap-2">
+<button type="button" onclick="exploreInterest('mare')" class="px-4 py-2 rounded-full border bg-white text-sm font-medium hover:border-brand-400 hover:bg-brand-50">🌊 <span data-i18n="int_sea">Mare</span></button>
+<button type="button" onclick="exploreInterest('natura')" class="px-4 py-2 rounded-full border bg-white text-sm font-medium hover:border-brand-400 hover:bg-brand-50">🏞️ <span data-i18n="int_nature">Natura</span></button>
+<button type="button" onclick="exploreInterest('cultura')" class="px-4 py-2 rounded-full border bg-white text-sm font-medium hover:border-brand-400 hover:bg-brand-50">🏛️ <span data-i18n="int_culture">Cultura</span></button>
+<button type="button" onclick="exploreInterest('cibo')" class="px-4 py-2 rounded-full border bg-white text-sm font-medium hover:border-brand-400 hover:bg-brand-50">🍝 <span data-i18n="int_food">Cibo</span></button>
+<button type="button" onclick="exploreInterest('città')" class="px-4 py-2 rounded-full border bg-white text-sm font-medium hover:border-brand-400 hover:bg-brand-50">🌆 <span data-i18n="int_city">Città</span></button>
+<button type="button" onclick="exploreInterest('famiglia')" class="px-4 py-2 rounded-full border bg-white text-sm font-medium hover:border-brand-400 hover:bg-brand-50">👨‍👩‍👧‍👦 <span data-i18n="int_family">Famiglia</span></button>
+</div>
+</div>
+
+<div class="mb-8 rounded-2xl bg-slate-900 text-white p-5">
+<div class="text-sm font-semibold text-slate-300 mb-2" data-i18n="explore_season">Idee per stagione</div>
+<div class="grid sm:grid-cols-2 gap-3 text-sm">
+<button type="button" onclick="exploreInterest('primavera città')" class="text-left rounded-xl bg-white/10 hover:bg-white/15 p-3">🌸 <span data-i18n="sea_spring">Primavera — città d’arte e temperature miti</span></button>
+<button type="button" onclick="exploreInterest('mare estate')" class="text-left rounded-xl bg-white/10 hover:bg-white/15 p-3">☀️ <span data-i18n="sea_summer">Estate — mare e costiere</span></button>
+<button type="button" onclick="exploreInterest('autunno enogastronomia')" class="text-left rounded-xl bg-white/10 hover:bg-white/15 p-3">🍂 <span data-i18n="sea_autumn">Autunno — cibo e borghi</span></button>
+<button type="button" onclick="exploreInterest('inverno città')" class="text-left rounded-xl bg-white/10 hover:bg-white/15 p-3">❄️ <span data-i18n="sea_winter">Inverno — capitali e musei</span></button>
+</div>
+</div>
+
+<div class="flex items-center justify-between mb-3">
+<div class="text-sm font-semibold text-slate-500 uppercase tracking-wide" data-i18n="explore_popular">Mete in evidenza</div>
+<button type="button" onclick="document.getElementById('list-q').value='';renderListings();var h=document.getElementById('ai-dest-hint');if(h)h.classList.add('hidden');" class="text-xs text-brand-600 font-semibold" data-i18n="explore_all">Mostra tutte</button>
+</div>
+<div id="listings-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+<div id="listing-detail" class="hidden mt-6 rounded-2xl border bg-white p-5 shadow-sm"></div>
+
+<div class="mt-10 rounded-2xl border border-brand-100 bg-brand-50 p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<div>
+<div class="font-bold text-brand-900" data-i18n="explore_cta_t">Hai già la meta?</div>
+<p class="text-sm text-brand-800 mt-1" data-i18n="explore_cta_d">Passa alla pianificazione completa con interessi, età, animali e PDF.</p>
+</div>
+<button type="button" onclick="go('plan')" class="px-5 py-3 rounded-full bg-brand-600 text-white text-sm font-semibold shrink-0" data-i18n="nav_plan">Pianifica</button>
+</div>
+</section>
+</div>
 <div id="page-ai" class="page">
 <section class="py-10 max-w-2xl mx-auto px-4">
 <button type="button" onclick="go('home')" class="text-sm text-brand-600 font-semibold mb-3 no-print">← Home</button>
@@ -397,11 +425,11 @@ header.sticky{z-index:9999!important}
 'use strict';
 var I18N={
 it:{
-nav_home:'Home',nav_listings:'Destinazioni',nav_plan:'Pianifica',nav_flights:'Voli',nav_cruises:'Crociere',nav_pricing:'Prezzi',nav_cta:'Pianifica',
+nav_home:'Home',nav_listings:'Esplora',explore_title:'Esplora mete',explore_sub:'Cerca una città, un tipo di viaggio o un interesse. ST AI propone mete e ti porta al piano.',explore_by_interest:'Esplora per interesse',explore_season:'Idee per stagione',explore_popular:'Mete in evidenza',explore_all:'Mostra tutte',explore_cta_t:'Hai già la meta?',explore_cta_d:'Passa alla pianificazione completa con interessi, età, animali e PDF.',int_sea:'Mare',int_nature:'Natura',int_culture:'Cultura',int_food:'Cibo',int_city:'Città',int_family:'Famiglia',sea_spring:'Primavera — città d’arte e temperature miti',sea_summer:'Estate — mare e costiere',sea_autumn:'Autunno — cibo e borghi',sea_winter:'Inverno — capitali e musei',nav_plan:'Pianifica',nav_flights:'Voli',nav_cruises:'Crociere',nav_pricing:'Prezzi',nav_cta:'Pianifica',
 hero_badge:'Itinerari · Mappa · PDF · ST AI',hero_t1:'Pianificazione completa,',hero_t2:'su misura per i tuoi interessi.',
 hero_sub:'ST AI approfondisce dove, come e quando. Il piano include tappe giornaliere, mappa e export PDF.',
 hero_cta1:'Avvia pianificazione',hero_cta2:'Parla con ST AI',home_map_label:'Anteprima mappa itinerario',home_search_ph:'Cerca città o destinazione (ST AI)…',home_search_btn:'Cerca',notes_ai:'Approfondisci con ST AI',notes_ai_hint:'ST AI legge le note e propone domande o tappe da aggiungere al piano.',
-cat_pl:'Interessi → tappe → PDF',cat_ai:'Domande su dove, come, quando',cat_fl:'Ricerca nel sito',cat_list:'Città e mete con ST AI',
+cat_pl:'Interessi → tappe → PDF',cat_ai:'Domande su dove, come, quando',cat_fl:'Ricerca nel sito',cat_list:'Mete, stagioni e idee viaggio',
 p1_name:'Analisi',p2_name:'10 piani',p3_name:'Mensile',buy:'Attiva',
 demo_banner:'Wizard completo: interessi, ritmo, orari. Output con mappa, tappe e PDF.',wiz_title:'Pianificazione viaggio',
 wiz_s1:'1/5 · Dove e con chi',wiz_s2:'2/5 · Come ti muovi',wiz_s3:'3/5 · Interessi (guidano le tappe)',wiz_s4:'4/5 · Età, animali, alloggio',
@@ -415,7 +443,7 @@ o_morning:'Mattina presto',o_day:'Giornata intera',o_sunset:'Pomeriggio / tramon
 next:'Continua',back:'Indietro',generate:'Genera piano completo',result_title:'Piano di viaggio completo',
 result_sub:'Tappe per interesse, mappa e orari indicativi.',restart:'Nuova',
 fl_title:'Voli',fl_sub:'Risultati nel sito (mock → Amadeus).',fl_search:'Cerca nel sito',fl_select:'Seleziona per il piano',fl_selected:'Aggiunto',
-cr_title:'Crociere',list_title:'Destinazioni',list_sub:'Cerca città e destinazioni. ST AI suggerisce mete anche se scrivi in modo libero.',dest_search_ph:'Es. Napoli, mare Sicilia, laghi…',dest_ai_btn:'ST AI',dest_ai_suggest:'ST AI suggerisce:',dest_ai_none:'Nessuna meta trovata: prova un’altra descrizione.',f_all:'Tutte',
+cr_title:'Crociere',list_title:'Destinazioni',list_sub:'Cerca città e destinazioni. ST AI suggerisce mete anche se scrivi in modo libero.',dest_search_ph:'Es. Napoli, mare Sicilia, laghi…',dest_ai_btn:'Cerca con ST AI',dest_ai_suggest:'ST AI suggerisce:',dest_ai_none:'Nessuna meta trovata: prova un’altra descrizione.',f_all:'Tutte',
 ai_sub:'Intervista guidata: interessi, dove, come, quando',ai_hello:'Ciao, sono ST AI. Posso farti domande mirate su interessi, ritmo e orari per costruire un itinerario preciso. Clicca «Avvia intervista interessi» oppure scrivi liberamente.',
 ai_start:'Avvia intervista interessi',send:'Invia',ai_ph:'Rispondi o chiedi…',
 legal_title:'Policy',refund_1:'Analisi 2 €: non rimborsabile dopo elaborazione salvo guasto tecnico.',privacy_1:'Demo su dispositivo. Produzione: Supabase.',
@@ -425,11 +453,11 @@ map_legend:'● → tappe · ● → ristoro · ● → base',
 day:'Giorno',poi:'Tappa',export_ok:'PDF generato',price_title:'Piani'
 },
 en:{
-nav_home:'Home',nav_listings:'Destinations',list_sub:'Search cities and destinations. ST AI suggests places even from free-text.',dest_search_ph:'E.g. Naples, Sicily sea, lakes…',dest_ai_btn:'ST AI',dest_ai_suggest:'ST AI suggests:',dest_ai_none:'No place found: try another description.',f_all:'All',nav_plan:'Plan',nav_flights:'Flights',nav_cruises:'Cruises',nav_pricing:'Pricing',nav_cta:'Plan',
+nav_home:'Home',nav_listings:'Explore',explore_title:'Explore places',explore_sub:'Search a city, trip type or interest. ST AI suggests places and takes you to the plan.',explore_by_interest:'Browse by interest',explore_season:'Seasonal ideas',explore_popular:'Featured places',explore_all:'Show all',explore_cta_t:'Already have a destination?',explore_cta_d:'Go to full planning with interests, ages, pets and PDF.',int_sea:'Sea',int_nature:'Nature',int_culture:'Culture',int_food:'Food',int_city:'City',int_family:'Family',sea_spring:'Spring — art cities and mild weather',sea_summer:'Summer — sea and coasts',sea_autumn:'Autumn — food and villages',sea_winter:'Winter — capitals and museums',list_sub:'Search cities and destinations. ST AI suggests places even from free-text.',dest_search_ph:'E.g. Naples, Sicily sea, lakes…',dest_ai_btn:'Search with ST AI',dest_ai_suggest:'ST AI suggests:',dest_ai_none:'No place found: try another description.',f_all:'All',nav_plan:'Plan',nav_flights:'Flights',nav_cruises:'Cruises',nav_pricing:'Pricing',nav_cta:'Plan',
 hero_badge:'Itineraries · Map · PDF · ST AI',hero_t1:'Complete planning,',hero_t2:'tailored to your interests.',
 hero_sub:'ST AI digs into where, how and when. The plan includes daily stops, map and PDF export.',
 hero_cta1:'Start planning',hero_cta2:'Talk to ST AI',home_map_label:'Itinerary map preview',home_search_ph:'Search city or destination (ST AI)…',home_search_btn:'Search',notes_ai:'Deepen with ST AI',notes_ai_hint:'ST AI reads your notes and suggests questions or stops for the plan.',
-cat_pl:'Interests → stops → PDF',cat_ai:'Questions on where, how, when',cat_fl:'On-site search',cat_list:'Cities & places with ST AI',
+cat_pl:'Interests → stops → PDF',cat_ai:'Questions on where, how, when',cat_fl:'On-site search',cat_list:'Places, seasons and trip ideas',
 p1_name:'Analysis',p2_name:'10 plans',p3_name:'Monthly',buy:'Activate',
 demo_banner:'Full wizard: interests, pace, times. Output with map, stops and PDF.',wiz_title:'Trip planning',
 wiz_s1:'1/5 · Where and who',wiz_s2:'2/5 · How you move',wiz_s3:'3/5 · Interests (drive the stops)',wiz_s4:'4/5 · Ages, pets, stay',
@@ -443,7 +471,7 @@ o_morning:'Early morning',o_day:'Full day',o_sunset:'Afternoon / sunset',
 next:'Continue',back:'Back',generate:'Generate full plan',result_title:'Complete travel plan',
 result_sub:'Interest-based stops, map and indicative times.',restart:'New',
 fl_title:'Flights',fl_sub:'On-site results (mock → Amadeus).',fl_search:'Search on site',fl_select:'Select for plan',fl_selected:'Added',
-cr_title:'Cruises',list_title:'Destinations',list_sub:'Search cities and destinations. ST AI suggests places even from free-text.',dest_search_ph:'E.g. Naples, Sicily sea, lakes…',dest_ai_btn:'ST AI',dest_ai_suggest:'ST AI suggests:',dest_ai_none:'No place found: try another description.',f_all:'All',
+cr_title:'Cruises',list_title:'Destinations',list_sub:'Search cities and destinations. ST AI suggests places even from free-text.',dest_search_ph:'E.g. Naples, Sicily sea, lakes…',dest_ai_btn:'Cerca con ST AI',dest_ai_suggest:'ST AI suggests:',dest_ai_none:'No place found: try another description.',f_all:'All',
 ai_sub:'Guided interview: interests, where, how, when',ai_hello:'Hi, I am ST AI. I can ask targeted questions on interests, pace and times to build a precise itinerary. Click «Start interest interview» or type freely.',
 ai_start:'Start interest interview',send:'Send',ai_ph:'Reply or ask…',
 legal_title:'Policy',refund_1:'€2 analysis: non-refundable after generation except technical failure.',privacy_1:'Demo on device. Production: Supabase.',
@@ -972,6 +1000,17 @@ function openListing(id){
 
 
 
+
+function exploreInterest(q){
+  var lq=document.getElementById('list-q');
+  if(lq) lq.value=q;
+  go('listings');
+  setTimeout(function(){
+    var el=document.getElementById('list-q');
+    if(el) el.value=q;
+    aiDestSearch();
+  },50);
+}
 function onDestSearchInput(){
   renderListings();
   var hint=document.getElementById('ai-dest-hint');
@@ -1116,6 +1155,7 @@ function notesToAI(){
 window.searchFromHome=searchFromHome;
 window.renderListings=renderListings;
 window.aiDestSearch=aiDestSearch;
+window.exploreInterest=exploreInterest;
 window.onDestSearchInput=onDestSearchInput;
 window.openListing=openListing;
 window.notesToAI=notesToAI;
