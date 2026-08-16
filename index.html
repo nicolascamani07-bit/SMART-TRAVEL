@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="it">
-  
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -501,116 +500,9 @@ header.sticky{z-index:9999!important}
 
 <div id="page-legal" class="page">
 <section class="py-12 max-w-3xl mx-auto px-4 text-sm text-slate-600 space-y-8">
-<button type="button" onclick="go('home')" class="text-brand-600 font-semibold no-print">← Home</button>
-
-<div class="rounded-xl bg-amber-50 border border-amber-200 px-4 py-3 text-amber-900 text-xs">
-<strong>Versione preliminare / demo.</strong> Questi testi verranno aggiornati con i dati completi del titolare prima della pubblicazione definitiva.
-</div>
-
-<h1 class="text-3xl font-extrabold text-slate-900">Policy & Legale</h1>
-<p class="text-slate-500">Ultimo aggiornamento: 17 agosto 2026 · Smart Travel</p>
-
-<!-- NAV INTERNA -->
-<nav class="flex flex-wrap gap-2 text-xs font-semibold no-print">
-<a href="#termini" class="px-3 py-1.5 rounded-full bg-slate-100 hover:bg-brand-50">Termini</a>
-<a href="#privacy" class="px-3 py-1.5 rounded-full bg-slate-100 hover:bg-brand-50">Privacy</a>
-<a href="#cookie" class="px-3 py-1.5 rounded-full bg-slate-100 hover:bg-brand-50">Cookie</a>
-<a href="#vendita" class="px-3 py-1.5 rounded-full bg-slate-100 hover:bg-brand-50">Vendita & Pagamenti</a>
-<a href="#ai" class="px-3 py-1.5 rounded-full bg-slate-100 hover:bg-brand-50">Intelligenza Artificiale</a>
-<a href="#recesso" class="px-3 py-1.5 rounded-full bg-slate-100 hover:bg-brand-50">Recesso</a>
-</nav>
-
-<!-- TERMINI -->
-<div id="termini" class="space-y-3 scroll-mt-24">
-<h2 class="text-xl font-bold text-slate-900 border-b pb-2">1. Termini e condizioni d’uso</h2>
-<p><strong>Titolare del servizio</strong><br>
-Smart Travel – sito dimostrativo raggiungibile all’indirizzo <code class="text-xs bg-slate-100 px-1 rounded">nicolascamani07-bit.github.io</code>.<br>
-I dati anagrafici e fiscali del titolare verranno inseriti nella versione di produzione.</p>
-<p><strong>Oggetto</strong><br>
-La piattaforma consente di pianificare itinerari di viaggio, generare piani giornalieri con mappa e PDF, utilizzare l’assistente ST AI, confrontare voli e hotel in modalità dimostrativa e acquistare piani a pagamento (Analisi, Mensile, 10 piani) tramite Stripe.</p>
-<p><strong>Accesso</strong><br>
-L’utilizzo è consentito a chi ha compiuto 18 anni. Alcune funzionalità richiedono l’acquisto di un piano.</p>
-<p><strong>Dati salvati localmente</strong><br>
-Al momento non è prevista registrazione con account. Preferenze e piani vengono salvati nel browser dell’utente (localStorage). L’utente è responsabile della loro conservazione.</p>
-<p><strong>Utilizzi vietati</strong><br>
-È vietato usare il servizio per scopi illegali, tentare accessi non autorizzati, inserire contenuti offensivi o eludere i limiti dei piani a pagamento.</p>
-<p><strong>Proprietà intellettuale</strong><br>
-Contenuti, design, codice e marchio “Smart Travel” sono riservati. È vietata la riproduzione non autorizzata.</p>
-<p><strong>Limitazioni di responsabilità</strong><br>
-Nei limiti di legge il Titolare non garantisce assenza di interruzioni o errori. Le informazioni generate (inclusi gli output di ST AI) hanno carattere orientativo e non costituiscono consulenza professionale.</p>
-<p><strong>Legge applicabile</strong><br>
-Si applica la legge italiana. Per i consumatori residenti in Italia vale il foro del luogo di residenza del consumatore.</p>
-</div>
-
-<!-- PRIVACY -->
-<div id="privacy" class="space-y-3 scroll-mt-24">
-<h2 class="text-xl font-bold text-slate-900 border-b pb-2">2. Informativa privacy (GDPR) – preliminare</h2>
-<p>Il Titolare del trattamento verrà indicato nella versione definitiva. Per la demo i dati di contatto privacy non sono ancora attivi.</p>
-<p><strong>Dati trattati</strong></p>
-<ul class="list-disc pl-5 space-y-1">
-<li>Dati di navigazione e log tecnici (funzionamento e sicurezza)</li>
-<li>Dati inseriti nei form di pianificazione (destinazione, interessi, età, animali, note) – salvati principalmente in locale</li>
-<li>Messaggi inviati a ST AI (trasmessi a OpenAI per elaborazione)</li>
-<li>Dati di pagamento gestiti interamente da Stripe</li>
-<li>Identificatori pubblicitari di Google AdSense (solo con consenso)</li>
-</ul>
-<p><strong>Finalità e basi giuridiche</strong><br>
-Esecuzione del contratto / misure precontrattuali, interesse legittimo (sicurezza), consenso (pubblicità).</p>
-<p><strong>Destinatari principali</strong><br>
-Stripe (pagamenti), OpenAI (ST AI), Google (AdSense), Cloudflare (Worker), GitHub Pages (hosting). In produzione è previsto anche Supabase.</p>
-<p><strong>Trasferimenti extra-SEE</strong><br>
-OpenAI e Google possono trattare dati fuori dallo Spazio Economico Europeo utilizzando Clausole Contrattuali Standard e altre garanzie GDPR.</p>
-<p><strong>Diritti dell’interessato</strong><br>
-Accesso, rettifica, cancellazione, limitazione, portabilità, opposizione e reclamo al Garante Privacy (www.garanteprivacy.it). I contatti per esercitare i diritti verranno pubblicati nella versione definitiva.</p>
-</div>
-
-<!-- COOKIE -->
-<div id="cookie" class="space-y-3 scroll-mt-24">
-<h2 class="text-xl font-bold text-slate-900 border-b pb-2">3. Cookie Policy – preliminare</h2>
-<p>Il Sito utilizza:</p>
-<ul class="list-disc pl-5 space-y-1">
-<li><strong>Cookie e storage tecnici necessari</strong> (localStorage per lingua e piani, cookie di sessione di Cloudflare/GitHub) – non richiedono consenso.</li>
-<li><strong>Cookie / identificatori di Google AdSense</strong> per la pubblicità – richiedono il consenso dell’utente.</li>
-<li>Cookie di Stripe solo durante il checkout – necessari alla transazione.</li>
-</ul>
-<p>Nella versione di produzione sarà implementato un banner cookie conforme (Rifiuta facoltativi / Personalizza / Accetta tutti) e un centro preferenze permanente nel footer. I cookie pubblicitari non verranno caricati prima del consenso.</p>
-</div>
-
-<!-- VENDITA -->
-<div id="vendita" class="space-y-3 scroll-mt-24">
-<h2 class="text-xl font-bold text-slate-900 border-b pb-2">4. Condizioni di vendita e pagamento</h2>
-<p>Piani disponibili:</p>
-<ul class="list-disc pl-5 space-y-1">
-<li><strong>Analisi</strong> – pagamento una tantum (€ 2,00)</li>
-<li><strong>Mensile</strong> – abbonamento (€ 14,90 / mese)</li>
-<li><strong>10 piani</strong> – pagamento una tantum (€ 19,90)</li>
-</ul>
-<p>I pagamenti sono gestiti da <strong>Stripe</strong>. Il Titolare non memorizza dati di carte di credito.</p>
-<p><strong>Abbonamento Mensile</strong>: si rinnova automaticamente fino a disdetta. La disdetta può essere effettuata tramite il portale clienti Stripe o contattando l’assistenza e ha effetto dalla fine del periodo già pagato.</p>
-</div>
-
-<!-- RECESSO -->
-<div id="recesso" class="space-y-3 scroll-mt-24">
-<h2 class="text-xl font-bold text-slate-900 border-b pb-2">5. Recesso, rimborsi e conformità</h2>
-<p>Per i consumatori si applicano le norme del Codice del Consumo. Il diritto di recesso di 14 giorni può decadere se il servizio digitale è stato eseguito (es. piano già generato) e l’utente ha accettato l’esecuzione anticipata. I rimborsi, quando dovuti, vengono effettuati tramite Stripe.</p>
-</div>
-
-<!-- AI -->
-<div id="ai" class="space-y-3 scroll-mt-24">
-<h2 class="text-xl font-bold text-slate-900 border-b pb-2">6. Informativa sull’Intelligenza Artificiale (ST AI)</h2>
-<ul class="list-disc pl-5 space-y-1">
-<li>Gli output dipendono dai dati forniti dall’utente e possono contenere errori, incompletezze o informazioni non aggiornate.</li>
-<li><strong>Non costituiscono consulenza legale, fiscale, medica, finanziaria o professionale.</strong></li>
-<li>Non garantiscono risultati economici, finanziamenti o approvazioni.</li>
-<li>Le decisioni importanti devono essere verificate con fonti ufficiali e professionisti qualificati.</li>
-<li>I contenuti non devono essere usati per attività illegali o per violare diritti di terzi.</li>
-<li>Si raccomanda di non inserire dati sensibili o informazioni di terzi non necessarie.</li>
-<li>I messaggi inviati a ST AI vengono trasmessi a OpenAI per l’elaborazione.</li>
-</ul>
-</div>
-
-<div class="pt-6 border-t text-xs text-slate-400">
-<p>Documento preliminare per uso dimostrativo. Prima della pubblicazione saranno inseriti i dati completi del titolare e sarà effettuata la revisione legale necessaria.</p>
+<button type="button" onclick="go('home')" class="text-brand-600 font-semibold no-print">← <span data-i18n="nav_home">Home</span></button>
+<div id="legal-content">
+<!-- Contenuto generato dinamicamente da renderLegal() in base alla lingua -->
 </div>
 </section>
 </div>
@@ -620,7 +512,7 @@ Accesso, rettifica, cancellazione, limitazione, portabilità, opposizione e recl
 <div class="max-w-7xl mx-auto px-4 flex flex-wrap justify-between items-center gap-3">
 <span class="font-bold text-slate-800">Smart Travel</span>
 <div class="flex gap-4 text-xs">
-<button type="button" onclick="go('legal')" class="hover:text-brand-600">Policy & Legale</button>
+<button type="button" onclick="go('legal')" class="hover:text-brand-600" data-i18n="nav_legal">Policy & Legale</button>
 <span>© 2026 · ST AI · PDF · Map</span>
 </div>
 </div>
@@ -659,7 +551,7 @@ fl_title:'Voli & Hotel',fl_sub:'Confronta disponibilità e prezzi senza uscire d
 cr_title:'Crociere',list_title:'Destinazioni',list_sub:'Cerca città e destinazioni. ST AI suggerisce mete anche se scrivi in modo libero.',dest_search_ph:'Es. Napoli, mare Sicilia, laghi…',dest_ai_btn:'Cerca con ST AI',dest_ai_suggest:'ST AI suggerisce:',dest_ai_none:'Nessuna meta trovata: prova un’altra descrizione.',f_all:'Tutte',
 ai_sub:'Intervista guidata: interessi, dove, come, quando',ai_hello:'Ciao, sono ST AI. Posso farti domande mirate su interessi, ritmo e orari per costruire un itinerario preciso. Clicca «Avvia intervista interessi» oppure scrivi liberamente.',
 ai_start:'Avvia intervista interessi',send:'Invia',ai_ph:'Rispondi o chiedi…',ai_privacy:'ST AI usa OpenAI solo quando invii un messaggio; non inserire dati sensibili.',
-legal_title:'Policy',refund_1:'Analisi 2 €: non rimborsabile dopo elaborazione salvo guasto tecnico.',privacy_1:'Demo su dispositivo. Produzione: Supabase.',
+legal_title:'Policy',nav_legal:'Policy & Legale',refund_1:'Analisi 2 €: non rimborsabile dopo elaborazione salvo guasto tecnico.',privacy_1:'Demo su dispositivo. Produzione: Supabase.',
 active_plan:'Piano attivo',from:'da',plan_this:'Usa nel piano',days_label:'giorni',fits_budget:'Allineato al budget',no_results:'Nessun risultato',
 morning:'Mattina',afternoon:'Pomeriggio',evening:'Sera',lunch:'Pranzo',dinner:'Cena',
 map_legend:'● → tappe · ● → ristoro · ● → base',
@@ -687,7 +579,7 @@ fl_title:'Flights & Hotels',fl_sub:'Compare availability and prices without leav
 cr_title:'Cruises',list_title:'Destinations',list_sub:'Search cities and destinations. ST AI suggests places even from free-text.',dest_search_ph:'E.g. Naples, Sicily sea, lakes…',dest_ai_btn:'Cerca con ST AI',dest_ai_suggest:'ST AI suggests:',dest_ai_none:'No place found: try another description.',f_all:'All',
 ai_sub:'Guided interview: interests, where, how, when',ai_hello:'Hi, I am ST AI. I can ask targeted questions on interests, pace and times to build a precise itinerary. Click «Start interest interview» or type freely.',
 ai_start:'Start interest interview',send:'Send',ai_ph:'Reply or ask…',ai_privacy:'ST AI uses OpenAI only when you send a message; do not enter sensitive data.',
-legal_title:'Policy',refund_1:'€2 analysis: non-refundable after generation except technical failure.',privacy_1:'Demo on device. Production: Supabase.',
+legal_title:'Policy',nav_legal:'Policy & Legal',refund_1:'€2 analysis: non-refundable after generation except technical failure.',privacy_1:'Demo on device. Production: Supabase.',
 active_plan:'Active plan',from:'from',plan_this:'Use in plan',days_label:'days',fits_budget:'Fits budget',no_results:'No results',
 morning:'Morning',afternoon:'Afternoon',evening:'Evening',lunch:'Lunch',dinner:'Dinner',
 map_legend:'● → interest · ● → food · ● → base',
@@ -753,6 +645,170 @@ function applyLang(){
   document.querySelectorAll('[data-i18n-ph]').forEach(function(el){var v=t(el.getAttribute('data-i18n-ph'));if(v)el.placeholder=v});
   try{localStorage.setItem('st_lang',lang)}catch(e){}
   renderListings();renderCruises();initTravelForm();
+  renderLegal();
+}
+
+function renderLegal(){
+  var box=document.getElementById('legal-content');
+  if(!box)return;
+  var isIt=lang!=='en';
+
+  var html='';
+  // Banner
+  html+='<div class="rounded-xl bg-amber-50 border border-amber-200 px-4 py-3 text-amber-900 text-xs mb-6">';
+  html+='<strong>'+(isIt?'Versione preliminare / demo.':'Preliminary / demo version.')+'</strong> ';
+  html+=(isIt
+    ?'Questi testi verranno aggiornati con i dati completi del titolare prima della pubblicazione definitiva.'
+    :'These texts will be updated with the full data of the data controller before the final publication.');
+  html+='</div>';
+
+  // Title
+  html+='<h1 class="text-3xl font-extrabold text-slate-900 mb-1">'+(isIt?'Policy & Legale':'Policy & Legal')+'</h1>';
+  html+='<p class="text-slate-500 mb-6">'+(isIt?'Ultimo aggiornamento: 17 agosto 2026 · Smart Travel':'Last update: 17 August 2026 · Smart Travel')+'</p>';
+
+  // Internal nav
+  html+='<nav class="flex flex-wrap gap-2 text-xs font-semibold no-print mb-8">';
+  var navItems=isIt
+    ?[['termini','Termini'],['privacy','Privacy'],['cookie','Cookie'],['vendita','Vendita & Pagamenti'],['ai','Intelligenza Artificiale'],['recesso','Recesso']]
+    :[['termini','Terms'],['privacy','Privacy'],['cookie','Cookie'],['vendita','Sales & Payments'],['ai','Artificial Intelligence'],['recesso','Withdrawal']];
+  navItems.forEach(function(item){
+    html+='<a href="#'+item[0]+'" class="px-3 py-1.5 rounded-full bg-slate-100 hover:bg-brand-50">'+item[1]+'</a>';
+  });
+  html+='</nav>';
+
+  // 1. Terms
+  html+='<div id="termini" class="space-y-3 scroll-mt-24 mb-10">';
+  html+='<h2 class="text-xl font-bold text-slate-900 border-b pb-2">'+(isIt?'1. Termini e condizioni d’uso':'1. Terms of use')+'</h2>';
+  if(isIt){
+    html+='<p><strong>Titolare del servizio</strong><br>Smart Travel – sito dimostrativo raggiungibile all’indirizzo <code class="text-xs bg-slate-100 px-1 rounded">nicolascamani07-bit.github.io</code>.<br>I dati anagrafici e fiscali del titolare verranno inseriti nella versione di produzione.</p>';
+    html+='<p><strong>Oggetto</strong><br>La piattaforma consente di pianificare itinerari di viaggio, generare piani giornalieri con mappa e PDF, utilizzare l’assistente ST AI, confrontare voli e hotel in modalità dimostrativa e acquistare piani a pagamento (Analisi, Mensile, 10 piani) tramite Stripe.</p>';
+    html+='<p><strong>Accesso</strong><br>L’utilizzo è consentito a chi ha compiuto 18 anni. Alcune funzionalità richiedono l’acquisto di un piano.</p>';
+    html+='<p><strong>Dati salvati localmente</strong><br>Al momento non è prevista registrazione con account. Preferenze e piani vengono salvati nel browser dell’utente (localStorage). L’utente è responsabile della loro conservazione.</p>';
+    html+='<p><strong>Utilizzi vietati</strong><br>È vietato usare il servizio per scopi illegali, tentare accessi non autorizzati, inserire contenuti offensivi o eludere i limiti dei piani a pagamento.</p>';
+    html+='<p><strong>Proprietà intellettuale</strong><br>Contenuti, design, codice e marchio “Smart Travel” sono riservati. È vietata la riproduzione non autorizzata.</p>';
+    html+='<p><strong>Limitazioni di responsabilità</strong><br>Nei limiti di legge il Titolare non garantisce assenza di interruzioni o errori. Le informazioni generate (inclusi gli output di ST AI) hanno carattere orientativo e non costituiscono consulenza professionale.</p>';
+    html+='<p><strong>Legge applicabile</strong><br>Si applica la legge italiana. Per i consumatori residenti in Italia vale il foro del luogo di residenza del consumatore.</p>';
+  }else{
+    html+='<p><strong>Service provider</strong><br>Smart Travel – demo website available at <code class="text-xs bg-slate-100 px-1 rounded">nicolascamani07-bit.github.io</code>.<br>The full personal and tax details of the provider will be added in the production version.</p>';
+    html+='<p><strong>Purpose</strong><br>The platform allows users to plan travel itineraries, generate daily plans with map and PDF, use the ST AI assistant, compare flights and hotels in demo mode, and purchase paid plans (Analysis, Monthly, 10 plans) via Stripe.</p>';
+    html+='<p><strong>Access</strong><br>Use is permitted to persons aged 18 or over. Some features require the purchase of a plan.</p>';
+    html+='<p><strong>Locally stored data</strong><br>No account registration is currently required. Preferences and plans are saved in the user’s browser (localStorage). The user is responsible for their safekeeping.</p>';
+    html+='<p><strong>Prohibited uses</strong><br>It is forbidden to use the service for illegal purposes, attempt unauthorised access, insert offensive content, or circumvent the limits of paid plans.</p>';
+    html+='<p><strong>Intellectual property</strong><br>Content, design, code and the “Smart Travel” trademark are reserved. Unauthorised reproduction is prohibited.</p>';
+    html+='<p><strong>Limitation of liability</strong><br>To the extent permitted by law, the Provider does not guarantee the absence of interruptions or errors. Generated information (including ST AI outputs) is indicative only and does not constitute professional advice.</p>';
+    html+='<p><strong>Governing law</strong><br>Italian law applies. For consumers resident in Italy the court of the consumer’s place of residence has jurisdiction.</p>';
+  }
+  html+='</div>';
+
+  // 2. Privacy
+  html+='<div id="privacy" class="space-y-3 scroll-mt-24 mb-10">';
+  html+='<h2 class="text-xl font-bold text-slate-900 border-b pb-2">'+(isIt?'2. Informativa privacy (GDPR) – preliminare':'2. Privacy notice (GDPR) – preliminary')+'</h2>';
+  if(isIt){
+    html+='<p>Il Titolare del trattamento verrà indicato nella versione definitiva. Per la demo i dati di contatto privacy non sono ancora attivi.</p>';
+    html+='<p><strong>Dati trattati</strong></p><ul class="list-disc pl-5 space-y-1">';
+    html+='<li>Dati di navigazione e log tecnici (funzionamento e sicurezza)</li>';
+    html+='<li>Dati inseriti nei form di pianificazione (destinazione, interessi, età, animali, note) – salvati principalmente in locale</li>';
+    html+='<li>Messaggi inviati a ST AI (trasmessi a OpenAI per elaborazione)</li>';
+    html+='<li>Dati di pagamento gestiti interamente da Stripe</li>';
+    html+='<li>Identificatori pubblicitari di Google AdSense (solo con consenso)</li></ul>';
+    html+='<p><strong>Finalità e basi giuridiche</strong><br>Esecuzione del contratto / misure precontrattuali, interesse legittimo (sicurezza), consenso (pubblicità).</p>';
+    html+='<p><strong>Destinatari principali</strong><br>Stripe (pagamenti), OpenAI (ST AI), Google (AdSense), Cloudflare (Worker), GitHub Pages (hosting). In produzione è previsto anche Supabase.</p>';
+    html+='<p><strong>Trasferimenti extra-SEE</strong><br>OpenAI e Google possono trattare dati fuori dallo Spazio Economico Europeo utilizzando Clausole Contrattuali Standard e altre garanzie GDPR.</p>';
+    html+='<p><strong>Diritti dell’interessato</strong><br>Accesso, rettifica, cancellazione, limitazione, portabilità, opposizione e reclamo al Garante Privacy (www.garanteprivacy.it). I contatti per esercitare i diritti verranno pubblicati nella versione definitiva.</p>';
+  }else{
+    html+='<p>The data controller will be indicated in the final version. For the demo, privacy contact details are not yet active.</p>';
+    html+='<p><strong>Data processed</strong></p><ul class="list-disc pl-5 space-y-1">';
+    html+='<li>Browsing data and technical logs (operation and security)</li>';
+    html+='<li>Data entered in planning forms (destination, interests, age, pets, notes) – mainly stored locally</li>';
+    html+='<li>Messages sent to ST AI (transmitted to OpenAI for processing)</li>';
+    html+='<li>Payment data handled entirely by Stripe</li>';
+    html+='<li>Advertising identifiers from Google AdSense (only with consent)</li></ul>';
+    html+='<p><strong>Purposes and legal bases</strong><br>Performance of the contract / pre-contractual measures, legitimate interest (security), consent (advertising).</p>';
+    html+='<p><strong>Main recipients</strong><br>Stripe (payments), OpenAI (ST AI), Google (AdSense), Cloudflare (Worker), GitHub Pages (hosting). Supabase is also planned for production.</p>';
+    html+='<p><strong>Transfers outside the EEA</strong><br>OpenAI and Google may process data outside the European Economic Area using Standard Contractual Clauses and other GDPR safeguards.</p>';
+    html+='<p><strong>Data subject rights</strong><br>Access, rectification, erasure, restriction, portability, objection and complaint to the Italian Data Protection Authority (www.garanteprivacy.it). Contacts for exercising rights will be published in the final version.</p>';
+  }
+  html+='</div>';
+
+  // 3. Cookie
+  html+='<div id="cookie" class="space-y-3 scroll-mt-24 mb-10">';
+  html+='<h2 class="text-xl font-bold text-slate-900 border-b pb-2">'+(isIt?'3. Cookie Policy – preliminare':'3. Cookie Policy – preliminary')+'</h2>';
+  if(isIt){
+    html+='<p>Il Sito utilizza:</p><ul class="list-disc pl-5 space-y-1">';
+    html+='<li><strong>Cookie e storage tecnici necessari</strong> (localStorage per lingua e piani, cookie di sessione di Cloudflare/GitHub) – non richiedono consenso.</li>';
+    html+='<li><strong>Cookie / identificatori di Google AdSense</strong> per la pubblicità – richiedono il consenso dell’utente.</li>';
+    html+='<li>Cookie di Stripe solo durante il checkout – necessari alla transazione.</li></ul>';
+    html+='<p>Nella versione di produzione sarà implementato un banner cookie conforme (Rifiuta facoltativi / Personalizza / Accetta tutti) e un centro preferenze permanente nel footer. I cookie pubblicitari non verranno caricati prima del consenso.</p>';
+  }else{
+    html+='<p>The Site uses:</p><ul class="list-disc pl-5 space-y-1">';
+    html+='<li><strong>Necessary technical cookies and storage</strong> (localStorage for language and plans, Cloudflare/GitHub session cookies) – no consent required.</li>';
+    html+='<li><strong>Google AdSense cookies / identifiers</strong> for advertising – require the user’s consent.</li>';
+    html+='<li>Stripe cookies only during checkout – necessary for the transaction.</li></ul>';
+    html+='<p>In the production version a compliant cookie banner (Reject optional / Customise / Accept all) and a permanent preference centre in the footer will be implemented. Advertising cookies will not be loaded before consent.</p>';
+  }
+  html+='</div>';
+
+  // 4. Sales
+  html+='<div id="vendita" class="space-y-3 scroll-mt-24 mb-10">';
+  html+='<h2 class="text-xl font-bold text-slate-900 border-b pb-2">'+(isIt?'4. Condizioni di vendita e pagamento':'4. Terms of sale and payment')+'</h2>';
+  if(isIt){
+    html+='<p>Piani disponibili:</p><ul class="list-disc pl-5 space-y-1">';
+    html+='<li><strong>Analisi</strong> – pagamento una tantum (€ 2,00)</li>';
+    html+='<li><strong>Mensile</strong> – abbonamento (€ 14,90 / mese)</li>';
+    html+='<li><strong>10 piani</strong> – pagamento una tantum (€ 19,90)</li></ul>';
+    html+='<p>I pagamenti sono gestiti da <strong>Stripe</strong>. Il Titolare non memorizza dati di carte di credito.</p>';
+    html+='<p><strong>Abbonamento Mensile</strong>: si rinnova automaticamente fino a disdetta. La disdetta può essere effettuata tramite il portale clienti Stripe o contattando l’assistenza e ha effetto dalla fine del periodo già pagato.</p>';
+  }else{
+    html+='<p>Available plans:</p><ul class="list-disc pl-5 space-y-1">';
+    html+='<li><strong>Analysis</strong> – one-off payment (€ 2.00)</li>';
+    html+='<li><strong>Monthly</strong> – subscription (€ 14.90 / month)</li>';
+    html+='<li><strong>10 plans</strong> – one-off payment (€ 19.90)</li></ul>';
+    html+='<p>Payments are handled by <strong>Stripe</strong>. The Provider does not store credit card data.</p>';
+    html+='<p><strong>Monthly subscription</strong>: renews automatically until cancelled. Cancellation can be made via the Stripe customer portal or by contacting support and takes effect at the end of the already paid period.</p>';
+  }
+  html+='</div>';
+
+  // 5. Withdrawal
+  html+='<div id="recesso" class="space-y-3 scroll-mt-24 mb-10">';
+  html+='<h2 class="text-xl font-bold text-slate-900 border-b pb-2">'+(isIt?'5. Recesso, rimborsi e conformità':'5. Withdrawal, refunds and conformity')+'</h2>';
+  if(isIt){
+    html+='<p>Per i consumatori si applicano le norme del Codice del Consumo. Il diritto di recesso di 14 giorni può decadere se il servizio digitale è stato eseguito (es. piano già generato) e l’utente ha accettato l’esecuzione anticipata. I rimborsi, quando dovuti, vengono effettuati tramite Stripe.</p>';
+  }else{
+    html+='<p>Consumer rules under the Italian Consumer Code apply. The 14-day right of withdrawal may lapse if the digital service has already been performed (e.g. plan already generated) and the user has accepted early performance. Refunds, when due, are processed via Stripe.</p>';
+  }
+  html+='</div>';
+
+  // 6. AI
+  html+='<div id="ai" class="space-y-3 scroll-mt-24 mb-10">';
+  html+='<h2 class="text-xl font-bold text-slate-900 border-b pb-2">'+(isIt?'6. Informativa sull’Intelligenza Artificiale (ST AI)':'6. Artificial Intelligence notice (ST AI)')+'</h2>';
+  html+='<ul class="list-disc pl-5 space-y-1">';
+  if(isIt){
+    html+='<li>Gli output dipendono dai dati forniti dall’utente e possono contenere errori, incompletezze o informazioni non aggiornate.</li>';
+    html+='<li><strong>Non costituiscono consulenza legale, fiscale, medica, finanziaria o professionale.</strong></li>';
+    html+='<li>Non garantiscono risultati economici, finanziamenti o approvazioni.</li>';
+    html+='<li>Le decisioni importanti devono essere verificate con fonti ufficiali e professionisti qualificati.</li>';
+    html+='<li>I contenuti non devono essere usati per attività illegali o per violare diritti di terzi.</li>';
+    html+='<li>Si raccomanda di non inserire dati sensibili o informazioni di terzi non necessarie.</li>';
+    html+='<li>I messaggi inviati a ST AI vengono trasmessi a OpenAI per l’elaborazione.</li>';
+  }else{
+    html+='<li>Outputs depend on the data provided by the user and may contain errors, incompleteness or outdated information.</li>';
+    html+='<li><strong>They do not constitute legal, tax, medical, financial or professional advice.</strong></li>';
+    html+='<li>They do not guarantee economic results, funding or approvals.</li>';
+    html+='<li>Important decisions must be verified with official sources and qualified professionals.</li>';
+    html+='<li>Content must not be used for illegal activities or to infringe third-party rights.</li>';
+    html+='<li>It is recommended not to enter sensitive data or unnecessary third-party information.</li>';
+    html+='<li>Messages sent to ST AI are transmitted to OpenAI for processing.</li>';
+  }
+  html+='</ul></div>';
+
+  // Footer note
+  html+='<div class="pt-6 border-t text-xs text-slate-400">';
+  html+='<p>'+(isIt
+    ?'Documento preliminare per uso dimostrativo. Prima della pubblicazione saranno inseriti i dati completi del titolare e sarà effettuata la revisione legale necessaria.'
+    :'Preliminary document for demonstration purposes. Before publication the full details of the provider will be inserted and the necessary legal review will be carried out.')+'</p>';
+  html+='</div>';
+
+  box.innerHTML=html;
 }
 function toggleLang(e){if(e){e.preventDefault();e.stopPropagation()}document.getElementById('lang-menu').classList.toggle('open')}
 function setLang(code){lang=code==='en'?'en':'it';document.getElementById('lang-menu').classList.remove('open');applyLang()}
@@ -774,6 +830,7 @@ function go(id){
   if(id==='cruises')renderCruises();
   if(id==='flights')initTravelForm();
   if(id==='plan'){refreshAccess();renderSelected()}
+  if(id==='legal')renderLegal();
   return false;
 }
 /* Stripe Price IDs */
