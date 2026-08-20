@@ -154,6 +154,21 @@ header.sticky{z-index:9999!important}
 <h1 class="text-2xl font-extrabold" data-i18n="wiz_title">Pianificazione viaggio</h1>
 <span id="plan-badge" class="text-xs font-semibold px-3 py-1 rounded-full bg-brand-100 text-brand-800">Demo</span>
 </div>
+<div class="mb-6 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm no-print" id="plan-ai-panel">
+<div class="flex flex-wrap items-start justify-between gap-2 mb-3">
+<div>
+<div class="font-bold text-slate-900" data-i18n="plan_ai_title">ST AI · Indagine interessi</div>
+<p class="text-sm text-slate-600 mt-0.5" data-i18n="plan_ai_sub">Come un consulente di viaggio: capiamo desideri, voli, ristoro e ritmo. Con Gemini attivo risponde in tempo reale.</p>
+</div>
+<button type="button" onclick="startPlanAiInterview()" class="px-4 py-2 rounded-full bg-brand-600 text-white text-sm font-semibold shrink-0" data-i18n="plan_ai_start">Avvia intervista AI</button>
+</div>
+<div id="plan-ai-log" class="max-h-48 overflow-y-auto space-y-2 text-sm mb-3 empty:hidden"></div>
+<div class="flex gap-2">
+<input id="plan-ai-in" type="text" class="flex-1 px-4 py-2.5 rounded-xl border text-sm" placeholder="Scrivi liberamente i tuoi desideri di viaggio…" data-i18n-ph="plan_ai_ph" onkeypress="if(event.key==='Enter')sendPlanAi()"/>
+<button type="button" onclick="sendPlanAi()" class="px-4 py-2.5 rounded-xl bg-slate-900 text-white text-sm font-semibold" data-i18n="send">Invia</button>
+</div>
+<div id="plan-ai-profile" class="hidden mt-3 rounded-xl bg-slate-50 border p-3 text-xs text-slate-700"></div>
+</div>
 <div id="selected-box" class="hidden mb-4 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm no-print"></div>
 <div class="flex gap-1 mb-6 no-print" id="plan-progress">
 <div id="pg1" class="h-1.5 flex-1 rounded-full bg-brand-500"></div>
@@ -511,13 +526,48 @@ header.sticky{z-index:9999!important}
 </div>
 
 <div id="page-prezzi" class="page">
-<section class="py-14 max-w-4xl mx-auto px-4">
+<section class="py-14 max-w-5xl mx-auto px-4">
 <button type="button" onclick="go('home')" class="text-sm text-brand-600 font-semibold mb-3">← Home</button>
-<h1 class="text-3xl font-extrabold text-center mb-8" data-i18n="price_title">Piani</h1>
-<div class="grid sm:grid-cols-3 gap-4">
-<div class="rounded-2xl border bg-white p-5"><div class="text-xs font-semibold text-slate-500" data-i18n="p1_name">Analisi</div><div class="text-3xl font-extrabold mt-2">2,00 €</div><button type="button" onclick="buy('compare','Analisi','2,00 €')" class="mt-4 w-full py-2.5 rounded-full border-2 border-brand-600 text-brand-700 text-sm font-semibold" data-i18n="buy">Attiva</button></div>
-<div class="rounded-2xl bg-brand-600 text-white p-5 shadow-lg"><div class="text-xs font-semibold text-white/90" data-i18n="p3_name">Mensile</div><div class="text-3xl font-extrabold mt-2 text-white">14,90 €</div><button type="button" onclick="buy('monthly','Mensile','14,90 €')" class="mt-4 w-full py-2.5 rounded-full bg-white text-slate-900 text-sm font-bold shadow-md hover:bg-slate-100 border border-slate-200" data-i18n="buy">Attiva</button></div>
-<div class="rounded-2xl border bg-white p-5"><div class="text-xs font-semibold text-slate-500" data-i18n="p2_name">10 piani</div><div class="text-3xl font-extrabold mt-2">19,90 €</div><button type="button" onclick="buy('pack10','10 piani','19,90 €')" class="mt-4 w-full py-2.5 rounded-full border-2 border-brand-600 text-brand-700 text-sm font-semibold" data-i18n="buy">Attiva</button></div>
+<h1 class="text-3xl font-extrabold text-center mb-2" data-i18n="price_title">Piani</h1>
+<p class="text-center text-slate-600 mb-10 max-w-2xl mx-auto" data-i18n="price_sub">Ogni piano sblocca la consulenza digitale Smart Travel: più approfondisci interessi e budget, più il piano e ST AI diventano precisi.</p>
+<div class="grid md:grid-cols-3 gap-5">
+<div class="rounded-2xl border bg-white p-6 flex flex-col">
+<div class="text-xs font-semibold text-slate-500 uppercase tracking-wide" data-i18n="p1_name">Analisi</div>
+<div class="text-3xl font-extrabold mt-2">2,00 €</div>
+<p class="text-sm text-slate-500 mt-1" data-i18n="p1_for">Per chi: prova unica, confronto veloce o un solo viaggio.</p>
+<ul class="mt-4 space-y-2 text-sm text-slate-700 flex-1">
+<li class="flex gap-2"><span class="text-brand-600">✓</span><span data-i18n="p1_f1">1 piano di viaggio completo (itinerario + mappa + PDF)</span></li>
+<li class="flex gap-2"><span class="text-brand-600">✓</span><span data-i18n="p1_f2">Roulette mete e profilo interessi base</span></li>
+<li class="flex gap-2"><span class="text-brand-600">✓</span><span data-i18n="p1_f3">Ricerca voli/hotel in-sito (test/live API)</span></li>
+<li class="flex gap-2"><span class="text-brand-600">✓</span><span data-i18n="p1_f4">ST AI: 5 messaggi di orientamento</span></li>
+</ul>
+<button type="button" onclick="buy('compare','Analisi','2,00 €')" class="mt-6 w-full py-2.5 rounded-full border-2 border-brand-600 text-brand-700 text-sm font-semibold" data-i18n="buy">Attiva</button>
+</div>
+<div class="rounded-2xl bg-brand-600 text-white p-6 shadow-xl flex flex-col ring-2 ring-brand-400/40">
+<div class="text-xs font-semibold text-white/90 uppercase tracking-wide" data-i18n="p3_name">Mensile</div>
+<div class="text-3xl font-extrabold mt-2 text-white">14,90 €</div>
+<p class="text-sm text-white/80 mt-1" data-i18n="p3_for">Per chi: viaggia spesso o pianifica più mete nel mese.</p>
+<ul class="mt-4 space-y-2 text-sm text-white/95 flex-1">
+<li class="flex gap-2"><span>✓</span><span data-i18n="p3_f1">Piani illimitati per 30 giorni</span></li>
+<li class="flex gap-2"><span>✓</span><span data-i18n="p3_f2">ST AI viaggi (voli, ristoro, ritmi) prioritario</span></li>
+<li class="flex gap-2"><span>✓</span><span data-i18n="p3_f3">Intervista interessi approfondita + roulette globale</span></li>
+<li class="flex gap-2"><span>✓</span><span data-i18n="p3_f4">Export PDF dossier e salvataggio preferenze</span></li>
+<li class="flex gap-2"><span>✓</span><span data-i18n="p3_f5">Ideale per famiglie e trip multi-destinazione</span></li>
+</ul>
+<button type="button" onclick="buy('monthly','Mensile','14,90 €')" class="mt-6 w-full py-2.5 rounded-full bg-white text-slate-900 text-sm font-bold shadow-md" data-i18n="buy">Attiva</button>
+</div>
+<div class="rounded-2xl border bg-white p-6 flex flex-col">
+<div class="text-xs font-semibold text-slate-500 uppercase tracking-wide" data-i18n="p2_name">10 piani</div>
+<div class="text-3xl font-extrabold mt-2">19,90 €</div>
+<p class="text-sm text-slate-500 mt-1" data-i18n="p2_for">Per chi: stagione di viaggi o regalo / uso condiviso leggero.</p>
+<ul class="mt-4 space-y-2 text-sm text-slate-700 flex-1">
+<li class="flex gap-2"><span class="text-brand-600">✓</span><span data-i18n="p2_f1">Credito di 10 piani completi (no scadenza mensile)</span></li>
+<li class="flex gap-2"><span class="text-brand-600">✓</span><span data-i18n="p2_f2">ST AI su ogni piano (consigli voli e ristoro)</span></li>
+<li class="flex gap-2"><span class="text-brand-600">✓</span><span data-i18n="p2_f3">Roulette mondiale e profili interessi salvati</span></li>
+<li class="flex gap-2"><span class="text-brand-600">✓</span><span data-i18n="p2_f4">PDF e mappa per ciascun itinerario</span></li>
+</ul>
+<button type="button" onclick="buy('pack10','10 piani','19,90 €')" class="mt-6 w-full py-2.5 rounded-full border-2 border-brand-600 text-brand-700 text-sm font-semibold" data-i18n="buy">Attiva</button>
+</div>
 </div>
 </section>
 </div>
@@ -556,7 +606,7 @@ hero_badge:'Itinerari · Mappa · PDF · ST AI',hero_t1:'Pianificazione completa
 hero_sub:'ST AI approfondisce dove, come e quando. Il piano include tappe giornaliere, mappa e export PDF.',
 hero_cta1:'Avvia pianificazione',hero_cta2:'Parla con ST AI',home_map_label:'Anteprima mappa itinerario',home_search_ph:'Cerca città o destinazione (ST AI)…',home_search_btn:'Cerca',notes_ai:'Approfondisci con ST AI',notes_ai_hint:'ST AI legge le note e propone domande o tappe da aggiungere al piano.',
 cat_pl:'Interessi → tappe → PDF',cat_ai:'Domande su dove, come, quando',cat_fl:'Prezzi e disponibilità nel sito',cat_list:'Mete, stagioni e idee viaggio',
-p1_name:'Analisi',p2_name:'10 piani',p3_name:'Mensile',buy:'Attiva',
+p1_name:'Analisi',p2_name:'10 piani',p3_name:'Mensile',buy:'Attiva',price_sub:'Ogni piano sblocca la consulenza digitale Smart Travel.',p1_for:'Per chi: prova unica o un solo viaggio.',p1_f1:'1 piano completo (itinerario + mappa + PDF)',p1_f2:'Roulette mete e profilo interessi base',p1_f3:'Ricerca voli/hotel in-sito',p1_f4:'ST AI: orientamento iniziale',p3_for:'Per chi: viaggia spesso o più mete nel mese.',p3_f1:'Piani illimitati per 30 giorni',p3_f2:'ST AI viaggi (voli, ristoro, ritmi)',p3_f3:'Intervista interessi + roulette globale',p3_f4:'PDF dossier e preferenze salvate',p3_f5:'Ideale famiglie e multi-destinazione',p2_for:'Per chi: stagione di viaggi o uso condiviso.',p2_f1:'10 piani completi',p2_f2:'ST AI su ogni piano',p2_f3:'Roulette mondiale e profili salvati',p2_f4:'PDF e mappa per ogni itinerario',plan_ai_title:'ST AI · Indagine interessi',plan_ai_sub:'Consulente di viaggio: desideri, voli, ristoro. Con Gemini risponde live.',plan_ai_start:'Avvia intervista AI',plan_ai_ph:'Scrivi liberamente i tuoi desideri di viaggio…',
 demo_banner:'Wizard completo: interessi, ritmo, orari. Output con mappa, tappe e PDF.',wiz_title:'Pianificazione viaggio',
 wiz_s1:'1/5 · Dove e con chi',wiz_s2:'2/5 · Come ti muovi',wiz_s3:'3/5 · Interessi (guidano le tappe)',wiz_s4:'4/5 · Età, animali, alloggio',
 q_people:'Viaggiatori',q_dest:'Destinazione (città o area)',wiz_s1:'1/5 · Profilo e meta',premium_line:'Consulenza premium',premium_sub:' — indaghiamo desideri, budget e ritmo prima di costruire l’itinerario.',q_know:'Sai già dove andare?',mode_known:'Sì, ho una meta',mode_unknown:'No, sorprendimi',q_desire:'Cosa cerchi in questo viaggio?',des_escape:'Svagarmi e staccare',des_wow:'Qualcosa di memorabile / “wow”',des_culture:'Approfondire cultura e luoghi',des_nature:'Natura e outdoor',des_food:'Cibo e sapori',des_romance:'Romantico / di coppia',des_family:'Famiglia e ritmo soft',des_party:'Energia, città, vita notturna',q_climate:'Clima / ambientazione preferita',cli_any:'Indifferente',cli_city:'Grande città',cli_sea:'Mare / costa',cli_mountain:'Lago / montagna',cli_exotic:'Esotico / tropicale',cli_desert:'Deserto / Oriente',q_distance:'Distanza accettabile',dist_eu:'Europa',dist_med:'Mediterraneo / vicino',dist_world:'Tutto il mondo',roulette_title:'Roulette destinazioni',roulette_sub:'in base a budget e desideri',roulette_btn:'🎲 Gira la roulette',budget_hint:'Usato per roulette mete, ritmo del piano e tetto alloggio/giorno',dest_hint:'Suggerimenti mentre digiti · mete globali supportate',q_when:'Quando',q_days:'Durata',q_transport:'Mezzo principale',
@@ -584,7 +634,7 @@ hero_badge:'Itineraries · Map · PDF · ST AI',hero_t1:'Complete planning,',her
 hero_sub:'ST AI digs into where, how and when. The plan includes daily stops, map and PDF export.',
 hero_cta1:'Start planning',hero_cta2:'Talk to ST AI',home_map_label:'Itinerary map preview',home_search_ph:'Search city or destination (ST AI)…',home_search_btn:'Search',notes_ai:'Deepen with ST AI',notes_ai_hint:'ST AI reads your notes and suggests questions or stops for the plan.',
 cat_pl:'Interests → stops → PDF',cat_ai:'Questions on where, how, when',cat_fl:'Live prices and availability',cat_list:'Places, seasons and trip ideas',
-p1_name:'Analysis',p2_name:'10 plans',p3_name:'Monthly',buy:'Activate',
+p1_name:'Analysis',p2_name:'10 plans',p3_name:'Monthly',buy:'Activate',price_sub:'Each plan unlocks Smart Travel digital consulting.',p1_for:'For: one-off try or a single trip.',p1_f1:'1 full plan (itinerary + map + PDF)',p1_f2:'Destination roulette & basic interest profile',p1_f3:'In-site flight/hotel search',p1_f4:'ST AI: initial guidance',p3_for:'For: frequent travellers or multiple destinations/month.',p3_f1:'Unlimited plans for 30 days',p3_f2:'Travel ST AI (flights, dining, pace)',p3_f3:'Deep interest interview + global roulette',p3_f4:'PDF dossier and saved preferences',p3_f5:'Ideal for families and multi-stop trips',p2_for:'For: a travel season or light shared use.',p2_f1:'10 full plans',p2_f2:'ST AI on every plan',p2_f3:'Worldwide roulette and saved profiles',p2_f4:'PDF and map per itinerary',plan_ai_title:'ST AI · Interest discovery',plan_ai_sub:'Travel consultant: desires, flights, dining. Live with Gemini.',plan_ai_start:'Start AI interview',plan_ai_ph:'Write freely about your travel desires…',
 demo_banner:'Full wizard: interests, pace, times. Output with map, stops and PDF.',wiz_title:'Trip planning',
 wiz_s1:'1/5 · Where and who',wiz_s2:'2/5 · How you move',wiz_s3:'3/5 · Interests (drive the stops)',wiz_s4:'4/5 · Ages, pets, stay',
 q_people:'Travellers',q_dest:'Destination (city or area)',wiz_s1:'1/5 · Profile & destination',premium_line:'Premium consulting',premium_sub:' — we explore desires, budget and pace before building the itinerary.',q_know:'Do you already know where to go?',mode_known:'Yes, I have a place',mode_unknown:'No, surprise me',q_desire:'What do you want from this trip?',des_escape:'Unwind and switch off',des_wow:'Something memorable / wow',des_culture:'Culture and places in depth',des_nature:'Nature and outdoors',des_food:'Food and flavours',des_romance:'Romantic / couple',des_family:'Family and soft pace',des_party:'Energy, city, nightlife',q_climate:'Preferred climate / setting',cli_any:'No preference',cli_city:'Big city',cli_sea:'Sea / coast',cli_mountain:'Lake / mountains',cli_exotic:'Exotic / tropical',cli_desert:'Desert / East',q_distance:'Acceptable distance',dist_eu:'Europe',dist_med:'Mediterranean / nearby',dist_world:'Worldwide',roulette_title:'Destination roulette',roulette_sub:'based on budget and desires',roulette_btn:'🎲 Spin the roulette',budget_hint:'Used for destination roulette, plan pace and nightly stay cap',dest_hint:'Suggestions as you type · global destinations supported',q_when:'When',q_days:'Duration',q_transport:'Main transport',
@@ -881,7 +931,65 @@ var DEST_CATALOG=[
      {title:'Christ the Redeemer',titleIt:'Cristo Redentore',type:'poi',dur:120,why:{it:'Vista e simbolo del Brasile.',en:'View and symbol of Brazil.'}},
      {title:'Copacabana / Ipanema',titleIt:'Copacabana / Ipanema',type:'poi',dur:120,why:{it:'Spiaggia e lifestyle.',en:'Beach and lifestyle.'}},
      {title:'Feijoada or juice bar',titleIt:'Feijoada o sucos',type:'food',dur:60,why:{it:'Sapori carioca.',en:'Carioca flavours.'}}
-   ]}
+   ]},
+  {id:'seoul',names:['seoul','seul'],label:'Seoul',labelIt:'Seoul',country:'Corea del Sud',coords:[37.5665,126.9780],
+   why:{it:'K-culture, palazzi e street food notturno.',en:'K-culture, palaces and night street food.'},
+   pois:[{title:'Gyeongbokgung',titleIt:'Gyeongbokgung',type:'poi',dur:120,why:{it:'Palazzo reale e storia coreana.',en:'Royal palace and Korean history.'}},{title:'Hongdae evening',titleIt:'Hongdae sera',type:'poi',dur:90,why:{it:'Quartiere giovane e creativo.',en:'Youthful creative district.'}},{title:'Korean BBQ',titleIt:'Korean BBQ',type:'food',dur:75,why:{it:'Rituale sociale della tavola.',en:'Social dining ritual.'}}]},
+  {id:'singapore',names:['singapore','singapore city'],label:'Singapore',labelIt:'Singapore',country:'Singapore',coords:[1.3521,103.8198],
+   why:{it:'Città-giardino, food courts e skyline.',en:'Garden city, food courts and skyline.'},
+   pois:[{title:'Gardens by the Bay',titleIt:'Gardens by the Bay',type:'poi',dur:120,why:{it:'Icona verde futurista.',en:'Futuristic green icon.'}},{title:'Hawker centre',titleIt:'Hawker centre',type:'food',dur:60,why:{it:'UNESCO street food.',en:'UNESCO street food.'}}]},
+  {id:'cape_town',names:['cape town','capetown','città del capo'],label:'Cape Town',labelIt:'Città del Capo',country:'Sudafrica',coords:[-33.9249,18.4241],
+   why:{it:'Montagna, oceano e winelands.',en:'Mountain, ocean and winelands.'},
+   pois:[{title:'Table Mountain',titleIt:'Table Mountain',type:'poi',dur:180,why:{it:'Vista unica sulla baia.',en:'Unique bay views.'}},{title:'V&A Waterfront',titleIt:'V&A Waterfront',type:'poi',dur:90,why:{it:'Porto e ristoro.',en:'Harbour and dining.'}}]},
+  {id:'mexico_city',names:['mexico city','città del messico','cdmx'],label:'Mexico City',labelIt:'Città del Messico',country:'Messico',coords:[19.4326,-99.1332],
+   why:{it:'Storia azteca, murales e cucina d’autore.',en:'Aztec history, murals and fine cuisine.'},
+   pois:[{title:'Zócalo & historic centre',titleIt:'Zócalo e centro',type:'poi',dur:120,why:{it:'Cuore storico.',en:'Historic heart.'}},{title:'Tacos & markets',titleIt:'Tacos e mercati',type:'food',dur:75,why:{it:'Street food di riferimento.',en:'Benchmark street food.'}}]},
+  {id:'buenos_aires',names:['buenos aires'],label:'Buenos Aires',labelIt:'Buenos Aires',country:'Argentina',coords:[-34.6037,-58.3816],
+   why:{it:'Tango, steakhouses e quartieri europei.',en:'Tango, steakhouses and European-style districts.'},
+   pois:[{title:'La Boca & San Telmo',titleIt:'La Boca e San Telmo',type:'poi',dur:120,why:{it:'Colore e tradizione.',en:'Colour and tradition.'}},{title:'Asado dinner',titleIt:'Cena asado',type:'food',dur:90,why:{it:'Carne argentina classica.',en:'Classic Argentine meat.'}}]},
+  {id:'reykjavik',names:['reykjavik','reykjavík'],label:'Reykjavik',labelIt:'Reykjavik',country:'Islanda',coords:[64.1466,-21.9426],
+   why:{it:'Nordici, lagune e natura estrema.',en:'Nordic mood, lagoons and extreme nature.'},
+   pois:[{title:'Golden Circle day',titleIt:'Golden Circle',type:'poi',dur:360,why:{it:'Geyser, cascate e parchi.',en:'Geysers, falls and parks.'}},{title:'Hot soup / local fish',titleIt:'Zuppa e pesce locale',type:'food',dur:60,why:{it:'Comfort food nordico.',en:'Nordic comfort food.'}}]},
+  {id:'vienna',names:['vienna','vienna','wien'],label:'Vienna',labelIt:'Vienna',country:'Austria',coords:[48.2082,16.3738],
+   why:{it:'Imperiale, caffè e musica.',en:'Imperial heritage, cafés and music.'},
+   pois:[{title:'Schönbrunn or old centre',titleIt:'Schönbrunn o centro',type:'poi',dur:120,why:{it:'Gloria asburgica.',en:'Habsburg grandeur.'}},{title:'Coffee house',titleIt:'Kaffeehaus',type:'food',dur:60,why:{it:'Rituale viennese.',en:'Viennese ritual.'}}]},
+  {id:'athens',names:['atene','athens'],label:'Athens',labelIt:'Atene',country:'Grecia',coords:[37.9838,23.7275],
+   why:{it:'Acropoli, quartieri vivaci e isole vicine.',en:'Acropolis, lively districts and nearby islands.'},
+   pois:[{title:'Acropolis & museum',titleIt:'Acropoli e museo',type:'poi',dur:150,why:{it:'Culla della civiltà classica.',en:'Cradle of classical civilisation.'}},{title:'Meze in Plaka',titleIt:'Meze a Plaka',type:'food',dur:75,why:{it:'Tavola greca informale.',en:'Informal Greek table.'}}]},
+  {id:'vancouver',names:['vancouver'],label:'Vancouver',labelIt:'Vancouver',country:'Canada',coords:[49.2827,-123.1207],
+   why:{it:'Città, oceano e montagne in un solo sguardo.',en:'City, ocean and mountains in one view.'},
+   pois:[{title:'Stanley Park',titleIt:'Stanley Park',type:'poi',dur:120,why:{it:'Natura urbana iconica.',en:'Iconic urban nature.'}},{title:'Seafood waterfront',titleIt:'Pesce sul waterfront',type:'food',dur:75,why:{it:'Pacific flavours.',en:'Pacific flavours.'}}]},
+  {id:'hong_kong',names:['hong kong','hongkong'],label:'Hong Kong',labelIt:'Hong Kong',country:'Cina',coords:[22.3193,114.1694],
+   why:{it:'Skyline, dim sum e contrasti.',en:'Skyline, dim sum and contrasts.'},
+   pois:[{title:'Victoria Peak',titleIt:'Victoria Peak',type:'poi',dur:90,why:{it:'Vista sulla baia.',en:'Harbour views.'}},{title:'Dim sum lunch',titleIt:'Pranzo dim sum',type:'food',dur:75,why:{it:'Classico cantonese.',en:'Cantonese classic.'}}]},
+  {id:'maldives',names:['maldives','maldive'],label:'Maldives',labelIt:'Maldive',country:'Maldive',coords:[3.2028,73.2207],
+   why:{it:'Atolli, snorkel e relax assoluto.',en:'Atolls, snorkelling and pure rest.'},
+   pois:[{title:'House reef snorkel',titleIt:'Snorkel house reef',type:'poi',dur:120,why:{it:'Mondo sottomarino a pochi metri.',en:'Underwater world metres away.'}},{title:'Sunset dinner',titleIt:'Cena al tramonto',type:'food',dur:90,why:{it:'Rituale resort.',en:'Resort ritual.'}}]},
+  {id:'santorini',names:['santorini'],label:'Santorini',labelIt:'Santorini',country:'Grecia',coords:[36.3932,25.4615],
+   why:{it:'Caldera, tramonti e borghi bianchi.',en:'Caldera, sunsets and white villages.'},
+   pois:[{title:'Oia sunset',titleIt:'Tramonto a Oia',type:'poi',dur:90,why:{it:'Il postcard greco.',en:'The Greek postcard.'}},{title:'Seafood with view',titleIt:'Pesce con vista',type:'food',dur:90,why:{it:'Sapori e panorama.',en:'Flavours and views.'}}]},
+  {id:'kyoto',names:['kyoto','kioto'],label:'Kyoto',labelIt:'Kyoto',country:'Giappone',coords:[35.0116,135.7681],
+   why:{it:'Templi, giardini e ritmi tradizionali.',en:'Temples, gardens and traditional pace.'},
+   pois:[{title:'Fushimi Inari',titleIt:'Fushimi Inari',type:'poi',dur:120,why:{it:'Torii e cammino iconico.',en:'Iconic torii walk.'}},{title:'Kaiseki or noodles',titleIt:'Kaiseki o noodles',type:'food',dur:90,why:{it:'Cucina di Kyoto.',en:'Kyoto cuisine.'}}]},
+  {id:'copenhagen',names:['copenhagen','copenaghen'],label:'Copenhagen',labelIt:'Copenaghen',country:'Danimarca',coords:[55.6761,12.5683],
+   why:{it:'Design, canali e new nordic.',en:'Design, canals and new Nordic food.'},
+   pois:[{title:'Nyhavn & centre',titleIt:'Nyhavn e centro',type:'poi',dur:90,why:{it:'Cartolina danese.',en:'Danish postcard.'}},{title:'Smørrebrød',titleIt:'Smørrebrød',type:'food',dur:60,why:{it:'Pranzo nordico.',en:'Nordic lunch.'}}]},
+  {id:'lima',names:['lima'],label:'Lima',labelIt:'Lima',country:'Perù',coords:[-12.0464,-77.0428],
+   why:{it:'Capitale gastronomica e costa del Pacifico.',en:'Food capital and Pacific coast.'},
+   pois:[{title:'Miraflores & coast',titleIt:'Miraflores e costa',type:'poi',dur:90,why:{it:'Oceano e quartiere moderno.',en:'Ocean and modern district.'}},{title:'Ceviche lunch',titleIt:'Pranzo ceviche',type:'food',dur:60,why:{it:'Piatto simbolo del Perù.',en:'Peru’s signature dish.'}}]},
+  {id:'zanzibar',names:['zanzibar'],label:'Zanzibar',labelIt:'Zanzibar',country:'Tanzania',coords:[-6.1659,39.2026],
+   why:{it:'Spiagge, Stone Town e spezie.',en:'Beaches, Stone Town and spices.'},
+   pois:[{title:'Stone Town walk',titleIt:'Stone Town',type:'poi',dur:120,why:{it:'UNESCO e storia swahili.',en:'UNESCO and Swahili history.'}},{title:'Spice & seafood',titleIt:'Spezie e pesce',type:'food',dur:75,why:{it:'Sapori dell’isola.',en:'Island flavours.'}}]},
+  {id:'quebec',names:['quebec','québec'],label:'Quebec City',labelIt:'Québec',country:'Canada',coords:[46.8139,-71.2080],
+   why:{it:'Città murata francofona e atmosfera nordica.',en:'Walled Francophone city with Nordic mood.'},
+   pois:[{title:'Old Quebec',titleIt:'Vieux-Québec',type:'poi',dur:120,why:{it:'UNESCO e charme europeo.',en:'UNESCO and European charm.'}},{title:'Maple & bistro',titleIt:'Acero e bistro',type:'food',dur:75,why:{it:'Sapori del Québec.',en:'Québec flavours.'}}]},
+  {id:'hanoi',names:['hanoi','hanoï'],label:'Hanoi',labelIt:'Hanoi',country:'Vietnam',coords:[21.0278,105.8342],
+   why:{it:'Quartiere antico, laghi e street food.',en:'Old quarter, lakes and street food.'},
+   pois:[{title:'Old Quarter walk',titleIt:'Quartiere antico',type:'poi',dur:100,why:{it:'Energia e mestieri.',en:'Energy and crafts.'}},{title:'Pho & coffee',titleIt:'Pho e caffè',type:'food',dur:45,why:{it:'Classici vietnamiti.',en:'Vietnamese classics.'}}]},
+  {id:'edinburgh',names:['edinburgh','edimburgo'],label:'Edinburgh',labelIt:'Edimburgo',country:'UK',coords:[55.9533,-3.1883],
+   why:{it:'Castello, festival e old town.',en:'Castle, festivals and old town.'},
+   pois:[{title:'Royal Mile & castle',titleIt:'Royal Mile e castello',type:'poi',dur:120,why:{it:'Cuore storico scozzese.',en:'Scottish historic heart.'}},{title:'Whisky or pub lunch',titleIt:'Whisky o pub lunch',type:'food',dur:60,why:{it:'Tradizione locale.',en:'Local tradition.'}}]}
+
 ];
 
 /* enrich catalog with budget tiers & mood tags */
@@ -910,7 +1018,26 @@ var DEST_CATALOG=[
     prague:{cost:1,tags:['culture','city','escape'],region:'europe'},
     cairo:{cost:2,tags:['culture','wow','desert'],region:'world'},
     marrakech:{cost:2,tags:['exotic','culture','wow'],region:'world'},
-    rio:{cost:2,tags:['sea','party','wow'],region:'world'}
+    rio:{cost:2,tags:['sea','party','wow'],region:'world'},
+    seoul:{cost:2,tags:['city','food','wow','culture'],region:'world'},
+    singapore:{cost:3,tags:['city','food','wow'],region:'world'},
+    cape_town:{cost:2,tags:['nature','sea','wow'],region:'world'},
+    mexico_city:{cost:1,tags:['culture','food','city'],region:'world'},
+    buenos_aires:{cost:2,tags:['culture','food','party','city'],region:'world'},
+    reykjavik:{cost:3,tags:['nature','escape','wow'],region:'europe'},
+    vienna:{cost:2,tags:['culture','romance','city'],region:'europe'},
+    athens:{cost:2,tags:['culture','sea','city'],region:'med'},
+    vancouver:{cost:3,tags:['nature','city','sea'],region:'world'},
+    hong_kong:{cost:3,tags:['city','food','wow'],region:'world'},
+    maldives:{cost:3,tags:['sea','romance','escape','exotic'],region:'world'},
+    santorini:{cost:3,tags:['sea','romance','wow'],region:'med'},
+    kyoto:{cost:3,tags:['culture','escape','food'],region:'world'},
+    copenhagen:{cost:3,tags:['culture','city','food'],region:'europe'},
+    lima:{cost:2,tags:['food','city','sea'],region:'world'},
+    zanzibar:{cost:2,tags:['sea','exotic','escape'],region:'world'},
+    quebec:{cost:2,tags:['culture','city','escape'],region:'world'},
+    hanoi:{cost:1,tags:['food','culture','city'],region:'world'},
+    edinburgh:{cost:2,tags:['culture','city'],region:'europe'}
   };
   DEST_CATALOG.forEach(function(d){
     var m=map[d.id]||{cost:2,tags:['escape'],region:'world'};
@@ -985,12 +1112,19 @@ var _br=document.getElementById('w-bud');if(_br&&!_br.value)_br.value=bud;
     // season soft bias
     if(when==='summer'&&d.tags&&d.tags.indexOf('sea')>=0)s+=8;
     if(when==='winter'&&d.id==='dubai')s+=10;
-    s+=Math.random()*12; // slight roulette randomness
+    s+=Math.random()*55; // strong roulette variance worldwide
     return {d:d,s:s};
   }).sort(function(a,b){return b.s-a.s;});
 
-  var top=scored.slice(0,5);
-  var pick=top[Math.floor(Math.random()*Math.min(3,top.length))].d;
+  // avoid repeating last spins
+  var recent=[];
+  try{recent=JSON.parse(sessionStorage.getItem('st_roulette_recent')||'[]')}catch(e){}
+  var pool=scored.filter(function(x){return recent.indexOf(x.d.id)<0;});
+  if(pool.length<8)pool=scored.slice();
+  var top=pool.slice(0,12);
+  var pick=top[Math.floor(Math.random()*top.length)].d;
+  recent.unshift(pick.id);recent=recent.slice(0,8);
+  try{sessionStorage.setItem('st_roulette_recent',JSON.stringify(recent))}catch(e){}
   var name=lang==='it'?pick.labelIt:pick.label;
   var inp=document.getElementById('w-dest');
   if(inp)inp.value=name;
@@ -998,7 +1132,7 @@ var _br=document.getElementById('w-bud');if(_br&&!_br.value)_br.value=bud;
   var out=document.getElementById('roulette-out');
   if(out){
     out.classList.remove('hidden');
-    var alt=top.slice(0,3).map(function(x){return lang==='it'?x.d.labelIt:x.d.label;}).join(' · ');
+    var alt=top.slice(0,6).map(function(x){return lang==='it'?x.d.labelIt:x.d.label;}).join(' · ');
     out.innerHTML='<div class="rounded-xl bg-white border border-brand-200 p-4 shadow-sm animate-[fadeIn_.4s_ease]">'+
       '<div class="text-xs font-bold uppercase text-brand-600 mb-1">'+(lang==='it'?'Meta consigliata':'Recommended destination')+'</div>'+
       '<div class="text-2xl font-extrabold text-slate-900">'+esc(name)+'</div>'+
@@ -1249,6 +1383,105 @@ function buildDayPlan(dayNum, int1, int2, pace, food, timeBand, dest){
   day.items.push({time:'13:00',title:lunchTitle,type:'food',dur:60});
   day.items.sort(function(a,b){return a.time.localeCompare(b.time)});
   return day;
+}
+
+
+var planAiHistory=[];
+var PLAN_AI_Q=[
+  {id:'mood',it:'In una frase: che emozione vuoi dal prossimo viaggio?',en:'In one sentence: what feeling do you want from the next trip?'},
+  {id:'must',it:'C’è qualcosa che non deve mancare (mare, musei, cibo, trekking, vita notturna)?',en:'Anything that must be included (sea, museums, food, trekking, nightlife)?'},
+  {id:'avoid',it:'Cosa vuoi evitare (folla, aerei lunghi, caldo, freddo, scale…)?',en:'What do you want to avoid (crowds, long flights, heat, cold, stairs…)?'},
+  {id:'food',it:'Per il ristoro: street food, cucina locale o ristoranti più curati?',en:'For food: street food, local cuisine or finer restaurants?'},
+  {id:'flight',it:'Preferisci voli diretti, low cost con scalo, o treno/traghetto se possibile?',en:'Prefer direct flights, budget with layover, or train/ferry when possible?'},
+  {id:'budget_feel',it:'Il budget è stretto, comodo o “premium senza pensieri”?',en:'Is the budget tight, comfortable, or premium no-worries?'}
+];
+var planAiStep=-1;
+
+function appendPlanAi(role,text){
+  var log=document.getElementById('plan-ai-log');if(!log)return;
+  var cls=role==='user'?'ml-auto bg-brand-600 text-white rounded-2xl rounded-tr-sm':'bg-slate-100 text-slate-800 rounded-2xl rounded-tl-sm';
+  log.innerHTML+='<div class="max-w-[90%] px-3 py-2 '+cls+'">'+esc(text)+'</div>';
+  log.scrollTop=log.scrollHeight;
+}
+function startPlanAiInterview(){
+  planAiStep=0;planAiHistory=[];
+  var log=document.getElementById('plan-ai-log');if(log)log.innerHTML='';
+  appendPlanAi('ai',lang==='it'?'Sono ST AI, il tuo consulente di viaggio. Ti faccio poche domande mirate su interessi, voli e ristoro. Puoi anche scrivere liberamente.':'I am ST AI, your travel consultant. A few targeted questions on interests, flights and food. You can also write freely.');
+  appendPlanAi('ai',lang==='it'?PLAN_AI_Q[0].it:PLAN_AI_Q[0].en);
+}
+async function sendPlanAi(){
+  var inp=document.getElementById('plan-ai-in');
+  var text=(inp&&inp.value||'').trim();if(!text)return;
+  if(inp)inp.value='';
+  appendPlanAi('user',text);
+  planAiHistory.push({role:'user',content:text});
+  // apply heuristics to wizard fields
+  applyPlanAiHeuristics(text);
+  if(planAiStep>=0&&planAiStep<PLAN_AI_Q.length){
+    planAiStep++;
+    if(planAiStep<PLAN_AI_Q.length){
+      var q=PLAN_AI_Q[planAiStep];
+      appendPlanAi('ai',lang==='it'?q.it:q.en);
+      planAiHistory.push({role:'assistant',content:lang==='it'?q.it:q.en});
+      return;
+    }
+    planAiStep=-1;
+  }
+  var reply='';
+  if(API_LIVE){
+    try{
+      var aiData=await apiPost('ai-travel',{
+        message:text,
+        language:lang,
+        history:planAiHistory.slice(-10),
+        travelContext:{scope:'planning_interview',focus:['interests','flights','dining','pace','budget']}
+      });
+      reply=aiData.reply||'';
+    }catch(e){reply='';}
+  }
+  if(!reply){
+    reply=lang==='it'
+      ?('Ho registrato la preferenza. Continua il wizard o usa la roulette se non hai ancora una meta. Per voli e ristoranti tipici, genereremo il piano e potrai approfondire in Voli & Hotel / ST AI.')
+      :('Preference noted. Continue the wizard or use the roulette if you still need a destination. We will refine flights and dining in the full plan and Flights & Hotels / ST AI.');
+  }
+  appendPlanAi('ai',reply);
+  planAiHistory.push({role:'assistant',content:reply});
+  var prof=document.getElementById('plan-ai-profile');
+  if(prof){
+    prof.classList.remove('hidden');
+    prof.innerHTML='<strong>'+(lang==='it'?'Profilo in costruzione':'Profile building')+'</strong> — '+(lang==='it'?'le risposte aggiornano interessi, cibo e note del wizard.':'answers update interests, food and wizard notes.');
+  }
+}
+function applyPlanAiHeuristics(text){
+  var low=text.toLowerCase();
+  var notes=document.getElementById('w-notes');
+  if(notes){notes.value=(notes.value?notes.value+' · ':'')+text.slice(0,180);}
+  var int1=document.getElementById('w-int');
+  if(int1){
+    if(/mare|spiaggia|beach|sea|isola|island/.test(low))int1.value='mare';
+    else if(/natura|trekking|montagna|nature|hike/.test(low))int1.value='natura';
+    else if(/cibo|food|ristor|gourmet|street food/.test(low))int1.value='cibo';
+    else if(/muse|cultur|storia|art|museum/.test(low))int1.value='cultura';
+    else if(/nightlife|vita notturn|festa|party|club/.test(low))int1.value='vita';
+    else if(/famigl|bambin|family|kid/.test(low))int1.value='famiglia';
+  }
+  var food=document.getElementById('w-food');
+  if(food){
+    if(/street|veloce|quick/.test(low))food.value='quick';
+    else if(/gourmet|fine|stellat|luxury/.test(low))food.value='fine';
+    else if(/local|tipic|locale/.test(low))food.value='local';
+  }
+  var pace=document.getElementById('w-pace');
+  if(pace){
+    if(/rilass|slow|relax/.test(low))pace.value='slow';
+    else if(/intens|full|tante tappe/.test(low))pace.value='intense';
+  }
+  var desire=document.getElementById('w-desire');
+  if(desire){
+    if(/wow|memorab|unico/.test(low))desire.value='wow';
+    else if(/stacc|svag|escape|relax/.test(low))desire.value='escape';
+    else if(/romant/.test(low))desire.value='romance';
+  }
 }
 
 function wiz(n){
@@ -1997,6 +2230,8 @@ window.sharePlan=sharePlan;
 window.onDestType=onDestType;
 window.setDestMode=setDestMode;
 window.spinDestinationRoulette=spinDestinationRoulette;
+window.startPlanAiInterview=startPlanAiInterview;
+window.sendPlanAi=sendPlanAi;
 window.onDestKey=onDestKey;
 window.showPlanDay=showPlanDay;
 window.focusDayOnMap=focusDayOnMap;
