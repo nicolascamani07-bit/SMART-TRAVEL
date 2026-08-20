@@ -13,9 +13,6 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://js.stripe.com/v3/"></script>
-<!-- Google AdSense - SOSTITUISCI ca-pub-XXXXXXXXXXXXXXXX con il tuo Publisher ID reale -->
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
 <style>
 body{font-family:Inter,system-ui,sans-serif}
 .glass{background:rgba(255,255,255,.95);backdrop-filter:blur(12px)}
@@ -39,18 +36,31 @@ header.sticky{z-index:9999!important}
 .poi-green{background:#10b981;border:2px solid #fff}
 .poi-pink{background:#d946ef;border:2px solid #fff}
 .poi-blue{background:#0ea5e9;border:2px solid #fff}
-/* === Annunci AdSense integrati (stile nativo SmartTravel) === */
-.ad-wrap{margin:1.25rem auto;max-width:100%;padding:0 1rem}
-.ad-box{background:#fff;border:1px solid #e2e8f0;border-radius:1rem;padding:12px 14px;box-shadow:0 1px 3px rgba(0,0,0,.04);overflow:hidden}
-.ad-label{font-size:10px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:#94a3b8;margin-bottom:6px;display:flex;align-items:center;gap:6px}
-.ad-label:before{content:'';width:4px;height:4px;border-radius:99px;background:#cbd5e1}
-.ad-box .adsbygoogle{display:block;min-height:90px}
-.ad-box.ad-incontent{background:linear-gradient(180deg,#f8fafc 0%,#fff 100%);border-color:#e0e7ff}
 @media print{
-  header,footer,.no-print,.ad-wrap{display:none!important}
+  header,footer,.no-print{display:none!important}
   .page{display:block!important}
   #plan-print-area{display:block!important}
 }
+/* Plan result premium */
+.plan-hero{background:linear-gradient(135deg,#1e3a8a 0%,#2563eb 45%,#06b6d4 100%);color:#fff;border-radius:1.25rem;padding:1.5rem;position:relative;overflow:hidden}
+.plan-hero:before{content:'';position:absolute;right:-40px;top:-40px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.08)}
+.plan-stat{background:rgba(255,255,255,.12);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.18);border-radius:1rem;padding:.75rem 1rem}
+.plan-day-tab{transition:all .2s ease;cursor:pointer}
+.plan-day-tab:hover{transform:translateY(-2px);box-shadow:0 8px 16px -8px rgba(37,99,235,.35)}
+.plan-day-tab.active{background:#2563eb;color:#fff;border-color:#2563eb}
+.plan-day-card{display:none;animation:fadeIn .35s ease}
+.plan-day-card.active{display:block}
+.timeline-item{position:relative;padding-left:1.25rem}
+.timeline-item:before{content:'';position:absolute;left:0;top:.45rem;width:.55rem;height:.55rem;border-radius:999px;background:#10b981;box-shadow:0 0 0 3px rgba(16,185,129,.2)}
+.timeline-item.food:before{background:#d946ef;box-shadow:0 0 0 3px rgba(217,70,239,.2)}
+.timeline-item.rest:before{background:#0ea5e9;box-shadow:0 0 0 3px rgba(14,165,233,.2)}
+.timeline-rail{position:relative}
+.timeline-rail:before{content:'';position:absolute;left:.2rem;top:.5rem;bottom:.5rem;width:2px;background:linear-gradient(to bottom,#bfdbfe,#e2e8f0)}
+.budget-bar{height:.5rem;border-radius:999px;background:#e2e8f0;overflow:hidden}
+.budget-bar>span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#2563eb,#06b6d4)}
+#plan-map{height:340px!important;border-radius:1rem}
+.plan-action:hover{transform:translateY(-1px)}
+.chip-live{animation:pulse 2s ease-in-out infinite}
 </style>
 </head>
 <body class="bg-slate-50 text-slate-800">
@@ -118,21 +128,6 @@ header.sticky{z-index:9999!important}
 <div id="home-map" class="h-56 rounded-xl bg-slate-100"></div>
 </div>
 </section>
-
-<!-- AdSense Home - sotto hero -->
-<div class="ad-wrap no-print max-w-7xl mx-auto">
-  <div class="ad-box ad-incontent">
-    <div class="ad-label">Pubblicità</div>
-    <ins class="adsbygoogle"
-         style="display:block"
-         data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-         data-ad-slot="1111111111"
-         data-ad-format="auto"
-         data-full-width-responsive="true"></ins>
-    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-  </div>
-</div>
-
 <section class="py-10 bg-white border-y">
 <div class="max-w-7xl mx-auto px-4 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
 <button type="button" onclick="go('plan')" class="card-h text-left rounded-2xl border p-5 transition"><div class="font-bold" data-i18n="nav_plan">Pianifica</div><p class="text-sm text-slate-500 mt-1" data-i18n="cat_pl">Interessi → tappe → PDF</p></button>
@@ -153,23 +148,8 @@ header.sticky{z-index:9999!important}
 <!-- PLAN enhanced -->
 <div id="page-plan" class="page">
 <section class="py-10">
-<div id="plan-box" class="max-w-2xl mx-auto px-4">
+<div id="plan-box" class="max-w-3xl mx-auto px-4">
 <div class="mb-4 rounded-xl bg-brand-50 border border-brand-100 px-4 py-3 text-sm text-brand-900 no-print" data-i18n="demo_banner">Wizard completo: interessi, ritmo, orari. Output con mappa, tappe e PDF.</div>
-
-<!-- AdSense Plan -->
-<div class="ad-wrap no-print mb-4" style="padding:0">
-  <div class="ad-box">
-    <div class="ad-label">Pubblicità</div>
-    <ins class="adsbygoogle"
-         style="display:block"
-         data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-         data-ad-slot="2222222222"
-         data-ad-format="auto"
-         data-full-width-responsive="true"></ins>
-    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-  </div>
-</div>
-
 <div class="flex flex-wrap justify-between items-center gap-2 mb-4">
 <h1 class="text-2xl font-extrabold" data-i18n="wiz_title">Pianificazione viaggio</h1>
 <span id="plan-badge" class="text-xs font-semibold px-3 py-1 rounded-full bg-brand-100 text-brand-800">Demo</span>
@@ -184,12 +164,70 @@ header.sticky{z-index:9999!important}
 </div>
 
 <div id="ws1" class="wizard-step active space-y-4 no-print">
-<p class="text-sm text-slate-500" data-i18n="wiz_s1">1/5 · Dove e con chi</p>
+<p class="text-sm text-slate-500" data-i18n="wiz_s1">1/5 · Profilo e meta</p>
+<div class="rounded-2xl border border-brand-100 bg-gradient-to-br from-brand-50 to-white p-4 text-sm text-slate-700">
+<strong class="text-brand-800" data-i18n="premium_line">Consulenza premium</strong>
+<span data-i18n="premium_sub"> — indaghiamo desideri, budget e ritmo prima di costruire l’itinerario.</span>
+</div>
 <div><label class="text-sm font-semibold" data-i18n="q_people">Viaggiatori</label>
 <select id="w-peo" class="mt-1 w-full px-4 py-3 rounded-xl border bg-white"><option>1</option><option selected>2</option><option>3</option><option>4</option><option>5+</option></select></div>
-<div><label class="text-sm font-semibold" data-i18n="q_dest">Destinazione (città o area)</label>
-<input id="w-dest" type="text" class="mt-1 w-full px-4 py-3 rounded-xl border" placeholder="es. Trapani, Roma, Bled" list="dest-suggestions"/>
-<datalist id="dest-suggestions"><option value="Trapani"><option value="Roma"><option value="Palermo"><option value="Bled"><option value="Lisbona"><option value="Parigi"><option value="Amalfi"><option value="Barcellona"></datalist></div>
+
+<div>
+<label class="text-sm font-semibold" data-i18n="q_know">Sai già dove andare?</label>
+<div class="mt-2 grid grid-cols-2 gap-2">
+<button type="button" id="mode-known" onclick="setDestMode('known')" class="px-3 py-3 rounded-xl border-2 border-brand-600 bg-brand-50 text-sm font-semibold text-brand-900" data-i18n="mode_known">Sì, ho una meta</button>
+<button type="button" id="mode-unknown" onclick="setDestMode('unknown')" class="px-3 py-3 rounded-xl border-2 border-slate-200 bg-white text-sm font-semibold text-slate-700" data-i18n="mode_unknown">No, sorprendimi</button>
+</div>
+</div>
+
+<div id="dest-known-box">
+<div class="relative">
+<label class="text-sm font-semibold" data-i18n="q_dest">Destinazione (città o area)</label>
+<input id="w-dest" type="text" autocomplete="off" class="mt-1 w-full px-4 py-3 rounded-xl border" placeholder="Inizia a digitare: New York, Tokyo, Roma…" oninput="onDestType(event)" onfocus="onDestType(event)" onkeydown="onDestKey(event)"/>
+<div id="dest-ac" class="hidden absolute z-30 left-0 right-0 mt-1 max-h-56 overflow-auto rounded-xl border bg-white shadow-xl text-sm"></div>
+<p class="text-xs text-slate-500 mt-1" data-i18n="dest_hint">Suggerimenti mentre digiti · mete globali supportate</p>
+</div>
+</div>
+
+<div id="dest-unknown-box" class="hidden space-y-3">
+<div><label class="text-sm font-semibold" data-i18n="q_desire">Cosa cerchi in questo viaggio?</label>
+<select id="w-desire" class="mt-1 w-full px-4 py-3 rounded-xl border bg-white">
+<option value="escape" data-i18n="des_escape">Svagarmi e staccare</option>
+<option value="wow" selected data-i18n="des_wow">Qualcosa di memorabile / “wow”</option>
+<option value="culture" data-i18n="des_culture">Approfondire cultura e luoghi</option>
+<option value="nature" data-i18n="des_nature">Natura e outdoor</option>
+<option value="food" data-i18n="des_food">Cibo e sapori</option>
+<option value="romance" data-i18n="des_romance">Romantico / di coppia</option>
+<option value="family" data-i18n="des_family">Famiglia e ritmo soft</option>
+<option value="party" data-i18n="des_party">Energia, città, vita notturna</option>
+</select></div>
+<div><label class="text-sm font-semibold" data-i18n="q_climate">Clima / ambientazione preferita</label>
+<select id="w-climate" class="mt-1 w-full px-4 py-3 rounded-xl border bg-white">
+<option value="any" selected data-i18n="cli_any">Indifferente</option>
+<option value="city" data-i18n="cli_city">Grande città</option>
+<option value="sea" data-i18n="cli_sea">Mare / costa</option>
+<option value="mountain" data-i18n="cli_mountain">Lago / montagna</option>
+<option value="exotic" data-i18n="cli_exotic">Esotico / tropicale</option>
+<option value="desert" data-i18n="cli_desert">Deserto / Oriente</option>
+</select></div>
+<div><label class="text-sm font-semibold" data-i18n="q_distance">Distanza accettabile</label>
+<select id="w-distance" class="mt-1 w-full px-4 py-3 rounded-xl border bg-white">
+<option value="europe" data-i18n="dist_eu">Europa</option>
+<option value="med" data-i18n="dist_med">Mediterraneo / vicino</option>
+<option value="world" selected data-i18n="dist_world">Tutto il mondo</option>
+</select></div>
+<div class="rounded-2xl border-2 border-dashed border-brand-300 bg-brand-50/50 p-4">
+<div class="flex items-center justify-between gap-2 mb-2">
+<div class="font-bold text-brand-900" data-i18n="roulette_title">Roulette destinazioni</div>
+<span class="text-xs text-brand-700" data-i18n="roulette_sub">in base a budget e desideri</span>
+</div>
+<div class="mb-2"><label class="text-xs font-semibold text-slate-600" data-i18n="q_budget">Budget totale (€)</label>
+<input id="w-bud-roul" type="number" min="50" placeholder="800" class="mt-1 w-full px-3 py-2 rounded-xl border text-sm" oninput="var b=document.getElementById('w-bud');if(b)b.value=this.value;"/></div>
+<button type="button" onclick="spinDestinationRoulette()" class="w-full py-3.5 rounded-full bg-gradient-to-r from-brand-600 to-cyan-500 text-white font-bold shadow-md hover:opacity-95" data-i18n="roulette_btn">🎲 Gira la roulette</button>
+<div id="roulette-out" class="mt-3 hidden"></div>
+</div>
+</div>
+
 <div><label class="text-sm font-semibold" data-i18n="q_when">Quando</label>
 <select id="w-when" class="mt-1 w-full px-4 py-3 rounded-xl border bg-white">
 <option value="flex" data-i18n="o_flex">Date flessibili</option>
@@ -222,7 +260,9 @@ header.sticky{z-index:9999!important}
 <option value="intense" data-i18n="o_intense">Intenso (molte tappe)</option>
 </select></div>
 <div><label class="text-sm font-semibold" data-i18n="q_budget">Budget totale (€)</label>
-<input id="w-bud" type="number" min="50" placeholder="800" class="mt-1 w-full px-4 py-3 rounded-xl border"/></div>
+<input id="w-bud" type="number" min="50" placeholder="800" class="mt-1 w-full px-4 py-3 rounded-xl border" onchange="if(document.getElementById('dest-unknown-box')&&!document.getElementById('dest-unknown-box').classList.contains('hidden')){/* budget ready for roulette */}""/>
+<p class="text-xs text-slate-500 mt-1" data-i18n="budget_hint">Usato per roulette mete, ritmo del piano e tetto alloggio/giorno</p>
+</div>
 <div class="flex gap-3"><button type="button" onclick="wiz(1)" class="flex-1 py-3 rounded-full border font-semibold" data-i18n="back">Indietro</button>
 <button type="button" onclick="wiz(3)" class="flex-1 py-3 rounded-full bg-brand-600 text-white font-semibold" data-i18n="next">Continua</button></div>
 </div>
@@ -313,17 +353,15 @@ header.sticky{z-index:9999!important}
 </div>
 
 <div id="ws5" class="wizard-step space-y-5">
-<div class="flex flex-wrap gap-2 no-print">
-<button type="button" onclick="exportPDF()" class="px-4 py-2 rounded-full bg-slate-900 text-white text-sm font-semibold">📄 PDF</button>
-<button type="button" onclick="window.print()" class="px-4 py-2 rounded-full border text-sm font-semibold">🖨️ Print</button>
-<button type="button" onclick="go('ai')" class="px-4 py-2 rounded-full bg-brand-600 text-white text-sm font-semibold">ST AI</button>
-<button type="button" onclick="resetWizard()" class="px-4 py-2 rounded-full border text-sm font-semibold" data-i18n="restart">Nuova</button>
+<div class="flex flex-wrap gap-2 no-print sticky top-16 z-20 py-2 bg-slate-50/95 backdrop-blur">
+<button type="button" onclick="exportPDF()" class="plan-action px-4 py-2 rounded-full bg-slate-900 text-white text-sm font-semibold shadow-sm">📄 PDF</button>
+<button type="button" onclick="window.print()" class="plan-action px-4 py-2 rounded-full border bg-white text-sm font-semibold">🖨️ Print</button>
+<button type="button" onclick="sharePlan()" class="plan-action px-4 py-2 rounded-full border bg-white text-sm font-semibold">🔗 Condividi</button>
+<button type="button" onclick="go('ai')" class="plan-action px-4 py-2 rounded-full bg-brand-600 text-white text-sm font-semibold shadow-sm">✦ ST AI</button>
+<button type="button" onclick="go('flights')" class="plan-action px-4 py-2 rounded-full border border-brand-200 bg-brand-50 text-brand-800 text-sm font-semibold">✈️ Voli & Hotel</button>
+<button type="button" onclick="resetWizard()" class="plan-action px-4 py-2 rounded-full border text-sm font-semibold" data-i18n="restart">Nuova</button>
 </div>
 <div id="plan-print-area" class="space-y-4">
-<div class="rounded-2xl bg-brand-50 border border-brand-100 p-4">
-<div class="font-bold text-brand-900" data-i18n="result_title">Piano di viaggio completo</div>
-<p class="text-sm text-brand-800 mt-1" data-i18n="result_sub">Tappe per interesse, mappa e orari indicativi.</p>
-</div>
 <div id="plan-out"></div>
 </div>
 </div>
@@ -406,20 +444,6 @@ header.sticky{z-index:9999!important}
 <select id="list-filter" class="hidden"><option value="all">all</option></select>
 </div>
 
-<!-- AdSense Listings -->
-<div class="ad-wrap no-print mb-8" style="padding:0">
-  <div class="ad-box ad-incontent">
-    <div class="ad-label">Pubblicità</div>
-    <ins class="adsbygoogle"
-         style="display:block"
-         data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-         data-ad-slot="3333333333"
-         data-ad-format="auto"
-         data-full-width-responsive="true"></ins>
-    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-  </div>
-</div>
-
 <div class="mb-8">
 <div class="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-3" data-i18n="explore_by_interest">Esplora per interesse</div>
 <div class="flex flex-wrap gap-2">
@@ -499,28 +523,25 @@ header.sticky{z-index:9999!important}
 </div>
 
 <div id="page-legal" class="page">
-<section class="py-12 max-w-3xl mx-auto px-4 text-sm text-slate-600 space-y-8">
-<button type="button" onclick="go('home')" class="text-brand-600 font-semibold no-print">← <span data-i18n="nav_home">Home</span></button>
-<div id="legal-content">
-<!-- Contenuto generato dinamicamente da renderLegal() in base alla lingua -->
-</div>
+<section class="py-12 max-w-2xl mx-auto px-4 text-sm text-slate-600 space-y-3">
+<button type="button" onclick="go('home')" class="text-brand-600 font-semibold">← Home</button>
+<h1 class="text-2xl font-extrabold text-slate-900" data-i18n="legal_title">Policy</h1>
+<p data-i18n="refund_1">Analisi 2 €: non rimborsabile dopo elaborazione salvo guasto tecnico.</p>
+<p data-i18n="privacy_1">Demo su dispositivo. Produzione: Supabase.</p>
 </section>
 </div>
 </main>
 
 <footer class="border-t py-6 bg-white text-sm text-slate-500 no-print">
-<div class="max-w-7xl mx-auto px-4 flex flex-wrap justify-between items-center gap-3">
+<div class="max-w-7xl mx-auto px-4 flex flex-wrap justify-between gap-3">
 <span class="font-bold text-slate-800">Smart Travel</span>
-<div class="flex gap-4 text-xs">
-<button type="button" onclick="go('legal')" class="hover:text-brand-600" data-i18n="nav_legal">Policy & Legale</button>
 <span>© 2026 · ST AI · PDF · Map</span>
-</div>
 </div>
 </footer>
 
 <script id="api-config" type="application/json">
 {
-  "mode": "demo",
+  "mode": "live",
   "workerUrl": "https://dry-bird-91e5.nicolascamani07.workers.dev"
 }
 </script>
@@ -538,7 +559,7 @@ cat_pl:'Interessi → tappe → PDF',cat_ai:'Domande su dove, come, quando',cat_
 p1_name:'Analisi',p2_name:'10 piani',p3_name:'Mensile',buy:'Attiva',
 demo_banner:'Wizard completo: interessi, ritmo, orari. Output con mappa, tappe e PDF.',wiz_title:'Pianificazione viaggio',
 wiz_s1:'1/5 · Dove e con chi',wiz_s2:'2/5 · Come ti muovi',wiz_s3:'3/5 · Interessi (guidano le tappe)',wiz_s4:'4/5 · Età, animali, alloggio',
-q_people:'Viaggiatori',q_dest:'Destinazione (città o area)',q_when:'Quando',q_days:'Durata',q_transport:'Mezzo principale',
+q_people:'Viaggiatori',q_dest:'Destinazione (città o area)',wiz_s1:'1/5 · Profilo e meta',premium_line:'Consulenza premium',premium_sub:' — indaghiamo desideri, budget e ritmo prima di costruire l’itinerario.',q_know:'Sai già dove andare?',mode_known:'Sì, ho una meta',mode_unknown:'No, sorprendimi',q_desire:'Cosa cerchi in questo viaggio?',des_escape:'Svagarmi e staccare',des_wow:'Qualcosa di memorabile / “wow”',des_culture:'Approfondire cultura e luoghi',des_nature:'Natura e outdoor',des_food:'Cibo e sapori',des_romance:'Romantico / di coppia',des_family:'Famiglia e ritmo soft',des_party:'Energia, città, vita notturna',q_climate:'Clima / ambientazione preferita',cli_any:'Indifferente',cli_city:'Grande città',cli_sea:'Mare / costa',cli_mountain:'Lago / montagna',cli_exotic:'Esotico / tropicale',cli_desert:'Deserto / Oriente',q_distance:'Distanza accettabile',dist_eu:'Europa',dist_med:'Mediterraneo / vicino',dist_world:'Tutto il mondo',roulette_title:'Roulette destinazioni',roulette_sub:'in base a budget e desideri',roulette_btn:'🎲 Gira la roulette',budget_hint:'Usato per roulette mete, ritmo del piano e tetto alloggio/giorno',dest_hint:'Suggerimenti mentre digiti · mete globali supportate',q_when:'Quando',q_days:'Durata',q_transport:'Mezzo principale',
 q_local:'Spostamenti in destinazione',q_pace:'Ritmo di visita',q_budget:'Budget totale (€)',q_int:'Interesse principale',q_int2:'Secondo interesse',
 q_food:'Preferenze pasto',q_time:'Fascia oraria preferita per le visite',q_stay:'Tipo alloggio',q_style:'Fascia',q_age_adults:'Adulti (18–64)',q_age_senior:'Over 65',q_age_child:'Bambini 0–12',q_age_teen:'Ragazzi 13–17',q_pets:'Animali al seguito',o_pets_none:'Nessuno',o_pets_dog:'Cane',o_pets_cat:'Gatto',o_pets_other:'Altro animale',q_pets_need:'Esigenze pet-friendly',o_pets_hotel:'Alloggio che accetta animali',o_pets_beach:'Spiagge / parchi pet-friendly',o_pets_both:'Alloggio + luoghi pet-friendly',q_access:'Accessibilità / mobilità ridotta',o_access_none:'Nessuna esigenza particolare',o_access_steps:'Evitare scale / percorsi impegnativi',o_access_wheel:'Accesso carrozzina / ridotta mobilità',o_access_stroller:'Passeggino / percorsi comodi',q_notes:'Note libere (opzionale)',
 o_flex:'Date flessibili',o_walk:'A piedi / poco raggio',o_transit:'Mezzi pubblici',o_car:'Auto a noleggio',o_mix:'Misto',
@@ -551,7 +572,7 @@ fl_title:'Voli & Hotel',fl_sub:'Confronta disponibilità e prezzi senza uscire d
 cr_title:'Crociere',list_title:'Destinazioni',list_sub:'Cerca città e destinazioni. ST AI suggerisce mete anche se scrivi in modo libero.',dest_search_ph:'Es. Napoli, mare Sicilia, laghi…',dest_ai_btn:'Cerca con ST AI',dest_ai_suggest:'ST AI suggerisce:',dest_ai_none:'Nessuna meta trovata: prova un’altra descrizione.',f_all:'Tutte',
 ai_sub:'Intervista guidata: interessi, dove, come, quando',ai_hello:'Ciao, sono ST AI. Posso farti domande mirate su interessi, ritmo e orari per costruire un itinerario preciso. Clicca «Avvia intervista interessi» oppure scrivi liberamente.',
 ai_start:'Avvia intervista interessi',send:'Invia',ai_ph:'Rispondi o chiedi…',ai_privacy:'ST AI usa OpenAI solo quando invii un messaggio; non inserire dati sensibili.',
-legal_title:'Policy',nav_legal:'Policy & Legale',refund_1:'Analisi 2 €: non rimborsabile dopo elaborazione salvo guasto tecnico.',privacy_1:'Demo su dispositivo. Produzione: Supabase.',
+legal_title:'Policy',refund_1:'Analisi 2 €: non rimborsabile dopo elaborazione salvo guasto tecnico.',privacy_1:'Demo su dispositivo. Produzione: Supabase.',
 active_plan:'Piano attivo',from:'da',plan_this:'Usa nel piano',days_label:'giorni',fits_budget:'Allineato al budget',no_results:'Nessun risultato',
 morning:'Mattina',afternoon:'Pomeriggio',evening:'Sera',lunch:'Pranzo',dinner:'Cena',
 map_legend:'● → tappe · ● → ristoro · ● → base',
@@ -566,7 +587,7 @@ cat_pl:'Interests → stops → PDF',cat_ai:'Questions on where, how, when',cat_
 p1_name:'Analysis',p2_name:'10 plans',p3_name:'Monthly',buy:'Activate',
 demo_banner:'Full wizard: interests, pace, times. Output with map, stops and PDF.',wiz_title:'Trip planning',
 wiz_s1:'1/5 · Where and who',wiz_s2:'2/5 · How you move',wiz_s3:'3/5 · Interests (drive the stops)',wiz_s4:'4/5 · Ages, pets, stay',
-q_people:'Travellers',q_dest:'Destination (city or area)',q_when:'When',q_days:'Duration',q_transport:'Main transport',
+q_people:'Travellers',q_dest:'Destination (city or area)',wiz_s1:'1/5 · Profile & destination',premium_line:'Premium consulting',premium_sub:' — we explore desires, budget and pace before building the itinerary.',q_know:'Do you already know where to go?',mode_known:'Yes, I have a place',mode_unknown:'No, surprise me',q_desire:'What do you want from this trip?',des_escape:'Unwind and switch off',des_wow:'Something memorable / wow',des_culture:'Culture and places in depth',des_nature:'Nature and outdoors',des_food:'Food and flavours',des_romance:'Romantic / couple',des_family:'Family and soft pace',des_party:'Energy, city, nightlife',q_climate:'Preferred climate / setting',cli_any:'No preference',cli_city:'Big city',cli_sea:'Sea / coast',cli_mountain:'Lake / mountains',cli_exotic:'Exotic / tropical',cli_desert:'Desert / East',q_distance:'Acceptable distance',dist_eu:'Europe',dist_med:'Mediterranean / nearby',dist_world:'Worldwide',roulette_title:'Destination roulette',roulette_sub:'based on budget and desires',roulette_btn:'🎲 Spin the roulette',budget_hint:'Used for destination roulette, plan pace and nightly stay cap',dest_hint:'Suggestions as you type · global destinations supported',q_when:'When',q_days:'Duration',q_transport:'Main transport',
 q_local:'Local mobility',q_pace:'Visit pace',q_budget:'Total budget (€)',q_int:'Main interest',q_int2:'Second interest',
 q_food:'Meal preference',q_time:'Preferred visit time band',q_stay:'Stay type',q_style:'Tier',q_age_adults:'Adults (18–64)',q_age_senior:'Over 65',q_age_child:'Children 0–12',q_age_teen:'Teens 13–17',q_pets:'Pets travelling',o_pets_none:'None',o_pets_dog:'Dog',o_pets_cat:'Cat',o_pets_other:'Other pet',q_pets_need:'Pet-friendly needs',o_pets_hotel:'Pet-friendly stay',o_pets_beach:'Pet-friendly beaches/parks',o_pets_both:'Stay + pet-friendly places',q_access:'Accessibility / reduced mobility',o_access_none:'No special needs',o_access_steps:'Avoid stairs / hard paths',o_access_wheel:'Wheelchair / reduced mobility',o_access_stroller:'Stroller-friendly routes',q_notes:'Free notes (optional)',
 o_flex:'Flexible dates',o_walk:'Walk / short range',o_transit:'Public transport',o_car:'Rental car',o_mix:'Mixed',
@@ -579,7 +600,7 @@ fl_title:'Flights & Hotels',fl_sub:'Compare availability and prices without leav
 cr_title:'Cruises',list_title:'Destinations',list_sub:'Search cities and destinations. ST AI suggests places even from free-text.',dest_search_ph:'E.g. Naples, Sicily sea, lakes…',dest_ai_btn:'Cerca con ST AI',dest_ai_suggest:'ST AI suggests:',dest_ai_none:'No place found: try another description.',f_all:'All',
 ai_sub:'Guided interview: interests, where, how, when',ai_hello:'Hi, I am ST AI. I can ask targeted questions on interests, pace and times to build a precise itinerary. Click «Start interest interview» or type freely.',
 ai_start:'Start interest interview',send:'Send',ai_ph:'Reply or ask…',ai_privacy:'ST AI uses OpenAI only when you send a message; do not enter sensitive data.',
-legal_title:'Policy',nav_legal:'Policy & Legal',refund_1:'€2 analysis: non-refundable after generation except technical failure.',privacy_1:'Demo on device. Production: Supabase.',
+legal_title:'Policy',refund_1:'€2 analysis: non-refundable after generation except technical failure.',privacy_1:'Demo on device. Production: Supabase.',
 active_plan:'Active plan',from:'from',plan_this:'Use in plan',days_label:'days',fits_budget:'Fits budget',no_results:'No results',
 morning:'Morning',afternoon:'Afternoon',evening:'Evening',lunch:'Lunch',dinner:'Dinner',
 map_legend:'● → interest · ● → food · ● → base',
@@ -645,170 +666,6 @@ function applyLang(){
   document.querySelectorAll('[data-i18n-ph]').forEach(function(el){var v=t(el.getAttribute('data-i18n-ph'));if(v)el.placeholder=v});
   try{localStorage.setItem('st_lang',lang)}catch(e){}
   renderListings();renderCruises();initTravelForm();
-  renderLegal();
-}
-
-function renderLegal(){
-  var box=document.getElementById('legal-content');
-  if(!box)return;
-  var isIt=lang!=='en';
-
-  var html='';
-  // Banner
-  html+='<div class="rounded-xl bg-amber-50 border border-amber-200 px-4 py-3 text-amber-900 text-xs mb-6">';
-  html+='<strong>'+(isIt?'Versione preliminare / demo.':'Preliminary / demo version.')+'</strong> ';
-  html+=(isIt
-    ?'Questi testi verranno aggiornati con i dati completi del titolare prima della pubblicazione definitiva.'
-    :'These texts will be updated with the full data of the data controller before the final publication.');
-  html+='</div>';
-
-  // Title
-  html+='<h1 class="text-3xl font-extrabold text-slate-900 mb-1">'+(isIt?'Policy & Legale':'Policy & Legal')+'</h1>';
-  html+='<p class="text-slate-500 mb-6">'+(isIt?'Ultimo aggiornamento: 17 agosto 2026 · Smart Travel':'Last update: 17 August 2026 · Smart Travel')+'</p>';
-
-  // Internal nav
-  html+='<nav class="flex flex-wrap gap-2 text-xs font-semibold no-print mb-8">';
-  var navItems=isIt
-    ?[['termini','Termini'],['privacy','Privacy'],['cookie','Cookie'],['vendita','Vendita & Pagamenti'],['ai','Intelligenza Artificiale'],['recesso','Recesso']]
-    :[['termini','Terms'],['privacy','Privacy'],['cookie','Cookie'],['vendita','Sales & Payments'],['ai','Artificial Intelligence'],['recesso','Withdrawal']];
-  navItems.forEach(function(item){
-    html+='<a href="#'+item[0]+'" class="px-3 py-1.5 rounded-full bg-slate-100 hover:bg-brand-50">'+item[1]+'</a>';
-  });
-  html+='</nav>';
-
-  // 1. Terms
-  html+='<div id="termini" class="space-y-3 scroll-mt-24 mb-10">';
-  html+='<h2 class="text-xl font-bold text-slate-900 border-b pb-2">'+(isIt?'1. Termini e condizioni d’uso':'1. Terms of use')+'</h2>';
-  if(isIt){
-    html+='<p><strong>Titolare del servizio</strong><br>Smart Travel – sito dimostrativo raggiungibile all’indirizzo <code class="text-xs bg-slate-100 px-1 rounded">nicolascamani07-bit.github.io</code>.<br>I dati anagrafici e fiscali del titolare verranno inseriti nella versione di produzione.</p>';
-    html+='<p><strong>Oggetto</strong><br>La piattaforma consente di pianificare itinerari di viaggio, generare piani giornalieri con mappa e PDF, utilizzare l’assistente ST AI, confrontare voli e hotel in modalità dimostrativa e acquistare piani a pagamento (Analisi, Mensile, 10 piani) tramite Stripe.</p>';
-    html+='<p><strong>Accesso</strong><br>L’utilizzo è consentito a chi ha compiuto 18 anni. Alcune funzionalità richiedono l’acquisto di un piano.</p>';
-    html+='<p><strong>Dati salvati localmente</strong><br>Al momento non è prevista registrazione con account. Preferenze e piani vengono salvati nel browser dell’utente (localStorage). L’utente è responsabile della loro conservazione.</p>';
-    html+='<p><strong>Utilizzi vietati</strong><br>È vietato usare il servizio per scopi illegali, tentare accessi non autorizzati, inserire contenuti offensivi o eludere i limiti dei piani a pagamento.</p>';
-    html+='<p><strong>Proprietà intellettuale</strong><br>Contenuti, design, codice e marchio “Smart Travel” sono riservati. È vietata la riproduzione non autorizzata.</p>';
-    html+='<p><strong>Limitazioni di responsabilità</strong><br>Nei limiti di legge il Titolare non garantisce assenza di interruzioni o errori. Le informazioni generate (inclusi gli output di ST AI) hanno carattere orientativo e non costituiscono consulenza professionale.</p>';
-    html+='<p><strong>Legge applicabile</strong><br>Si applica la legge italiana. Per i consumatori residenti in Italia vale il foro del luogo di residenza del consumatore.</p>';
-  }else{
-    html+='<p><strong>Service provider</strong><br>Smart Travel – demo website available at <code class="text-xs bg-slate-100 px-1 rounded">nicolascamani07-bit.github.io</code>.<br>The full personal and tax details of the provider will be added in the production version.</p>';
-    html+='<p><strong>Purpose</strong><br>The platform allows users to plan travel itineraries, generate daily plans with map and PDF, use the ST AI assistant, compare flights and hotels in demo mode, and purchase paid plans (Analysis, Monthly, 10 plans) via Stripe.</p>';
-    html+='<p><strong>Access</strong><br>Use is permitted to persons aged 18 or over. Some features require the purchase of a plan.</p>';
-    html+='<p><strong>Locally stored data</strong><br>No account registration is currently required. Preferences and plans are saved in the user’s browser (localStorage). The user is responsible for their safekeeping.</p>';
-    html+='<p><strong>Prohibited uses</strong><br>It is forbidden to use the service for illegal purposes, attempt unauthorised access, insert offensive content, or circumvent the limits of paid plans.</p>';
-    html+='<p><strong>Intellectual property</strong><br>Content, design, code and the “Smart Travel” trademark are reserved. Unauthorised reproduction is prohibited.</p>';
-    html+='<p><strong>Limitation of liability</strong><br>To the extent permitted by law, the Provider does not guarantee the absence of interruptions or errors. Generated information (including ST AI outputs) is indicative only and does not constitute professional advice.</p>';
-    html+='<p><strong>Governing law</strong><br>Italian law applies. For consumers resident in Italy the court of the consumer’s place of residence has jurisdiction.</p>';
-  }
-  html+='</div>';
-
-  // 2. Privacy
-  html+='<div id="privacy" class="space-y-3 scroll-mt-24 mb-10">';
-  html+='<h2 class="text-xl font-bold text-slate-900 border-b pb-2">'+(isIt?'2. Informativa privacy (GDPR) – preliminare':'2. Privacy notice (GDPR) – preliminary')+'</h2>';
-  if(isIt){
-    html+='<p>Il Titolare del trattamento verrà indicato nella versione definitiva. Per la demo i dati di contatto privacy non sono ancora attivi.</p>';
-    html+='<p><strong>Dati trattati</strong></p><ul class="list-disc pl-5 space-y-1">';
-    html+='<li>Dati di navigazione e log tecnici (funzionamento e sicurezza)</li>';
-    html+='<li>Dati inseriti nei form di pianificazione (destinazione, interessi, età, animali, note) – salvati principalmente in locale</li>';
-    html+='<li>Messaggi inviati a ST AI (trasmessi a OpenAI per elaborazione)</li>';
-    html+='<li>Dati di pagamento gestiti interamente da Stripe</li>';
-    html+='<li>Identificatori pubblicitari di Google AdSense (solo con consenso)</li></ul>';
-    html+='<p><strong>Finalità e basi giuridiche</strong><br>Esecuzione del contratto / misure precontrattuali, interesse legittimo (sicurezza), consenso (pubblicità).</p>';
-    html+='<p><strong>Destinatari principali</strong><br>Stripe (pagamenti), OpenAI (ST AI), Google (AdSense), Cloudflare (Worker), GitHub Pages (hosting). In produzione è previsto anche Supabase.</p>';
-    html+='<p><strong>Trasferimenti extra-SEE</strong><br>OpenAI e Google possono trattare dati fuori dallo Spazio Economico Europeo utilizzando Clausole Contrattuali Standard e altre garanzie GDPR.</p>';
-    html+='<p><strong>Diritti dell’interessato</strong><br>Accesso, rettifica, cancellazione, limitazione, portabilità, opposizione e reclamo al Garante Privacy (www.garanteprivacy.it). I contatti per esercitare i diritti verranno pubblicati nella versione definitiva.</p>';
-  }else{
-    html+='<p>The data controller will be indicated in the final version. For the demo, privacy contact details are not yet active.</p>';
-    html+='<p><strong>Data processed</strong></p><ul class="list-disc pl-5 space-y-1">';
-    html+='<li>Browsing data and technical logs (operation and security)</li>';
-    html+='<li>Data entered in planning forms (destination, interests, age, pets, notes) – mainly stored locally</li>';
-    html+='<li>Messages sent to ST AI (transmitted to OpenAI for processing)</li>';
-    html+='<li>Payment data handled entirely by Stripe</li>';
-    html+='<li>Advertising identifiers from Google AdSense (only with consent)</li></ul>';
-    html+='<p><strong>Purposes and legal bases</strong><br>Performance of the contract / pre-contractual measures, legitimate interest (security), consent (advertising).</p>';
-    html+='<p><strong>Main recipients</strong><br>Stripe (payments), OpenAI (ST AI), Google (AdSense), Cloudflare (Worker), GitHub Pages (hosting). Supabase is also planned for production.</p>';
-    html+='<p><strong>Transfers outside the EEA</strong><br>OpenAI and Google may process data outside the European Economic Area using Standard Contractual Clauses and other GDPR safeguards.</p>';
-    html+='<p><strong>Data subject rights</strong><br>Access, rectification, erasure, restriction, portability, objection and complaint to the Italian Data Protection Authority (www.garanteprivacy.it). Contacts for exercising rights will be published in the final version.</p>';
-  }
-  html+='</div>';
-
-  // 3. Cookie
-  html+='<div id="cookie" class="space-y-3 scroll-mt-24 mb-10">';
-  html+='<h2 class="text-xl font-bold text-slate-900 border-b pb-2">'+(isIt?'3. Cookie Policy – preliminare':'3. Cookie Policy – preliminary')+'</h2>';
-  if(isIt){
-    html+='<p>Il Sito utilizza:</p><ul class="list-disc pl-5 space-y-1">';
-    html+='<li><strong>Cookie e storage tecnici necessari</strong> (localStorage per lingua e piani, cookie di sessione di Cloudflare/GitHub) – non richiedono consenso.</li>';
-    html+='<li><strong>Cookie / identificatori di Google AdSense</strong> per la pubblicità – richiedono il consenso dell’utente.</li>';
-    html+='<li>Cookie di Stripe solo durante il checkout – necessari alla transazione.</li></ul>';
-    html+='<p>Nella versione di produzione sarà implementato un banner cookie conforme (Rifiuta facoltativi / Personalizza / Accetta tutti) e un centro preferenze permanente nel footer. I cookie pubblicitari non verranno caricati prima del consenso.</p>';
-  }else{
-    html+='<p>The Site uses:</p><ul class="list-disc pl-5 space-y-1">';
-    html+='<li><strong>Necessary technical cookies and storage</strong> (localStorage for language and plans, Cloudflare/GitHub session cookies) – no consent required.</li>';
-    html+='<li><strong>Google AdSense cookies / identifiers</strong> for advertising – require the user’s consent.</li>';
-    html+='<li>Stripe cookies only during checkout – necessary for the transaction.</li></ul>';
-    html+='<p>In the production version a compliant cookie banner (Reject optional / Customise / Accept all) and a permanent preference centre in the footer will be implemented. Advertising cookies will not be loaded before consent.</p>';
-  }
-  html+='</div>';
-
-  // 4. Sales
-  html+='<div id="vendita" class="space-y-3 scroll-mt-24 mb-10">';
-  html+='<h2 class="text-xl font-bold text-slate-900 border-b pb-2">'+(isIt?'4. Condizioni di vendita e pagamento':'4. Terms of sale and payment')+'</h2>';
-  if(isIt){
-    html+='<p>Piani disponibili:</p><ul class="list-disc pl-5 space-y-1">';
-    html+='<li><strong>Analisi</strong> – pagamento una tantum (€ 2,00)</li>';
-    html+='<li><strong>Mensile</strong> – abbonamento (€ 14,90 / mese)</li>';
-    html+='<li><strong>10 piani</strong> – pagamento una tantum (€ 19,90)</li></ul>';
-    html+='<p>I pagamenti sono gestiti da <strong>Stripe</strong>. Il Titolare non memorizza dati di carte di credito.</p>';
-    html+='<p><strong>Abbonamento Mensile</strong>: si rinnova automaticamente fino a disdetta. La disdetta può essere effettuata tramite il portale clienti Stripe o contattando l’assistenza e ha effetto dalla fine del periodo già pagato.</p>';
-  }else{
-    html+='<p>Available plans:</p><ul class="list-disc pl-5 space-y-1">';
-    html+='<li><strong>Analysis</strong> – one-off payment (€ 2.00)</li>';
-    html+='<li><strong>Monthly</strong> – subscription (€ 14.90 / month)</li>';
-    html+='<li><strong>10 plans</strong> – one-off payment (€ 19.90)</li></ul>';
-    html+='<p>Payments are handled by <strong>Stripe</strong>. The Provider does not store credit card data.</p>';
-    html+='<p><strong>Monthly subscription</strong>: renews automatically until cancelled. Cancellation can be made via the Stripe customer portal or by contacting support and takes effect at the end of the already paid period.</p>';
-  }
-  html+='</div>';
-
-  // 5. Withdrawal
-  html+='<div id="recesso" class="space-y-3 scroll-mt-24 mb-10">';
-  html+='<h2 class="text-xl font-bold text-slate-900 border-b pb-2">'+(isIt?'5. Recesso, rimborsi e conformità':'5. Withdrawal, refunds and conformity')+'</h2>';
-  if(isIt){
-    html+='<p>Per i consumatori si applicano le norme del Codice del Consumo. Il diritto di recesso di 14 giorni può decadere se il servizio digitale è stato eseguito (es. piano già generato) e l’utente ha accettato l’esecuzione anticipata. I rimborsi, quando dovuti, vengono effettuati tramite Stripe.</p>';
-  }else{
-    html+='<p>Consumer rules under the Italian Consumer Code apply. The 14-day right of withdrawal may lapse if the digital service has already been performed (e.g. plan already generated) and the user has accepted early performance. Refunds, when due, are processed via Stripe.</p>';
-  }
-  html+='</div>';
-
-  // 6. AI
-  html+='<div id="ai" class="space-y-3 scroll-mt-24 mb-10">';
-  html+='<h2 class="text-xl font-bold text-slate-900 border-b pb-2">'+(isIt?'6. Informativa sull’Intelligenza Artificiale (ST AI)':'6. Artificial Intelligence notice (ST AI)')+'</h2>';
-  html+='<ul class="list-disc pl-5 space-y-1">';
-  if(isIt){
-    html+='<li>Gli output dipendono dai dati forniti dall’utente e possono contenere errori, incompletezze o informazioni non aggiornate.</li>';
-    html+='<li><strong>Non costituiscono consulenza legale, fiscale, medica, finanziaria o professionale.</strong></li>';
-    html+='<li>Non garantiscono risultati economici, finanziamenti o approvazioni.</li>';
-    html+='<li>Le decisioni importanti devono essere verificate con fonti ufficiali e professionisti qualificati.</li>';
-    html+='<li>I contenuti non devono essere usati per attività illegali o per violare diritti di terzi.</li>';
-    html+='<li>Si raccomanda di non inserire dati sensibili o informazioni di terzi non necessarie.</li>';
-    html+='<li>I messaggi inviati a ST AI vengono trasmessi a OpenAI per l’elaborazione.</li>';
-  }else{
-    html+='<li>Outputs depend on the data provided by the user and may contain errors, incompleteness or outdated information.</li>';
-    html+='<li><strong>They do not constitute legal, tax, medical, financial or professional advice.</strong></li>';
-    html+='<li>They do not guarantee economic results, funding or approvals.</li>';
-    html+='<li>Important decisions must be verified with official sources and qualified professionals.</li>';
-    html+='<li>Content must not be used for illegal activities or to infringe third-party rights.</li>';
-    html+='<li>It is recommended not to enter sensitive data or unnecessary third-party information.</li>';
-    html+='<li>Messages sent to ST AI are transmitted to OpenAI for processing.</li>';
-  }
-  html+='</ul></div>';
-
-  // Footer note
-  html+='<div class="pt-6 border-t text-xs text-slate-400">';
-  html+='<p>'+(isIt
-    ?'Documento preliminare per uso dimostrativo. Prima della pubblicazione saranno inseriti i dati completi del titolare e sarà effettuata la revisione legale necessaria.'
-    :'Preliminary document for demonstration purposes. Before publication the full details of the provider will be inserted and the necessary legal review will be carried out.')+'</p>';
-  html+='</div>';
-
-  box.innerHTML=html;
 }
 function toggleLang(e){if(e){e.preventDefault();e.stopPropagation()}document.getElementById('lang-menu').classList.toggle('open')}
 function setLang(code){lang=code==='en'?'en':'it';document.getElementById('lang-menu').classList.remove('open');applyLang()}
@@ -830,66 +687,11 @@ function go(id){
   if(id==='cruises')renderCruises();
   if(id==='flights')initTravelForm();
   if(id==='plan'){refreshAccess();renderSelected()}
-  if(id==='legal')renderLegal();
   return false;
 }
-/* Stripe Price IDs */
-var STRIPE_PRICES = {
-  compare: 'price_1U5BaP4UxF5QJc4DCY6t5WFI',   // Analisi 2,00 €
-  monthly: 'price_1U5Bau4UxF5QJc4DntOhX2VP',   // Mensile 14,90 €
-  pack10:  'price_1U5BbM4UxF5QJc4D2SBSs7yt'    // 10 piani 19,90 €
-};
-
-async function buy(id, name, price) {
-  var priceId = STRIPE_PRICES[id];
-  if (!priceId) {
-    alert('Piano non trovato');
-    return;
-  }
-
-  // Salva in attesa (verrà confermato dopo il pagamento)
-  try {
-    localStorage.setItem('st_plan_pending', JSON.stringify({ id: id, name: name, price: price, priceId: priceId }));
-  } catch (e) {}
-
-  var workerBase = (API_CONFIG && API_CONFIG.workerUrl) ? String(API_CONFIG.workerUrl).replace(/\/$/, '') : '';
-  var successUrl = window.location.origin + window.location.pathname + '?paid=1&plan=' + encodeURIComponent(id);
-  var cancelUrl  = window.location.href;
-
-  // Prova a creare la sessione Checkout tramite il tuo Worker
-  if (workerBase) {
-    try {
-      var res = await fetch(workerBase + '/create-checkout-session', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          priceId: priceId,
-          successUrl: successUrl,
-          cancelUrl: cancelUrl,
-          planId: id,
-          planName: name
-        })
-      });
-      var data = await res.json();
-      if (data && data.url) {
-        window.location.href = data.url;
-        return;
-      }
-      if (data && data.error) {
-        console.warn('Stripe worker error:', data.error);
-      }
-    } catch (err) {
-      console.warn('Checkout session failed, fallback...', err);
-    }
-  }
-
-  // Fallback demo (se il worker non ha ancora l'endpoint)
-  // In produzione questo non dovrebbe mai apparire
-  alert('Pagamento Stripe in preparazione.\n\nPiano: ' + name + ' (' + price + ')\nPrice ID: ' + priceId + '\n\nAggiungi l\'endpoint /create-checkout-session sul tuo Worker per attivare i pagamenti reali.');
-  try {
-    localStorage.setItem('st_plan', JSON.stringify({ id: id, name: name, price: price }));
-  } catch (e) {}
-  go('plan');
+function buy(id,name,price){
+  try{localStorage.setItem('st_plan',JSON.stringify({id:id,name:name,price:price}))}catch(e){}
+  alert(t('active_plan')+': '+name+' ('+price+')');go('plan');
 }
 function refreshAccess(){
   var p=null;try{p=JSON.parse(localStorage.getItem('st_plan')||'null')}catch(e){}
@@ -898,20 +700,392 @@ function refreshAccess(){
   else{b.textContent='Demo';b.className='text-xs font-semibold px-3 py-1 rounded-full bg-brand-100 text-brand-800'}
 }
 
-/* coords approx for demo maps */
-var COORDS={
-  'trapani':[38.0174,12.5367],'roma':[41.9028,12.4964],'rome':[41.9028,12.4964],
-  'palermo':[38.1157,13.3615],'bled':[46.3683,14.1136],'lisbona':[38.7223,-9.1393],'lisbon':[38.7223,-9.1393],
-  'parigi':[48.8566,2.3522],'paris':[48.8566,2.3522],'amalfi':[40.6340,14.6026],'barcellona':[41.3874,2.1686],'barcelona':[41.3874,2.1686]
-};
+/* ===== Destination catalog (global) ===== */
+var DEST_CATALOG=[
+  {id:'newyork',names:['new york','nyc','new york city'],label:'New York',labelIt:'New York',country:'USA',coords:[40.7128,-74.0060],
+   why:{it:'Skyline, musei di livello mondiale e quartieri iconici.',en:'Skyline, world-class museums and iconic neighbourhoods.'},
+   pois:[
+     {title:'Statue of Liberty & Battery',titleIt:'Statua della Libertà & Battery',type:'poi',dur:150,why:{it:'Simbolo della città e ingresso storico al porto.',en:'City symbol and historic harbour gateway.'}},
+     {title:'Metropolitan Museum',titleIt:'Metropolitan Museum',type:'poi',dur:180,why:{it:'Una delle collezioni d’arte più ampie al mondo.',en:'One of the world’s largest art collections.'}},
+     {title:'Central Park walk',titleIt:'Passeggiata a Central Park',type:'poi',dur:90,why:{it:'Polmone verde tra i grattacieli.',en:'Green lung among the skyscrapers.'}},
+     {title:'Brooklyn Bridge & DUMBO',titleIt:'Brooklyn Bridge & DUMBO',type:'poi',dur:120,why:{it:'Vista skyline e quartiere creativo.',en:'Skyline views and creative district.'}},
+     {title:'Times Square evening',titleIt:'Times Square di sera',type:'poi',dur:60,why:{it:'Energia notturna e Broadway.',en:'Night energy and Broadway.'}},
+     {title:'Chelsea Market food stop',titleIt:'Pausa cibo Chelsea Market',type:'food',dur:75,why:{it:'Street food e prodotti locali indoor.',en:'Indoor street food and local produce.'}}
+   ]},
+  {id:'tokyo',names:['tokyo','tokio'],label:'Tokyo',labelIt:'Tokyo',country:'Giappone',coords:[35.6762,139.6503],
+   why:{it:'Tradizione e futurismo, templi e quartieri hi-tech.',en:'Tradition and futurism, temples and high-tech districts.'},
+   pois:[
+     {title:'Senso-ji Asakusa',titleIt:'Senso-ji Asakusa',type:'poi',dur:90,why:{it:'Tempio storico e atmosfera tradizionale.',en:'Historic temple and traditional atmosphere.'}},
+     {title:'Shibuya Crossing & skyline',titleIt:'Shibuya Crossing & skyline',type:'poi',dur:60,why:{it:'L’incrocio più famoso e pulse della città.',en:'The famous crossing and city pulse.'}},
+     {title:'Meiji Shrine',titleIt:'Santuario Meiji',type:'poi',dur:90,why:{it:'Oasi sacra nel cuore urbano.',en:'Sacred oasis in the urban core.'}},
+     {title:'teamLab / digital art',titleIt:'teamLab / arte digitale',type:'poi',dur:120,why:{it:'Esperienza immersiva contemporanea.',en:'Immersive contemporary experience.'}},
+     {title:'Ramen or izakaya stop',titleIt:'Pausa ramen / izakaya',type:'food',dur:60,why:{it:'Cucina quotidiana autentica.',en:'Authentic everyday cuisine.'}}
+   ]},
+  {id:'paris',names:['parigi','paris'],label:'Paris',labelIt:'Parigi',country:'Francia',coords:[48.8566,2.3522],
+   why:{it:'Arte, boulevards e café culture.',en:'Art, boulevards and café culture.'},
+   pois:[
+     {title:'Louvre (highlights)',titleIt:'Louvre (highlight)',type:'poi',dur:150,why:{it:'Capolavori essenziali senza correre tutto il museo.',en:'Essential masterpieces without rushing the whole museum.'}},
+     {title:'Seine walk & bridges',titleIt:'Passeggiata sulla Senna',type:'poi',dur:90,why:{it:'Il ritmo classico di Parigi.',en:'The classic Paris rhythm.'}},
+     {title:'Montmartre & Sacré-Cœur',titleIt:'Montmartre & Sacré-Cœur',type:'poi',dur:120,why:{it:'Vista e quartiere artistico.',en:'Views and artists’ quarter.'}},
+     {title:'Marais boutiques & falafel',titleIt:'Marais boutique & falafel',type:'food',dur:75,why:{it:'Quartiere vivo e street food famoso.',en:'Lively area and famous street food.'}}
+   ]},
+  {id:'london',names:['londra','london'],label:'London',labelIt:'Londra',country:'UK',coords:[51.5074,-0.1278],
+   why:{it:'Storia, musei gratuiti e quartieri cosmopoliti.',en:'History, free museums and cosmopolitan neighbourhoods.'},
+   pois:[
+     {title:'British Museum highlights',titleIt:'British Museum (highlight)',type:'poi',dur:120,why:{it:'Collezioni globali in un percorso mirato.',en:'Global collections on a focused route.'}},
+     {title:'South Bank walk',titleIt:'Passeggiata South Bank',type:'poi',dur:90,why:{it:'Tamigi, skyline e vita culturale.',en:'Thames, skyline and culture.'}},
+     {title:'Tower Bridge area',titleIt:'Zona Tower Bridge',type:'poi',dur:90,why:{it:'Icona e storia del porto.',en:'Icon and harbour history.'}},
+     {title:'Borough Market tasting',titleIt:'Borough Market',type:'food',dur:60,why:{it:'Mercato food di riferimento.',en:'Landmark food market.'}}
+   ]},
+  {id:'barcelona',names:['barcellona','barcelona'],label:'Barcelona',labelIt:'Barcellona',country:'Spagna',coords:[41.3874,2.1686],
+   why:{it:'Modernismo di Gaudí, mare e vita di quartiere.',en:'Gaudí modernism, sea and neighbourhood life.'},
+   pois:[
+     {title:'Sagrada Família',titleIt:'Sagrada Família',type:'poi',dur:90,why:{it:'Capolavoro unico al mondo.',en:'A one-of-a-kind masterpiece.'}},
+     {title:'Gothic Quarter walk',titleIt:'Barri Gòtic',type:'poi',dur:90,why:{it:'Vicoli e storia medievale.',en:'Lanes and medieval history.'}},
+     {title:'Park Güell viewpoints',titleIt:'Park Güell',type:'poi',dur:100,why:{it:'Panorami e design.',en:'Views and design.'}},
+     {title:'Tapas in El Born',titleIt:'Tapas a El Born',type:'food',dur:75,why:{it:'Cucina locale in zona trendy.',en:'Local food in a trendy area.'}}
+   ]},
+  {id:'rome',names:['roma','rome'],label:'Rome',labelIt:'Roma',country:'Italia',coords:[41.9028,12.4964],
+   why:{it:'Strati di storia antica, barocca e vita di piazza.',en:'Layers of ancient and baroque history and piazza life.'},
+   pois:[
+     {title:'Colosseum area',titleIt:'Area Colosseo',type:'poi',dur:120,why:{it:'Cuore dell’antica Roma.',en:'Heart of ancient Rome.'}},
+     {title:'Vatican Museums / St Peter',titleIt:'Vaticani / San Pietro',type:'poi',dur:150,why:{it:'Arte e spiritualità di scala globale.',en:'Art and spirituality on a global scale.'}},
+     {title:'Trastevere evening',titleIt:'Trastevere sera',type:'poi',dur:90,why:{it:'Vicoli e atmosfera romana.',en:'Lanes and Roman atmosphere.'}},
+     {title:'Gelato & trattoria',titleIt:'Gelato e trattoria',type:'food',dur:60,why:{it:'Classici quotidiani romani.',en:'Everyday Roman classics.'}}
+   ]},
+  {id:'lisbon',names:['lisbona','lisbon','lisboa'],label:'Lisbon',labelIt:'Lisbona',country:'Portogallo',coords:[38.7223,-9.1393],
+   why:{it:'Colline, azulejos e luce atlantica.',en:'Hills, azulejos and Atlantic light.'},
+   pois:[
+     {title:'Alfama & viewpoints',titleIt:'Alfama e miradouros',type:'poi',dur:120,why:{it:'Quartiere storico e viste sul Tago.',en:'Historic quarter and Tagus views.'}},
+     {title:'Belém monuments',titleIt:'Monumenti di Belém',type:'poi',dur:120,why:{it:'Età delle scoperte e pastéis.',en:'Age of Discoveries and pastéis.'}},
+     {title:'Time Out Market',titleIt:'Time Out Market',type:'food',dur:75,why:{it:'Food hall con chef locali.',en:'Food hall with local chefs.'}}
+   ]},
+  {id:'dubai',names:['dubai'],label:'Dubai',labelIt:'Dubai',country:'UAE',coords:[25.2048,55.2708],
+   why:{it:'Architettura futurista, deserti e shopping.',en:'Futuristic architecture, desert and shopping.'},
+   pois:[
+     {title:'Burj Khalifa viewpoint',titleIt:'Belvedere Burj Khalifa',type:'poi',dur:90,why:{it:'Vista dalla torre più alta.',en:'View from the tallest tower.'}},
+     {title:'Old Dubai & souks',titleIt:'Dubai storica e souk',type:'poi',dur:100,why:{it:'Contrasto con la città moderna.',en:'Contrast with the modern city.'}},
+     {title:'Desert edge experience',titleIt:'Esperienza deserto',type:'poi',dur:180,why:{it:'Paesaggio unico a pochi km dal centro.',en:'Unique landscape near the city.'}},
+     {title:'Waterfront dining',titleIt:'Cena waterfront',type:'food',dur:90,why:{it:'Skyline e cucina internazionale.',en:'Skyline and international dining.'}}
+   ]},
+  {id:'bangkok',names:['bangkok'],label:'Bangkok',labelIt:'Bangkok',country:'Thailandia',coords:[13.7563,100.5018],
+   why:{it:'Templi, street food e fiumi cittadini.',en:'Temples, street food and city rivers.'},
+   pois:[
+     {title:'Grand Palace & Wat Pho',titleIt:'Grand Palace & Wat Pho',type:'poi',dur:150,why:{it:'Cuore cerimoniale e reclining Buddha.',en:'Ceremonial heart and reclining Buddha.'}},
+     {title:'Chao Phraya boat',titleIt:'Barca sul Chao Phraya',type:'poi',dur:60,why:{it:'La città vista dall’acqua.',en:'The city from the water.'}},
+     {title:'Street food night market',titleIt:'Street food night market',type:'food',dur:90,why:{it:'Sapori thailandesi autentici.',en:'Authentic Thai flavours.'}}
+   ]},
+  {id:'sydney',names:['sydney','sidney'],label:'Sydney',labelIt:'Sydney',country:'Australia',coords:[-33.8688,151.2093],
+   why:{it:'Porto iconico, spiagge e outdoor.',en:'Iconic harbour, beaches and outdoors.'},
+   pois:[
+     {title:'Opera House & Circular Quay',titleIt:'Opera House & Circular Quay',type:'poi',dur:90,why:{it:'Simbolo mondiale e lungomare.',en:'World symbol and waterfront.'}},
+     {title:'Bondi to Bronte walk',titleIt:'Bondi–Bronte walk',type:'poi',dur:120,why:{it:'Costa e lifestyle australiano.',en:'Coast and Australian lifestyle.'}},
+     {title:'Harbour seafood',titleIt:'Pesce al porto',type:'food',dur:75,why:{it:'Cucina di mare con vista.',en:'Seafood with a view.'}}
+   ]},
+  {id:'bali',names:['bali','ubud','denpasar'],label:'Bali',labelIt:'Bali',country:'Indonesia',coords:[-8.4095,115.1889],
+   why:{it:'Templi, risaie e ritmo tropicale.',en:'Temples, rice terraces and tropical pace.'},
+   pois:[
+     {title:'Ubud rice terraces',titleIt:'Risaie di Ubud',type:'poi',dur:120,why:{it:'Paesaggio classico balinese.',en:'Classic Balinese landscape.'}},
+     {title:'Temple visit',titleIt:'Visita a un tempio',type:'poi',dur:90,why:{it:'Spiritualità e architettura locale.',en:'Spirituality and local architecture.'}},
+     {title:'Beach sunset',titleIt:'Tramonto in spiaggia',type:'poi',dur:90,why:{it:'Luce e atmosfera serale.',en:'Light and evening mood.'}},
+     {title:'Warung local meal',titleIt:'Pasto in warung',type:'food',dur:60,why:{it:'Cucina locale accessibile.',en:'Accessible local cuisine.'}}
+   ]},
+  {id:'istanbul',names:['istanbul','istambul','costantinopoli'],label:'Istanbul',labelIt:'Istanbul',country:'Turchia',coords:[41.0082,28.9784],
+   why:{it:'Ponte Europa-Asia, bazaar e moschee imperiali.',en:'Europe–Asia bridge, bazaars and imperial mosques.'},
+   pois:[
+     {title:'Hagia Sophia & Blue Mosque',titleIt:'Santa Sofia & Moschea Blu',type:'poi',dur:120,why:{it:'Due simboli a pochi minuti.',en:'Two icons minutes apart.'}},
+     {title:'Grand Bazaar',titleIt:'Gran Bazaar',type:'poi',dur:90,why:{it:'Labirinto commerciale storico.',en:'Historic commercial maze.'}},
+     {title:'Bosphorus ferry',titleIt:'Traghetto sul Bosforo',type:'poi',dur:60,why:{it:'La città tra due continenti.',en:'The city between two continents.'}},
+     {title:'Meze & tea',titleIt:'Meze e tè',type:'food',dur:75,why:{it:'Rituali della tavola turca.',en:'Turkish table rituals.'}}
+   ]},
+  {id:'trapani',names:['trapani'],label:'Trapani',labelIt:'Trapani',country:'Italia',coords:[38.0174,12.5367],
+   why:{it:'Costa ovest siciliana, sale e Egadi.',en:'West Sicily coast, salt pans and Egadi islands.'},
+   pois:[
+     {title:'Salt pans sunset',titleIt:'Tramonto alle saline',type:'poi',dur:90,why:{it:'Paesaggio unico e luce serale.',en:'Unique landscape and evening light.'}},
+     {title:'Centro storico',titleIt:'Centro storico',type:'poi',dur:90,why:{it:'Vicoli e tradizioni.',en:'Lanes and traditions.'}},
+     {title:'Pesce fresco',titleIt:'Pesce fresco',type:'food',dur:75,why:{it:'Cucina di mare siciliana.',en:'Sicilian seafood.'}}
+   ]},
+  {id:'palermo',names:['palermo'],label:'Palermo',labelIt:'Palermo',country:'Italia',coords:[38.1157,13.3615],
+   why:{it:'Mercati, arabo-normanno e street food.',en:'Markets, Arab-Norman heritage and street food.'},
+   pois:[
+     {title:'Mercati storici',titleIt:'Mercati storici',type:'poi',dur:90,why:{it:'Energia e sapori della città.',en:'Energy and flavours of the city.'}},
+     {title:'Cappella Palatina',titleIt:'Cappella Palatina',type:'poi',dur:60,why:{it:'Mosaici di livello mondiale.',en:'World-class mosaics.'}},
+     {title:'Street food tour',titleIt:'Tour street food',type:'food',dur:90,why:{it:'Panelle, arancine e tradizioni.',en:'Panelle, arancine and tradition.'}}
+   ]},
+  {id:'amalfi',names:['amalfi','positano','costiera'],label:'Amalfi',labelIt:'Amalfi',country:'Italia',coords:[40.6340,14.6026],
+   why:{it:'Costiera spettacolare e borghi a strapiombo.',en:'Dramatic coastline and cliffside towns.'},
+   pois:[
+     {title:'Duomo & historic centre',titleIt:'Duomo e centro',type:'poi',dur:60,why:{it:'Cuore del borgo.',en:'Heart of the town.'}},
+     {title:'Coastal path / boat',titleIt:'Sentiero / barca costiera',type:'poi',dur:120,why:{it:'La costiera vista dal mare o dai sentieri.',en:'The coast from sea or trails.'}},
+     {title:'Limoncello & seafood',titleIt:'Limoncello e pesce',type:'food',dur:75,why:{it:'Sapori tipici della costiera.',en:'Typical coastal flavours.'}}
+   ]},
+  {id:'bled',names:['bled'],label:'Bled',labelIt:'Bled',country:'Slovenia',coords:[46.3683,14.1136],
+   why:{it:'Lago alpino, isola e castello.',en:'Alpine lake, island and castle.'},
+   pois:[
+     {title:'Lake shore walk',titleIt:'Passeggiata sul lago',type:'poi',dur:90,why:{it:'Vista classica del lago.',en:'Classic lake view.'}},
+     {title:'Castle viewpoint',titleIt:'Belvedere del castello',type:'poi',dur:75,why:{it:'Panorama a 360°.',en:'360° panorama.'}},
+     {title:'Cream cake stop',titleIt:'Pausa kremšnita',type:'food',dur:45,why:{it:'Dolce tipico locale.',en:'Local signature dessert.'}}
+   ]},
+  {id:'napoli',names:['napoli','naples'],label:'Naples',labelIt:'Napoli',country:'Italia',coords:[40.8518,14.2681],
+   why:{it:'Centro storico UNESCO, pizza e golfo.',en:'UNESCO centre, pizza and the bay.'},
+   pois:[
+     {title:'Spaccanapoli walk',titleIt:'Passeggiata Spaccanapoli',type:'poi',dur:90,why:{it:'Cuore vivo del centro.',en:'Living heart of the centre.'}},
+     {title:'Lungomare & Castel dell’Ovo',titleIt:'Lungomare e Castel dell’Ovo',type:'poi',dur:75,why:{it:'Golfo e passeggiata.',en:'Bay and promenade.'}},
+     {title:'Pizza napoletana',titleIt:'Pizza napoletana',type:'food',dur:60,why:{it:'Patrimonio gastronomico globale.',en:'Global food heritage.'}}
+   ]},
+  {id:'madrid',names:['madrid'],label:'Madrid',labelIt:'Madrid',country:'Spagna',coords:[40.4168,-3.7038],
+   why:{it:'Musei, plaza mayores e vita notturna.',en:'Museums, grand plazas and nightlife.'},
+   pois:[
+     {title:'Prado highlights',titleIt:'Prado (highlight)',type:'poi',dur:120,why:{it:'Capolavori spagnoli e europei.',en:'Spanish and European masterpieces.'}},
+     {title:'Retiro Park',titleIt:'Parco del Retiro',type:'poi',dur:90,why:{it:'Pausa verde in centro.',en:'Green break in the centre.'}},
+     {title:'Tapas in La Latina',titleIt:'Tapas a La Latina',type:'food',dur:75,why:{it:'Tradizione madrileña.',en:'Madrid tradition.'}}
+   ]},
+  {id:'berlin',names:['berlino','berlin'],label:'Berlin',labelIt:'Berlino',country:'Germania',coords:[52.52,13.405],
+   why:{it:'Storia del XX secolo, arte e quartieri creativi.',en:'20th-century history, art and creative districts.'},
+   pois:[
+     {title:'Brandenburg Gate & Reichstag area',titleIt:'Porta di Brandeburgo',type:'poi',dur:75,why:{it:'Simboli della storia tedesca.',en:'Symbols of German history.'}},
+     {title:'East Side Gallery',titleIt:'East Side Gallery',type:'poi',dur:60,why:{it:'Muro e street art.',en:'Wall and street art.'}},
+     {title:'Street food & market',titleIt:'Street food e mercato',type:'food',dur:60,why:{it:'Scena food contemporanea.',en:'Contemporary food scene.'}}
+   ]},
+  {id:'amsterdam',names:['amsterdam'],label:'Amsterdam',labelIt:'Amsterdam',country:'Paesi Bassi',coords:[52.3676,4.9041],
+   why:{it:'Canali, musei e mobilità in bici.',en:'Canals, museums and bike mobility.'},
+   pois:[
+     {title:'Canal belt walk',titleIt:'Passeggiata sui canali',type:'poi',dur:90,why:{it:'UNESCO e atmosfera unica.',en:'UNESCO and unique atmosphere.'}},
+     {title:'Rijksmuseum or Van Gogh',titleIt:'Rijksmuseum o Van Gogh',type:'poi',dur:120,why:{it:'Arte olandese essenziale.',en:'Essential Dutch art.'}},
+     {title:'Brown café / pancake',titleIt:'Café / pancake',type:'food',dur:60,why:{it:'Tradizioni locali informali.',en:'Informal local traditions.'}}
+   ]},
+  {id:'prague',names:['praga','prague'],label:'Prague',labelIt:'Praga',country:'Cechia',coords:[50.0755,14.4378],
+   why:{it:'Centro barocco e ponte Carlo.',en:'Baroque centre and Charles Bridge.'},
+   pois:[
+     {title:'Old Town & Astronomical Clock',titleIt:'Città vecchia e orologio',type:'poi',dur:90,why:{it:'Cuore turistico e storico.',en:'Tourist and historic heart.'}},
+     {title:'Charles Bridge morning',titleIt:'Ponte Carlo al mattino',type:'poi',dur:60,why:{it:'Luce migliore e meno folla.',en:'Best light and fewer crowds.'}},
+     {title:'Czech lunch',titleIt:'Pranzo boemo',type:'food',dur:60,why:{it:'Cucina locale sostanziosa.',en:'Hearty local cuisine.'}}
+   ]},
+  {id:'cairo',names:['cairo','il cairo'],label:'Cairo',labelIt:'Il Cairo',country:'Egitto',coords:[30.0444,31.2357],
+   why:{it:'Piramidi, museo egizio e Nilo.',en:'Pyramids, Egyptian Museum and the Nile.'},
+   pois:[
+     {title:'Giza pyramids',titleIt:'Piramidi di Giza',type:'poi',dur:180,why:{it:'Meraviglia antica fuori scala.',en:'Ancient wonder beyond scale.'}},
+     {title:'Egyptian Museum highlights',titleIt:'Museo Egizio (highlight)',type:'poi',dur:120,why:{it:'Tesori faraonici essenziali.',en:'Essential pharaonic treasures.'}},
+     {title:'Koshari / local meal',titleIt:'Koshari / pasto locale',type:'food',dur:45,why:{it:'Comfort food cairota.',en:'Cairene comfort food.'}}
+   ]},
+  {id:'marrakech',names:['marrakech','marrakesh'],label:'Marrakech',labelIt:'Marrakech',country:'Marocco',coords:[31.6295,-7.9811],
+   why:{it:'Medina, souk e riad.',en:'Medina, souks and riads.'},
+   pois:[
+     {title:'Jemaa el-Fna & souks',titleIt:'Jemaa el-Fna e souk',type:'poi',dur:120,why:{it:'Cuore sensoriale della città.',en:'Sensory heart of the city.'}},
+     {title:'Bahia or Majorelle',titleIt:'Bahia o Majorelle',type:'poi',dur:90,why:{it:'Giardini e architettura.',en:'Gardens and architecture.'}},
+     {title:'Tagine dinner',titleIt:'Cena tajine',type:'food',dur:90,why:{it:'Cucina marocchina classica.',en:'Classic Moroccan cuisine.'}}
+   ]},
+  {id:'rio',names:['rio','rio de janeiro'],label:'Rio de Janeiro',labelIt:'Rio de Janeiro',country:'Brasile',coords:[-22.9068,-43.1729],
+   why:{it:'Spiagge, Cristo Redentore e ritmo carioca.',en:'Beaches, Christ the Redeemer and carioca rhythm.'},
+   pois:[
+     {title:'Christ the Redeemer',titleIt:'Cristo Redentore',type:'poi',dur:120,why:{it:'Vista e simbolo del Brasile.',en:'View and symbol of Brazil.'}},
+     {title:'Copacabana / Ipanema',titleIt:'Copacabana / Ipanema',type:'poi',dur:120,why:{it:'Spiaggia e lifestyle.',en:'Beach and lifestyle.'}},
+     {title:'Feijoada or juice bar',titleIt:'Feijoada o sucos',type:'food',dur:60,why:{it:'Sapori carioca.',en:'Carioca flavours.'}}
+   ]}
+];
+
+/* enrich catalog with budget tiers & mood tags */
+(function enrichDestCatalog(){
+  var map={
+    newyork:{cost:3,tags:['wow','city','party','culture'],region:'world'},
+    tokyo:{cost:3,tags:['wow','city','culture','food'],region:'world'},
+    paris:{cost:3,tags:['romance','culture','city','food','wow'],region:'europe'},
+    london:{cost:3,tags:['culture','city','party'],region:'europe'},
+    barcelona:{cost:2,tags:['sea','party','culture','food'],region:'med'},
+    rome:{cost:2,tags:['culture','food','romance','city'],region:'med'},
+    lisbon:{cost:2,tags:['escape','city','sea','food'],region:'europe'},
+    dubai:{cost:3,tags:['wow','desert','city'],region:'world'},
+    bangkok:{cost:1,tags:['food','exotic','wow','city'],region:'world'},
+    sydney:{cost:3,tags:['sea','nature','wow'],region:'world'},
+    bali:{cost:2,tags:['escape','nature','exotic','romance'],region:'world'},
+    istanbul:{cost:2,tags:['culture','food','wow','city'],region:'med'},
+    trapani:{cost:1,tags:['sea','escape','food'],region:'med'},
+    palermo:{cost:1,tags:['food','culture','city'],region:'med'},
+    amalfi:{cost:3,tags:['sea','romance','wow'],region:'med'},
+    bled:{cost:2,tags:['nature','escape','romance','mountain'],region:'europe'},
+    napoli:{cost:1,tags:['food','culture','city','sea'],region:'med'},
+    madrid:{cost:2,tags:['culture','city','party','food'],region:'europe'},
+    berlin:{cost:2,tags:['culture','party','city'],region:'europe'},
+    amsterdam:{cost:3,tags:['culture','city','party'],region:'europe'},
+    prague:{cost:1,tags:['culture','city','escape'],region:'europe'},
+    cairo:{cost:2,tags:['culture','wow','desert'],region:'world'},
+    marrakech:{cost:2,tags:['exotic','culture','wow'],region:'world'},
+    rio:{cost:2,tags:['sea','party','wow'],region:'world'}
+  };
+  DEST_CATALOG.forEach(function(d){
+    var m=map[d.id]||{cost:2,tags:['escape'],region:'world'};
+    d.cost=m.cost;d.tags=m.tags;d.region=m.region;
+  });
+})();
+
+var destMode='known';
+function setDestMode(mode){
+  destMode=mode;
+  var k=document.getElementById('dest-known-box');
+  var u=document.getElementById('dest-unknown-box');
+  var bk=document.getElementById('mode-known');
+  var bu=document.getElementById('mode-unknown');
+  if(k)k.classList.toggle('hidden',mode!=='known');
+  if(u)u.classList.toggle('hidden',mode!=='unknown');
+  if(bk){bk.className=mode==='known'?'px-3 py-3 rounded-xl border-2 border-brand-600 bg-brand-50 text-sm font-semibold text-brand-900':'px-3 py-3 rounded-xl border-2 border-slate-200 bg-white text-sm font-semibold text-slate-700';}
+  if(bu){bu.className=mode==='unknown'?'px-3 py-3 rounded-xl border-2 border-brand-600 bg-brand-50 text-sm font-semibold text-brand-900':'px-3 py-3 rounded-xl border-2 border-slate-200 bg-white text-sm font-semibold text-slate-700';}
+  if(mode==='unknown'){
+    var inp=document.getElementById('w-dest');
+    if(inp&&!inp.value)inp.placeholder=lang==='it'?'Verrà scelta con la roulette':'Will be chosen by roulette';
+  }
+}
+
+function budgetTier(bud){
+  bud=Number(bud)||800;
+  if(bud<600)return 1;
+  if(bud<1500)return 2;
+  return 3;
+}
+function spinDestinationRoulette(){
+  var bud=parseInt((document.getElementById('w-bud')||{}).value,10)||parseInt((document.getElementById('w-bud-roul')||{}).value,10)||800;
+var _br=document.getElementById('w-bud');if(_br&&!_br.value)_br.value=bud;
+  var desire=(document.getElementById('w-desire')||{}).value||'wow';
+  var climate=(document.getElementById('w-climate')||{}).value||'any';
+  var distance=(document.getElementById('w-distance')||{}).value||'world';
+  var int1=(document.getElementById('w-int')||{}).value||'combinata';
+  var tier=budgetTier(bud);
+  var when=(document.getElementById('w-when')||{}).value||'flex';
+
+  var scored=DEST_CATALOG.map(function(d){
+    var s=10;
+    // budget fit: prefer cost <= tier, slight penalty if much higher
+    if(d.cost<=tier)s+=40-(tier-d.cost)*5;
+    else s-=(d.cost-tier)*25;
+    // desire tags
+    if(d.tags&&d.tags.indexOf(desire)>=0)s+=35;
+    if(desire==='culture'&&d.tags&&d.tags.indexOf('culture')>=0)s+=15;
+    if(desire==='nature'&&d.tags&&d.tags.indexOf('nature')>=0)s+=20;
+    if(desire==='food'&&d.tags&&d.tags.indexOf('food')>=0)s+=20;
+    if(desire==='party'&&d.tags&&d.tags.indexOf('party')>=0)s+=20;
+    if(desire==='romance'&&d.tags&&d.tags.indexOf('romance')>=0)s+=20;
+    if(desire==='family'&&d.tags&&d.tags.indexOf('escape')>=0)s+=10;
+    // climate
+    if(climate==='city'&&d.tags&&d.tags.indexOf('city')>=0)s+=25;
+    if(climate==='sea'&&d.tags&&d.tags.indexOf('sea')>=0)s+=25;
+    if(climate==='mountain'&&d.tags&&d.tags.indexOf('mountain')>=0)s+=30;
+    if(climate==='exotic'&&d.tags&&d.tags.indexOf('exotic')>=0)s+=25;
+    if(climate==='desert'&&d.tags&&d.tags.indexOf('desert')>=0)s+=30;
+    // region
+    if(distance==='europe'&&d.region==='europe')s+=20;
+    else if(distance==='europe'&&d.region==='med')s+=12;
+    else if(distance==='europe'&&d.region==='world')s-=15;
+    if(distance==='med'&&d.region==='med')s+=25;
+    else if(distance==='med'&&d.region==='europe')s+=8;
+    else if(distance==='med'&&d.region==='world')s-=20;
+    // interest alignment
+    if(int1==='mare'&&d.tags&&d.tags.indexOf('sea')>=0)s+=15;
+    if(int1==='cultura'&&d.tags&&d.tags.indexOf('culture')>=0)s+=15;
+    if(int1==='cibo'&&d.tags&&d.tags.indexOf('food')>=0)s+=15;
+    if(int1==='natura'&&d.tags&&d.tags.indexOf('nature')>=0)s+=15;
+    // season soft bias
+    if(when==='summer'&&d.tags&&d.tags.indexOf('sea')>=0)s+=8;
+    if(when==='winter'&&d.id==='dubai')s+=10;
+    s+=Math.random()*12; // slight roulette randomness
+    return {d:d,s:s};
+  }).sort(function(a,b){return b.s-a.s;});
+
+  var top=scored.slice(0,5);
+  var pick=top[Math.floor(Math.random()*Math.min(3,top.length))].d;
+  var name=lang==='it'?pick.labelIt:pick.label;
+  var inp=document.getElementById('w-dest');
+  if(inp)inp.value=name;
+
+  var out=document.getElementById('roulette-out');
+  if(out){
+    out.classList.remove('hidden');
+    var alt=top.slice(0,3).map(function(x){return lang==='it'?x.d.labelIt:x.d.label;}).join(' · ');
+    out.innerHTML='<div class="rounded-xl bg-white border border-brand-200 p-4 shadow-sm animate-[fadeIn_.4s_ease]">'+
+      '<div class="text-xs font-bold uppercase text-brand-600 mb-1">'+(lang==='it'?'Meta consigliata':'Recommended destination')+'</div>'+
+      '<div class="text-2xl font-extrabold text-slate-900">'+esc(name)+'</div>'+
+      '<div class="text-sm text-slate-600 mt-1">'+esc(pick.country)+' · '+(lang==='it'?'fascia budget':'budget band')+' '+pick.cost+'/3</div>'+
+      '<p class="text-sm text-slate-700 mt-2">'+esc(lang==='it'?pick.why.it:pick.why.en)+'</p>'+
+      '<p class="text-xs text-slate-500 mt-2">'+(lang==='it'?'Anche in lista':'Also shortlisted')+': '+esc(alt)+'</p>'+
+      '<button type="button" onclick="spinDestinationRoulette()" class="mt-3 text-sm font-semibold text-brand-700">'+(lang==='it'?'↻ Gira di nuovo':'↻ Spin again')+'</button>'+
+      '</div>';
+  }
+  // soft-set interest from desire if still default
+  var intEl=document.getElementById('w-int');
+  if(intEl&&desire){
+    var map={culture:'cultura',nature:'natura',food:'cibo',party:'vita',family:'famiglia',romance:'combinata',wow:'combinata',escape:'combinata'};
+    if(map[desire])intEl.value=map[desire];
+  }
+}
+
+
+function findDest(query){
+  var q=String(query||'').toLowerCase().trim();
+  if(!q)return null;
+  for(var i=0;i<DEST_CATALOG.length;i++){
+    var d=DEST_CATALOG[i];
+    if(d.names.indexOf(q)>=0)return d;
+    if(d.label.toLowerCase()===q||d.labelIt.toLowerCase()===q)return d;
+    for(var j=0;j<d.names.length;j++){if(d.names[j].indexOf(q)>=0||q.indexOf(d.names[j])>=0)return d;}
+  }
+  return null;
+}
+function suggestDests(query){
+  var q=String(query||'').toLowerCase().trim();
+  if(!q)return DEST_CATALOG.slice(0,8);
+  var scored=DEST_CATALOG.map(function(d){
+    var s=0;
+    var lab=(lang==='it'?d.labelIt:d.label).toLowerCase();
+    if(lab.indexOf(q)===0)s+=100;
+    else if(lab.indexOf(q)>=0)s+=50;
+    d.names.forEach(function(n){if(n.indexOf(q)===0)s+=80;else if(n.indexOf(q)>=0)s+=40;});
+    if((d.country||'').toLowerCase().indexOf(q)===0)s+=30;
+    return {d:d,s:s};
+  }).filter(function(x){return x.s>0;}).sort(function(a,b){return b.s-a.s;});
+  return scored.slice(0,10).map(function(x){return x.d;});
+}
+function onDestType(e){
+  var inp=document.getElementById('w-dest');
+  var box=document.getElementById('dest-ac');
+  if(!inp||!box)return;
+  var list=suggestDests(inp.value);
+  if(!list.length){box.classList.add('hidden');box.innerHTML='';return;}
+  box.innerHTML=list.map(function(d,i){
+    var name=lang==='it'?d.labelIt:d.label;
+    return '<button type="button" class="w-full text-left px-4 py-2.5 hover:bg-brand-50 border-b border-slate-50 last:border-0 dest-ac-item" data-i="'+i+'" data-name="'+esc(name)+'"><span class="font-semibold">'+esc(name)+'</span> <span class="text-slate-400 text-xs">'+esc(d.country)+'</span></button>';
+  }).join('');
+  box.classList.remove('hidden');
+  box.querySelectorAll('.dest-ac-item').forEach(function(btn){
+    btn.addEventListener('mousedown',function(ev){
+      ev.preventDefault();
+      inp.value=btn.getAttribute('data-name');
+      box.classList.add('hidden');
+    });
+  });
+}
+function onDestKey(e){
+  if(e.key==='Escape'){var box=document.getElementById('dest-ac');if(box)box.classList.add('hidden');}
+}
+document.addEventListener('click',function(e){
+  var box=document.getElementById('dest-ac');
+  var inp=document.getElementById('w-dest');
+  if(!box||!inp)return;
+  if(e.target!==inp&&!box.contains(e.target))box.classList.add('hidden');
+});
+
+var COORDS={};
+DEST_CATALOG.forEach(function(d){COORDS[d.id]=d.coords;d.names.forEach(function(n){COORDS[n]=d.coords;});});
+
 function destCoords(name){
+  var found=findDest(name);
+  if(found)return found.coords.slice();
   var k=(name||'').toLowerCase().trim();
-  for(var key in COORDS){if(k.indexOf(key)>=0)return COORDS[key]}
+  for(var key in COORDS){if(k.indexOf(key)>=0)return COORDS[key].slice();}
   return [41.9,12.5];
 }
 async function resolveDestinationCoords(name){
   var key='st_geo_'+String(name||'').toLowerCase().trim();
   try{var cached=JSON.parse(localStorage.getItem(key)||'null');if(cached&&Date.now()-cached.savedAt<2592000000)return [cached.lat,cached.lng]}catch(e){}
+  var local=findDest(name);
+  if(local)return local.coords.slice();
   if(!API_LIVE)return destCoords(name);
   try{
     var data=await apiPost('geocode-place',{query:name,language:lang});
@@ -921,6 +1095,90 @@ async function resolveDestinationCoords(name){
     }
   }catch(e){}
   return destCoords(name);
+}
+
+function genericPois(intKey, dest){
+  var d=dest||(lang==='it'?'la destinazione':'the destination');
+  var pools={
+    cultura:[
+      {title:lang==='it'?'Museo o sito storico principale':'Main museum or historic site',type:'poi',dur:120,why:{it:'Per capire la storia e l’identità del luogo.',en:'To understand the history and identity of the place.'}},
+      {title:lang==='it'?'Centro storico a piedi':'Old town on foot',type:'poi',dur:90,why:{it:'Il modo migliore per assorbire l’atmosfera.',en:'The best way to absorb the atmosphere.'}},
+      {title:lang==='it'?'Tour guidato patrimonio':'Heritage guided walk',type:'poi',dur:120,why:{it:'Contesto e aneddoti che da soli si perdono.',en:'Context and stories you would miss alone.'}}
+    ],
+    natura:[
+      {title:lang==='it'?'Belvedere / sentiero':'Viewpoint / trail',type:'poi',dur:150,why:{it:'Paesaggio e ritmo più lento.',en:'Landscape and a slower pace.'}},
+      {title:lang==='it'?'Parco o riserva':'Park or reserve',type:'poi',dur:150,why:{it:'Natura accessibile vicino alla meta.',en:'Accessible nature near the destination.'}}
+    ],
+    mare:[
+      {title:lang==='it'?'Spiaggia o lungomare':'Beach or seafront',type:'poi',dur:150,why:{it:'L’esperienza costiera tipica della zona.',en:'The typical coastal experience of the area.'}},
+      {title:lang==='it'?'Cala / punto panoramico mare':'Cove / sea viewpoint',type:'poi',dur:90,why:{it:'Vista e luce migliori.',en:'Better views and light.'}}
+    ],
+    cibo:[
+      {title:lang==='it'?'Mercato alimentare':'Food market',type:'food',dur:60,why:{it:'Prodotti e vita quotidiana locale.',en:'Local produce and everyday life.'}},
+      {title:lang==='it'?'Ristorante tipico':'Local restaurant',type:'food',dur:90,why:{it:'Sapori rappresentativi della cucina del luogo.',en:'Flavours that represent local cuisine.'}}
+    ],
+    vita:[
+      {title:lang==='it'?'Quartiere vivace':'Lively district',type:'poi',dur:90,why:{it:'Vita notturna e sociale.',en:'Nightlife and social energy.'}},
+      {title:lang==='it'?'Aperitivo / rooftop':'Aperitivo / rooftop',type:'food',dur:60,why:{it:'Vista e atmosfera serale.',en:'Views and evening mood.'}}
+    ],
+    famiglia:[
+      {title:lang==='it'?'Attività soft / museo interattivo':'Soft activity / interactive museum',type:'poi',dur:90,why:{it:'Adatto a ritmi e attenzioni di bambini.',en:'Suited to children’s pace and attention.'}},
+      {title:lang==='it'?'Pausa gelato / parco':'Ice cream / park break',type:'food',dur:45,why:{it:'Ricarica senza stress.',en:'Low-stress recharge.'}}
+    ],
+    combinata:[
+      {title:lang==='it'?'Icona del luogo':'Signature landmark',type:'poi',dur:90,why:{it:'Il perché più immediato di visitare '+d+'.',en:'The most immediate reason to visit '+d+'.'}},
+      {title:lang==='it'?'Passeggiata mista':'Mixed walk',type:'poi',dur:100,why:{it:'Bilancia cultura e ritmo leggero.',en:'Balances culture and a light pace.'}},
+      {title:lang==='it'?'Pausa gastronomica':'Food stop',type:'food',dur:70,why:{it:'Assaggio della cucina locale.',en:'A taste of local cooking.'}}
+    ]
+  };
+  return (pools[intKey]||pools.combinata).map(function(x){return Object.assign({},x);});
+}
+
+function interestPool(intKey, dest){
+  var found=findDest(dest);
+  if(found&&found.pois&&found.pois.length){
+    return found.pois.map(function(p){
+      return {
+        title:lang==='it'?(p.titleIt||p.title):p.title,
+        type:p.type||'poi',
+        dur:p.dur||90,
+        why:p.why||found.why
+      };
+    });
+  }
+  return genericPois(intKey, dest);
+}
+
+function buildDayPlan(dayNum, int1, int2, pace, food, timeBand, dest){
+  var stopsPerDay=pace==='slow'?2:pace==='intense'?5:3;
+  var pool=interestPool(int1,dest);
+  if(int2&&int2!=='none'){
+    var p2=interestPool(int2,dest);
+    pool=pool.concat(p2);
+  }
+  // de-dupe by title
+  var seen={};pool=pool.filter(function(x){var k=x.title;if(seen[k])return false;seen[k]=1;return true;});
+  if(pool.length<stopsPerDay)pool=pool.concat(genericPois(int1,dest));
+  var startIdx=((dayNum-1)*2)%Math.max(pool.length,1);
+  var picks=[];
+  for(var i=0;i<stopsPerDay;i++)picks.push(pool[(startIdx+i)%pool.length]);
+  var times=timeBand==='morning'?['08:30','10:30','12:30','15:00','17:00']:timeBand==='sunset'?['11:00','13:30','16:00','18:00','19:30']:['09:30','11:30','13:30','16:00','18:00'];
+  var foodSlot=food==='quick'?(lang==='it'?'Street food / pranzo veloce':'Street food / quick lunch'):food==='fine'?(lang==='it'?'Ristorante curato':'Fine dining stop'):(lang==='it'?'Pranzo cucina locale':'Local lunch');
+  var items=[];
+  picks.forEach(function(p,i){
+    items.push({
+      time:times[i]||'12:00',
+      title:p.title,
+      type:p.type||'poi',
+      dur:p.dur||90,
+      why:(p.why&&(lang==='it'?p.why.it:p.why.en))||''
+    });
+  });
+  // ensure one food stop
+  if(!items.some(function(x){return x.type==='food';})){
+    items.splice(Math.min(2,items.length),0,{time:times[Math.min(2,times.length-1)],title:foodSlot,type:'food',dur:70,why:lang==='it'?'Per assaggiare la cucina del luogo senza improvvisare.':'To taste local cuisine without improvising.'});
+  }
+  return {day:dayNum,items:items};
 }
 
 function initHomeMap(){
@@ -995,7 +1253,7 @@ function buildDayPlan(dayNum, int1, int2, pace, food, timeBand, dest){
 
 function wiz(n){
   n=parseInt(n,10);
-  if(n===2){var dest=document.getElementById('w-dest');if(dest&&!dest.value.trim()){dest.focus();return}}
+  if(n===2){var dest=document.getElementById('w-dest');if(dest&&!dest.value.trim()){if(destMode==='unknown'){spinDestinationRoulette();if(!dest.value.trim()){alert(lang==='it'?'Gira la roulette o scegli una meta.':'Spin the roulette or pick a destination.');return;}}else{dest.focus();alert(lang==='it'?'Indica una destinazione o attiva «No, sorprendimi».':'Enter a destination or enable Surprise me.');return;}}}
   document.querySelectorAll('.wizard-step').forEach(function(s){s.classList.remove('active')});
   var step=document.getElementById('ws'+n);if(step)step.classList.add('active');
   for(var i=1;i<=5;i++){var p=document.getElementById('pg'+i);if(p)p.className='h-1.5 flex-1 rounded-full '+(i<=n?'bg-brand-500':'bg-slate-200')}
@@ -1016,7 +1274,7 @@ function buildPlan(){
   var dest=(document.getElementById('w-dest').value||'Trapani').trim();
   var peo=document.getElementById('w-peo').value;
   var daysVal=parseInt(document.getElementById('w-days').value,10)||5;
-  var nDays=Math.min(Math.max(daysVal,2),7);
+  var nDays=Math.min(Math.max(daysVal,2),10);
   var bud=parseInt(document.getElementById('w-bud').value,10)||800;
   var tr=document.getElementById('w-tr').value;
   var pace=document.getElementById('w-pace').value;
@@ -1042,57 +1300,127 @@ function buildPlan(){
   var center=destCoords(dest);
   lastPlan={dest:dest,peo:peo,nDays:nDays,bud:bud,tr:tr,pace:pace,int1:int1,int2:int2,food:food,timeBand:timeBand,local:local,notes:notes,when:when,style:style,ageAdults:ageAdults,ageSenior:ageSenior,ageChild:ageChild,ageTeen:ageTeen,pets:pets,petsNeed:petsNeed,access:access,days:days,center:center,selected:selected};
 
-  var html='';
-  html+='<div class="rounded-2xl border bg-white p-4 shadow-sm flex flex-wrap gap-2 text-sm mb-4">';
-  html+='<span class="px-3 py-1 rounded-full bg-slate-100 font-medium">'+esc(dest)+'</span>';
-  html+='<span class="px-3 py-1 rounded-full bg-slate-100">'+esc(peo)+'</span>';
-  html+='<span class="px-3 py-1 rounded-full bg-slate-100">'+nDays+' '+esc(t('days_label'))+'</span>';
-  html+='<span class="px-3 py-1 rounded-full bg-slate-100">'+bud+' €</span>';
-  html+='<span class="px-3 py-1 rounded-full bg-slate-100">'+esc(tr)+'</span>';
-  html+='<span class="px-3 py-1 rounded-full bg-violet-100 text-violet-800">'+esc(int1)+(int2&&int2!=='none'?' + '+esc(int2):'')+'</span>';
-  html+='<span class="px-3 py-1 rounded-full bg-slate-100">'+esc(pace)+'</span></div>';
-  if(notes)html+='<p class="text-sm text-slate-600 mb-3"><em>'+esc(notes)+'</em></p>';
-  html+='<div class="flex flex-wrap gap-2 text-xs mb-4">';
-  html+='<span class="px-2 py-1 rounded-full bg-slate-100">'+esc(t('q_age_adults'))+': '+esc(ageAdults)+'</span>';
-  if(ageSenior&&ageSenior!=='0')html+='<span class="px-2 py-1 rounded-full bg-slate-100">'+esc(t('q_age_senior'))+': '+esc(ageSenior)+'</span>';
-  if(ageChild&&ageChild!=='0')html+='<span class="px-2 py-1 rounded-full bg-sky-100 text-sky-800">'+esc(t('q_age_child'))+': '+esc(ageChild)+'</span>';
-  if(ageTeen&&ageTeen!=='0')html+='<span class="px-2 py-1 rounded-full bg-sky-100 text-sky-800">'+esc(t('q_age_teen'))+': '+esc(ageTeen)+'</span>';
-  if(pets&&pets!=='none')html+='<span class="px-2 py-1 rounded-full bg-amber-100 text-amber-900">🐾 '+esc(pets)+(petsNeed?(' · '+esc(petsNeed)):'')+'</span>';
-  if(access&&access!=='none')html+='<span class="px-2 py-1 rounded-full bg-violet-100 text-violet-800">'+esc(t('q_access'))+': '+esc(access)+'</span>';
-  html+='</div>';
   if(ageChild&&ageChild!=='0'){days.forEach(function(day){day.items.push({time:'16:30',title:(lang==='it'?'Pausa famiglia / area soft':'Family soft break'),type:'poi',dur:45});});}
   if(pets&&pets!=='none'){days.forEach(function(day){day.items.push({time:'17:15',title:(lang==='it'?'Area / passeggiata pet-friendly':'Pet-friendly walk area'),type:'poi',dur:40});});}
   if(access==='steps'||access==='wheelchair'||access==='stroller'){days.forEach(function(day){day.items=day.items.map(function(it){if(it.type==='poi')it.title=it.title+' · ✓ access';return it});});}
 
+  var nightBudget=Math.max(40,Math.floor(bud*0.35/Math.max(nDays-1,1)));
+  var foodBudget=Math.max(25,Math.floor(bud*0.25/nDays));
+  var actBudget=Math.max(15,Math.floor(bud*0.2/nDays));
+  var usedPct=Math.min(100,Math.round((nightBudget*(nDays-1)+foodBudget*nDays+actBudget*nDays)/Math.max(bud,1)*100));
 
-  if(selected.flight)html+='<div class="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm mb-3">✈️ '+esc(selected.flight.carrier)+' '+esc(selected.flight.from)+'→'+esc(selected.flight.to)+' · '+esc(money(selected.flight.price,selected.flight.currency))+'</div>';
-  if(selected.hotel)html+='<div class="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm mb-3">🏨 '+esc(selected.hotel.name)+' · '+esc(money(selected.hotel.price,selected.hotel.currency))+'</div>';
-  if(selected.cruise)html+='<div class="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm mb-3">🚢 '+esc(selected.cruise.line)+' · '+selected.cruise.price+' €</div>';
+  var html='';
+  /* HERO */
+  html+='<div class="plan-hero shadow-lg mb-4">';
+  html+='<div class="relative z-10">';
+  html+='<div class="flex flex-wrap items-center gap-2 mb-2"><span class="text-xs font-bold uppercase tracking-wider opacity-80">Smart Travel</span><span class="chip-live text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/20">LIVE</span></div>';
+  html+='<h2 class="text-2xl sm:text-3xl font-extrabold leading-tight">'+esc(dest)+'</h2>';
+  var _fd=findDest(dest);
+  if(_fd){html+='<p class="mt-1 text-sm text-white/90">'+esc(lang==='it'?_fd.why.it:_fd.why.en)+' <span class="opacity-70">· '+esc(_fd.country)+'</span></p>';}
+  else{html+='<p class="mt-1 text-sm text-white/85">'+esc(t('result_sub'))+'</p>';}
+  html+='<div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-4">';
+  html+='<div class="plan-stat"><div class="text-[10px] uppercase opacity-70">'+esc(t('days_label'))+'</div><div class="text-lg font-extrabold">'+nDays+'</div></div>';
+  html+='<div class="plan-stat"><div class="text-[10px] uppercase opacity-70">'+esc(t('q_people'))+'</div><div class="text-lg font-extrabold">'+esc(peo)+'</div></div>';
+  html+='<div class="plan-stat"><div class="text-[10px] uppercase opacity-70">Budget</div><div class="text-lg font-extrabold">'+bud+' €</div></div>';
+  html+='<div class="plan-stat"><div class="text-[10px] uppercase opacity-70">'+esc(t('q_transport'))+'</div><div class="text-lg font-extrabold truncate">'+esc(tr)+'</div></div>';
+  html+='</div></div></div>';
 
+  /* CHIPS */
+  html+='<div class="flex flex-wrap gap-2 text-xs mb-4">';
+  html+='<span class="px-2.5 py-1 rounded-full bg-brand-100 text-brand-800 font-semibold">'+esc(t('q_int'))+': '+esc(int1)+'</span>';
+  if(int2&&int2!=='none')html+='<span class="px-2.5 py-1 rounded-full bg-cyan-100 text-cyan-900 font-semibold">+ '+esc(int2)+'</span>';
+  html+='<span class="px-2.5 py-1 rounded-full bg-slate-100">'+esc(t('q_pace'))+': '+esc(pace)+'</span>';
+  html+='<span class="px-2.5 py-1 rounded-full bg-slate-100">'+esc(t('q_local'))+': '+esc(local)+'</span>';
+  if(ageAdults)html+='<span class="px-2.5 py-1 rounded-full bg-slate-100">'+esc(t('q_age_adults'))+': '+esc(ageAdults)+'</span>';
+  if(ageSenior&&ageSenior!=='0')html+='<span class="px-2.5 py-1 rounded-full bg-slate-100">'+esc(t('q_age_senior'))+': '+esc(ageSenior)+'</span>';
+  if(ageChild&&ageChild!=='0')html+='<span class="px-2.5 py-1 rounded-full bg-sky-100 text-sky-800">'+esc(t('q_age_child'))+': '+esc(ageChild)+'</span>';
+  if(ageTeen&&ageTeen!=='0')html+='<span class="px-2.5 py-1 rounded-full bg-sky-100 text-sky-800">'+esc(t('q_age_teen'))+': '+esc(ageTeen)+'</span>';
+  if(pets&&pets!=='none')html+='<span class="px-2.5 py-1 rounded-full bg-amber-100 text-amber-900">🐾 '+esc(pets)+(petsNeed?(' · '+esc(petsNeed)):'')+'</span>';
+  if(access&&access!=='none')html+='<span class="px-2.5 py-1 rounded-full bg-violet-100 text-violet-800">'+esc(t('q_access'))+': '+esc(access)+'</span>';
+  html+='</div>';
+
+  /* SELECTED */
+  if(selected.flight||selected.hotel||selected.cruise){
+    html+='<div class="grid sm:grid-cols-3 gap-2 mb-4">';
+    if(selected.flight)html+='<div class="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm">✈️ <strong>'+esc(selected.flight.carrier)+'</strong><br><span class="text-slate-600">'+esc(selected.flight.from)+'→'+esc(selected.flight.to)+' · '+esc(money(selected.flight.price,selected.flight.currency))+'</span></div>';
+    if(selected.hotel)html+='<div class="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm">🏨 <strong>'+esc(selected.hotel.name)+'</strong><br><span class="text-slate-600">'+esc(money(selected.hotel.price,selected.hotel.currency))+'</span></div>';
+    if(selected.cruise)html+='<div class="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm">🚢 <strong>'+esc(selected.cruise.line)+'</strong><br><span class="text-slate-600">'+selected.cruise.price+' €</span></div>';
+    html+='</div>';
+  }
+
+  /* BUDGET CARD */
   html+='<div class="rounded-2xl border bg-white p-4 shadow-sm mb-4">';
-  html+='<div class="flex flex-col sm:flex-row gap-4">';
-  html+='<div class="flex-1 min-w-0"><div id="plan-map"></div></div>';
-  html+='<aside class="sm:w-44 shrink-0 rounded-xl bg-slate-50 border border-slate-100 p-3 text-sm space-y-3">';
+  html+='<div class="flex items-center justify-between gap-2 mb-2"><div class="font-bold text-slate-800">'+(lang==='it'?'Ripartizione budget indicativa':'Indicative budget split')+'</div><div class="text-sm font-semibold text-brand-700">'+usedPct+'%</div></div>';
+  html+='<div class="budget-bar mb-3"><span style="width:'+usedPct+'%"></span></div>';
+  html+='<div class="grid grid-cols-3 gap-2 text-center text-xs">';
+  html+='<div class="rounded-xl bg-slate-50 p-2"><div class="text-slate-500">'+(lang==='it'?'Alloggio/notte':'Stay/night')+'</div><div class="font-extrabold text-slate-800">~'+nightBudget+' €</div></div>';
+  html+='<div class="rounded-xl bg-slate-50 p-2"><div class="text-slate-500">'+(lang==='it'?'Cibo/giorno':'Food/day')+'</div><div class="font-extrabold text-slate-800">~'+foodBudget+' €</div></div>';
+  html+='<div class="rounded-xl bg-slate-50 p-2"><div class="text-slate-500">'+(lang==='it'?'Attività/giorno':'Activities/day')+'</div><div class="font-extrabold text-slate-800">~'+actBudget+' €</div></div>';
+  html+='</div></div>';
+
+  /* MAP + LEGEND */
+  html+='<div class="rounded-2xl border bg-white p-4 shadow-sm mb-4">';
+  html+='<div class="flex flex-wrap items-center justify-between gap-2 mb-3"><div class="font-bold">'+(lang==='it'?'Mappa interattiva':'Interactive map')+'</div><div class="text-xs text-slate-500">'+(lang==='it'?'Clicca un giorno per evidenziare le tappe':'Click a day to highlight stops')+'</div></div>';
+  html+='<div class="flex flex-col lg:flex-row gap-4">';
+  html+='<div class="flex-1 min-w-0"><div id="plan-map" class="border border-slate-100"></div></div>';
+  html+='<aside class="lg:w-48 shrink-0 rounded-xl bg-slate-50 border border-slate-100 p-3 text-sm space-y-3">';
   html+='<div class="font-bold text-slate-800 text-xs uppercase tracking-wide">'+(lang==='it'?'Legenda':'Legend')+'</div>';
-  html+='<div class="flex items-center gap-2"><span class="inline-block w-3 h-3 rounded-full bg-emerald-500 border-2 border-white shadow"></span><span class="text-slate-600">→ '+(lang==='it'?'tappe interesse':'interest stops')+'</span></div>';
-  html+='<div class="flex items-center gap-2"><span class="inline-block w-3 h-3 rounded-full bg-fuchsia-500 border-2 border-white shadow"></span><span class="text-slate-600">→ '+(lang==='it'?'ristoro':'food')+'</span></div>';
-  html+='<div class="flex items-center gap-2"><span class="inline-block w-3 h-3 rounded-full bg-sky-500 border-2 border-white shadow"></span><span class="text-slate-600">→ '+(lang==='it'?'base / alloggio':'base / stay')+'</span></div>';
+  html+='<div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span><span>→ '+(lang==='it'?'Punti di interesse':'Points of interest')+'</span></div>';
+  html+='<div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-fuchsia-500"></span><span>→ '+(lang==='it'?'Cibo / pause':'Food / breaks')+'</span></div>';
+  html+='<div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-sky-500"></span><span>→ '+(lang==='it'?'Base / alloggio':'Base / stay')+'</span></div>';
+  html+='<button type="button" onclick="go(\'flights\')" class="w-full mt-2 py-2 rounded-xl bg-brand-600 text-white text-xs font-semibold">'+(lang==='it'?'Cerca voli e hotel':'Search flights & hotels')+'</button>';
+  html+='<button type="button" onclick="go(\'ai\')" class="w-full py-2 rounded-xl border text-xs font-semibold">ST AI</button>';
   html+='</aside></div></div>';
 
-  days.forEach(function(day){
-    html+='<div class="rounded-2xl border bg-white p-4 shadow-sm mb-3">';
-    html+='<div class="font-extrabold text-brand-700 mb-3">'+esc(t('day'))+' '+day.day+'</div>';
-    html+='<ul class="space-y-2 text-sm">';
-    day.items.forEach(function(it){
+  /* DAY TABS */
+  html+='<div class="flex gap-2 overflow-x-auto pb-2 mb-3 no-print" id="plan-day-tabs">';
+  days.forEach(function(day,i){
+    html+='<button type="button" class="plan-day-tab shrink-0 px-4 py-2 rounded-full border bg-white text-sm font-semibold '+(i===0?'active':'')+'" data-day="'+day.day+'" onclick="showPlanDay('+day.day+')">'+esc(t('day'))+' '+day.day+'</button>';
+  });
+  html+='<button type="button" class="plan-day-tab shrink-0 px-4 py-2 rounded-full border bg-white text-sm font-semibold" data-day="all" onclick="showPlanDay(\'all\')">'+(lang==='it'?'Tutti':'All')+'</button>';
+  html+='</div>';
+
+  /* DAY CARDS */
+  days.forEach(function(day,i){
+    html+='<div class="plan-day-card rounded-2xl border bg-white p-4 shadow-sm mb-3 '+(i===0?'active':'')+'" data-day-card="'+day.day+'">';
+    html+='<div class="flex flex-wrap items-center justify-between gap-2 mb-3">';
+    html+='<div class="font-extrabold text-lg text-brand-800">'+esc(t('day'))+' '+day.day+'</div>';
+    html+='<div class="text-xs text-slate-500">'+day.items.length+' '+(lang==='it'?'tappe':'stops')+'</div>';
+    html+='</div>';
+    html+='<div class="timeline-rail space-y-3 pl-1">';
+    day.items.forEach(function(it,j){
+      var kind=it.type==='food'?'food':(it.type==='rest'?'rest':'');
       var badge=it.type==='food'?'bg-fuchsia-100 text-fuchsia-800':'bg-emerald-100 text-emerald-800';
-      html+='<li class="flex gap-3 items-start"><span class="font-mono text-xs text-slate-500 w-12 shrink-0">'+esc(it.time)+'</span>';
-      html+='<span class="px-2 py-0.5 rounded-full text-xs font-semibold '+badge+'">'+esc(t('poi'))+'</span>';
-      html+='<span class="flex-1">'+esc(it.title)+' <span class="text-slate-400">('+it.dur+'′)</span></span></li>';
+      var label=it.type==='food'?(lang==='it'?'Cibo':'Food'):(lang==='it'?'Visita':'Visit');
+      html+='<div class="timeline-item '+kind+' flex gap-3 items-start group">';
+      html+='<div class="w-14 shrink-0 text-right"><div class="font-mono text-sm font-bold text-slate-700">'+esc(it.time)+'</div><div class="text-[10px] text-slate-400">'+it.dur+' min</div></div>';
+      html+='<div class="flex-1 rounded-xl border border-slate-100 bg-slate-50/80 group-hover:bg-brand-50 group-hover:border-brand-200 transition p-3">';
+      html+='<div class="flex flex-wrap items-center gap-2 mb-1"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase '+badge+'">'+esc(label)+'</span></div>';
+      html+='<div class="font-semibold text-slate-800">'+esc(it.title)+'</div>';
+      if(it.why)html+='<p class="text-xs text-slate-500 mt-1 leading-relaxed">'+esc(it.why)+'</p>';
+      html+='</div></div>';
+    });
+    html+='</div>';
+    html+='<div class="mt-4 flex flex-wrap gap-2 no-print">';
+    html+='<button type="button" class="px-3 py-1.5 rounded-full text-xs font-semibold bg-brand-600 text-white" onclick="focusDayOnMap('+day.day+')">'+(lang==='it'?'Vedi sulla mappa':'Show on map')+'</button>';
+    html+='<button type="button" class="px-3 py-1.5 rounded-full text-xs font-semibold border" onclick="go(\'ai\')">'+(lang==='it'?'Chiedi a ST AI di questo giorno':'Ask ST AI about this day')+'</button>';
+    html+='</div></div>';
+  });
+
+  /* ALL DAYS compact (hidden by default via showPlanDay) */
+  html+='<div class="plan-day-card rounded-2xl border bg-white p-4 shadow-sm mb-3" data-day-card="all">';
+  days.forEach(function(day){
+    html+='<div class="mb-4 last:mb-0">';
+    html+='<div class="font-bold text-brand-800 mb-2">'+esc(t('day'))+' '+day.day+'</div>';
+    html+='<ul class="space-y-1 text-sm">';
+    day.items.forEach(function(it){
+      html+='<li class="flex gap-2"><span class="font-mono text-xs text-slate-500 w-12">'+esc(it.time)+'</span><span>'+esc(it.title)+'</span></li>';
     });
     html+='</ul></div>';
   });
+  html+='</div>';
 
-  html+='<p class="text-sm text-emerald-800 bg-emerald-50 border border-emerald-100 rounded-xl p-3">'+esc(t('fits_budget'))+': max ~'+Math.max(40,Math.floor(bud*0.35/Math.max(nDays-1,1)))+' €/notte · '+esc(style)+' · '+esc(local)+'</p>';
+  html+='<p class="text-sm text-emerald-800 bg-emerald-50 border border-emerald-100 rounded-xl p-3">'+esc(t('fits_budget'))+': max ~'+nightBudget+' €/notte · '+esc(style)+' · '+esc(local)+'</p>';
 
   document.getElementById('plan-out').innerHTML=html;
   setTimeout(function(){renderPlanMap(center,days)},150);
@@ -1105,57 +1433,106 @@ function buildPlan(){
   try{localStorage.setItem('st_last_plan',JSON.stringify(lastPlan))}catch(e){}
 }
 
-function renderPlanMap(center,days){
+var planMapMarkers=[];
+function renderPlanMap(center,days,focusDay){
   var el=document.getElementById('plan-map');if(!el||typeof L==='undefined')return;
   if(planMap){planMap.remove();planMap=null}
-  planMap=L.map(el).setView(center,12);
+  planMapMarkers=[];
+  planMap=L.map(el,{scrollWheelZoom:true}).setView(center,13);
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>',maxZoom:18}).addTo(planMap);
-  // base stay blue
-  L.circleMarker(center,{radius:10,color:'#fff',weight:2,fillColor:'#0ea5e9',fillOpacity:1}).addTo(planMap).bindPopup('Base / '+t('from'));
+  L.circleMarker(center,{radius:11,color:'#fff',weight:2,fillColor:'#0ea5e9',fillOpacity:1}).addTo(planMap).bindPopup('<strong>Base</strong>');
   var lat=center[0],lng=center[1];
   var idx=0;
-  days.forEach(function(day){
+  var bounds=[center];
+  (days||[]).forEach(function(day){
+    if(focusDay&&focusDay!=='all'&&String(day.day)!==String(focusDay))return;
     day.items.forEach(function(it){
       idx++;
       var offLat=(Math.sin(idx*1.7)*0.012);
       var offLng=(Math.cos(idx*1.3)*0.014);
+      var pos=[lat+offLat,lng+offLng];
+      bounds.push(pos);
       var color=it.type==='food'?'#d946ef':'#10b981';
-      L.circleMarker([lat+offLat,lng+offLng],{radius:8,color:'#fff',weight:2,fillColor:color,fillOpacity:1})
+      var m=L.circleMarker(pos,{radius:9,color:'#fff',weight:2,fillColor:color,fillOpacity:1})
         .addTo(planMap).bindPopup('<strong>'+t('day')+' '+day.day+' · '+it.time+'</strong><br>'+esc(it.title));
+      planMapMarkers.push({day:day.day,marker:m});
     });
   });
-  setTimeout(function(){planMap.invalidateSize()},100);
+  try{if(bounds.length>1)planMap.fitBounds(bounds,{padding:[28,28]});}catch(e){}
+  setTimeout(function(){planMap.invalidateSize()},120);
+}
+function showPlanDay(day){
+  document.querySelectorAll('.plan-day-tab').forEach(function(b){
+    b.classList.toggle('active', String(b.getAttribute('data-day'))===String(day));
+  });
+  document.querySelectorAll('.plan-day-card').forEach(function(c){
+    c.classList.toggle('active', String(c.getAttribute('data-day-card'))===String(day));
+  });
+  if(lastPlan) focusDayOnMap(day);
+}
+function focusDayOnMap(day){
+  if(!lastPlan)return;
+  renderPlanMap(lastPlan.center||[41.9,12.5], lastPlan.days||[], day==='all'?null:day);
+}
+function sharePlan(){
+  if(!lastPlan){alert(lang==='it'?'Genera prima un piano.':'Generate a plan first.');return}
+  var text='Smart Travel — '+lastPlan.dest+' · '+lastPlan.nDays+' '+t('days_label')+' · budget '+lastPlan.bud+'€';
+  if(navigator.share){navigator.share({title:'Smart Travel',text:text}).catch(function(){})}
+  else if(navigator.clipboard){navigator.clipboard.writeText(text);alert(lang==='it'?'Riepilogo copiato.':'Summary copied.');}
+  else{prompt('Copy',text)}
 }
 
 function exportPDF(){
   if(!lastPlan){buildPlan();if(!lastPlan)return}
   var J=window.jspdf&&window.jspdf.jsPDF;if(!J){window.print();return}
   var doc=new J({unit:'pt',format:'a4'});
-  var y=40,margin=40,maxW=515;
+  var y=48,margin=48,maxW=500;
+  function ensure(space){if(y+space>800){doc.addPage();y=48;}}
   function line(txt,size,bold){
-    doc.setFontSize(size||11);
     doc.setFont('helvetica',bold?'bold':'normal');
-    var lines=doc.splitTextToSize(String(txt),maxW);
-    lines.forEach(function(ln){
-      if(y>780){doc.addPage();y=40}
-      doc.text(ln,margin,y);y+=size+4;
-    });
+    doc.setFontSize(size||11);
+    var lines=doc.splitTextToSize(String(txt||''),maxW);
+    ensure(lines.length*(size||11)*1.25+4);
+    doc.text(lines,margin,y);
+    y+=lines.length*(size||11)*1.25+4;
   }
-  line('Smart Travel — '+lastPlan.dest,16,true);
-  line((lang==='it'?'Piano di viaggio':'Travel plan')+' · '+lastPlan.nDays+' '+t('days_label')+' · '+lastPlan.peo+' · '+lastPlan.bud+' €',11,false);
-  line(t('q_int')+': '+lastPlan.int1+(lastPlan.int2&&lastPlan.int2!=='none'?' + '+lastPlan.int2:''),10,false);
-  line(t('q_pace')+': '+lastPlan.pace+' · '+t('q_transport')+': '+lastPlan.tr,10,false);
-  if(lastPlan.notes)line(lastPlan.notes,10,false);
-  y+=8;
-  lastPlan.days.forEach(function(day){
-    line(t('day')+' '+day.day,13,true);
-    day.items.forEach(function(it){
-      line(it.time+'  '+it.title+' ('+it.dur+' min)',10,false);
-    });
+  var fd=findDest(lastPlan.dest);
+  // Cover header
+  doc.setFillColor(37,99,235);doc.rect(0,0,595,110,'F');
+  doc.setTextColor(255,255,255);
+  doc.setFont('helvetica','bold');doc.setFontSize(11);
+  doc.text('SMART TRAVEL — Travel dossier',margin,36);
+  doc.setFontSize(22);doc.text(String(lastPlan.dest||''),margin,68);
+  doc.setFont('helvetica','normal');doc.setFontSize(11);
+  doc.text((lang==='it'?'Piano personalizzato':'Custom itinerary')+' · '+lastPlan.nDays+' '+t('days_label')+' · '+lastPlan.peo+' · '+lastPlan.bud+' €',margin,90);
+  doc.setTextColor(30,41,59);y=130;
+  if(fd){
+    line((lang==='it'?'Perché questa meta':'Why this destination'),13,true);
+    line((lang==='it'?fd.why.it:fd.why.en)+' ('+fd.country+')',10,false);
     y+=6;
+  }
+  line((lang==='it'?'Profilo viaggio':'Trip profile'),13,true);
+  line(t('q_int')+': '+lastPlan.int1+(lastPlan.int2&&lastPlan.int2!=='none'?' + '+lastPlan.int2:''),10,false);
+  line(t('q_pace')+': '+lastPlan.pace+' · '+t('q_transport')+': '+lastPlan.tr+' · '+t('q_local')+': '+lastPlan.local,10,false);
+  if(lastPlan.notes)line((lang==='it'?'Note':'Notes')+': '+lastPlan.notes,10,false);
+  y+=8;
+  line((lang==='it'?'Itinerario giorno per giorno':'Day-by-day itinerary'),14,true);
+  y+=4;
+  (lastPlan.days||[]).forEach(function(day){
+    ensure(60);
+    doc.setFillColor(239,246,255);doc.roundedRect(margin-6,y-12,maxW+12,22,4,4,'F');
+    line(t('day')+' '+day.day,12,true);
+    day.items.forEach(function(it){
+      line(it.time+'  ·  '+it.title+'  ('+it.dur+' min)',10,true);
+      if(it.why)line('    → '+it.why,9,false);
+    });
+    y+=8;
   });
-  line(t('map_legend'),9,false);
-  doc.save('SmartTravel_'+lastPlan.dest.replace(/\s+/g,'_')+'.pdf');
+  ensure(40);
+  line((lang==='it'?'Note operative':'Operational notes'),12,true);
+  line(lang==='it'?'Orari indicativi: verifica aperture e prenotazioni in alta stagione. I prezzi di voli/hotel vanno confermati nella sezione Voli & Hotel.':'Indicative times: check opening hours and peak-season bookings. Confirm flight/hotel prices in Flights & Hotels.','10',false);
+  line('Smart Travel · '+new Date().toLocaleDateString(lang==='it'?'it-IT':'en-GB'),9,false);
+  doc.save('SmartTravel_'+String(lastPlan.dest||'trip').replace(/\s+/g,'_')+'.pdf');
 }
 
 /* ST AI interview */
@@ -1616,6 +1993,13 @@ window.notesToAI=notesToAI;
 window.go=go;window.buy=buy;window.setLang=setLang;window.toggleLang=toggleLang;
 window.toggleMobile=toggleMobile;window.closeMobile=closeMobile;
 window.wiz=wiz;window.resetWizard=resetWizard;window.exportPDF=exportPDF;
+window.sharePlan=sharePlan;
+window.onDestType=onDestType;
+window.setDestMode=setDestMode;
+window.spinDestinationRoulette=spinDestinationRoulette;
+window.onDestKey=onDestKey;
+window.showPlanDay=showPlanDay;
+window.focusDayOnMap=focusDayOnMap;
 window.sendChat=sendChat;window.aiStartInterview=aiStartInterview;
 window.searchFlights=searchFlights;window.searchHotels=searchHotels;
 
@@ -1628,35 +2012,6 @@ document.getElementById('chat-in').addEventListener('keypress',function(e){if(e.
 try{selected=JSON.parse(localStorage.getItem('st_selected')||'null')||{flight:null,hotel:null,cruise:null}}catch(e){}
 if(!Object.prototype.hasOwnProperty.call(selected,'hotel'))selected.hotel=null;
 applyLang();refreshAccess();
-
-// Gestione ritorno da Stripe Checkout (?paid=1)
-(function handleStripeReturn(){
-  try {
-    var params = new URLSearchParams(window.location.search);
-    if (params.get('paid') === '1') {
-      var planId = params.get('plan') || '';
-      var pending = null;
-      try { pending = JSON.parse(localStorage.getItem('st_plan_pending') || 'null'); } catch(e){}
-      if (pending && (!planId || pending.id === planId)) {
-        localStorage.setItem('st_plan', JSON.stringify({
-          id: pending.id,
-          name: pending.name,
-          price: pending.price,
-          paidAt: new Date().toISOString()
-        }));
-        localStorage.removeItem('st_plan_pending');
-        refreshAccess();
-        // Pulisce l'URL
-        if (window.history && window.history.replaceState) {
-          window.history.replaceState({}, document.title, window.location.pathname);
-        }
-        alert((lang === 'it' ? 'Pagamento riuscito! Piano attivo: ' : 'Payment successful! Active plan: ') + pending.name);
-        go('plan');
-      }
-    }
-  } catch(e){}
-})();
-
 setTimeout(initHomeMap,300);
 var hs=document.getElementById('home-search');if(hs)hs.addEventListener('keypress',function(e){if(e.key==='Enter')searchFromHome()});
 })();
