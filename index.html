@@ -136,11 +136,29 @@ header.sticky{z-index:9999!important}
 <button type="button" onclick="go('listings')" class="card-h text-left rounded-2xl border p-5 transition"><div class="font-bold" data-i18n="nav_listings">Esplora</div><p class="text-sm text-slate-500 mt-1" data-i18n="cat_list">Mete, stagioni e idee viaggio</p></button>
 </div>
 </section>
-<section class="py-12 bg-slate-900 text-white">
-<div class="max-w-5xl mx-auto px-4 grid sm:grid-cols-3 gap-4">
-<div class="rounded-2xl bg-white/5 border border-white/10 p-5"><div class="text-xs uppercase text-slate-400" data-i18n="p1_name">Analisi</div><div class="text-3xl font-extrabold mt-1">2,00 €</div><button type="button" onclick="buy('compare','Analisi','2,00 €')" class="mt-4 w-full py-2 rounded-full bg-white text-slate-900 text-sm font-semibold" data-i18n="buy">Attiva</button></div>
-<div class="rounded-2xl bg-brand-500/20 border border-brand-400/40 p-5"><div class="text-xs uppercase text-brand-200" data-i18n="p3_name">Mensile</div><div class="text-3xl font-extrabold mt-1">14,90 €</div><button type="button" onclick="buy('monthly','Mensile','14,90 €')" class="mt-4 w-full py-2.5 rounded-full bg-white text-slate-900 text-sm font-bold shadow-md hover:bg-slate-100 border border-slate-200" data-i18n="buy">Attiva</button></div>
-<div class="rounded-2xl bg-white/5 border border-white/10 p-5"><div class="text-xs uppercase text-slate-400" data-i18n="p2_name">10 piani</div><div class="text-3xl font-extrabold mt-1">19,90 €</div><button type="button" onclick="buy('pack10','10 piani','19,90 €')" class="mt-4 w-full py-2 rounded-full bg-white text-slate-900 text-sm font-semibold" data-i18n="buy">Attiva</button></div>
+<section class="py-6 bg-slate-900 text-white">
+<div class="max-w-5xl mx-auto px-4">
+<div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+<div class="text-xs font-semibold uppercase tracking-wide text-slate-400" data-i18n="home_price_label">Piani Smart Travel</div>
+<button type="button" onclick="go('prezzi')" class="text-xs font-semibold text-brand-300 hover:text-white" data-i18n="home_price_more">Dettagli e cosa include →</button>
+</div>
+<div class="grid sm:grid-cols-3 gap-2">
+<button type="button" onclick="buy('compare','Analisi','2,00 €')" class="text-left rounded-xl bg-white/5 border border-white/10 px-3 py-3 hover:bg-white/10 transition">
+<div class="text-[10px] uppercase text-slate-400" data-i18n="p1_name">Analisi</div>
+<div class="text-lg font-extrabold">2,00 €</div>
+<div class="text-[11px] text-slate-400 mt-0.5" data-i18n="p1_home">1 piano · PDF · ST AI base</div>
+</button>
+<button type="button" onclick="buy('monthly','Mensile','14,90 €')" class="text-left rounded-xl bg-brand-500/25 border border-brand-400/40 px-3 py-3 hover:bg-brand-500/35 transition">
+<div class="text-[10px] uppercase text-brand-200" data-i18n="p3_name">Mensile</div>
+<div class="text-lg font-extrabold">14,90 €</div>
+<div class="text-[11px] text-brand-100/80 mt-0.5" data-i18n="p3_home">Illimitato 30gg · ST AI prioritario</div>
+</button>
+<button type="button" onclick="buy('pack10','10 piani','19,90 €')" class="text-left rounded-xl bg-white/5 border border-white/10 px-3 py-3 hover:bg-white/10 transition">
+<div class="text-[10px] uppercase text-slate-400" data-i18n="p2_name">10 piani</div>
+<div class="text-lg font-extrabold">19,90 €</div>
+<div class="text-[11px] text-slate-400 mt-0.5" data-i18n="p2_home">10 dossier · senza scadenza mese</div>
+</button>
+</div>
 </div>
 </section>
 </div>
@@ -236,9 +254,11 @@ header.sticky{z-index:9999!important}
 <div class="font-bold text-brand-900" data-i18n="roulette_title">Roulette destinazioni</div>
 <span class="text-xs text-brand-700" data-i18n="roulette_sub">in base a budget e desideri</span>
 </div>
-<div class="mb-2"><label class="text-xs font-semibold text-slate-600" data-i18n="q_budget">Budget totale (€)</label>
-<input id="w-bud-roul" type="number" min="50" placeholder="800" class="mt-1 w-full px-3 py-2 rounded-xl border text-sm" oninput="var b=document.getElementById('w-bud');if(b)b.value=this.value;"/></div>
-<button type="button" onclick="spinDestinationRoulette()" class="w-full py-3.5 rounded-full bg-gradient-to-r from-brand-600 to-cyan-500 text-white font-bold shadow-md hover:opacity-95" data-i18n="roulette_btn">🎲 Gira la roulette</button>
+<div class="mb-2"><label class="text-xs font-semibold text-slate-600" data-i18n="q_budget_full">Budget totale viaggio (€) — obbligatorio</label>
+<input id="w-bud-roul" type="number" min="100" required placeholder="es. 1200" class="mt-1 w-full px-3 py-2 rounded-xl border text-sm" oninput="var b=document.getElementById('w-bud');if(b)b.value=this.value;"/>
+<p class="text-[11px] text-slate-500 mt-1" data-i18n="budget_full_hint">Include voli, hotel/soggiorno, trasferimenti, pasti e attività. Non solo alloggio.</p>
+</div>
+<button type="button" id="roulette-spin-btn" onclick="spinDestinationRoulette()" class="w-full py-3.5 rounded-full bg-gradient-to-r from-brand-600 to-cyan-500 text-white font-bold shadow-md hover:opacity-95 disabled:opacity-40" data-i18n="roulette_btn">🎲 Gira la roulette</button>
 <div id="roulette-out" class="mt-3 hidden"></div>
 </div>
 </div>
@@ -437,13 +457,48 @@ header.sticky{z-index:9999!important}
 </div>
 
 <div id="page-cruises" class="page">
-<section class="py-12 max-w-3xl mx-auto px-4">
-<button type="button" onclick="go('home')" class="text-sm text-brand-600 font-semibold mb-3">← Home</button>
-<h1 class="text-3xl font-extrabold mb-4" data-i18n="cr_title">Crociere</h1>
+<section class="py-12 max-w-5xl mx-auto px-4">
+<button type="button" onclick="go('home')" class="text-sm text-brand-600 font-semibold mb-3 no-print">← Home</button>
+<h1 class="text-3xl font-extrabold mb-2" data-i18n="nav_cruises">Crociere</h1>
+<p class="text-slate-600 mb-6" data-i18n="cruise_sub">Cerca per partenza, arrivo, durata e regione. Suggerimenti mentre digiti.</p>
+<div class="rounded-2xl border bg-white p-5 shadow-sm mb-6 space-y-3">
+<div class="relative">
+<label class="text-xs font-semibold text-slate-500" data-i18n="cruise_search_label">Cerca crociera / meta / porto</label>
+<input id="cr-q" type="search" autocomplete="off" class="mt-1 w-full px-4 py-3 rounded-xl border" placeholder="es. Amalfi, Mediterraneo, Genova…" oninput="onCruiseType(event)" onfocus="onCruiseType(event)"/>
+<div id="cr-ac" class="hidden absolute z-30 left-0 right-0 mt-1 max-h-56 overflow-auto rounded-xl border bg-white shadow-xl text-sm"></div>
+</div>
+<div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+<div><label class="text-xs font-semibold text-slate-500" data-i18n="cruise_from">Porto di partenza</label>
+<input id="cr-from" class="mt-1 w-full px-3 py-2.5 rounded-xl border text-sm" placeholder="Genova, Barcelona…"/></div>
+<div><label class="text-xs font-semibold text-slate-500" data-i18n="cruise_to">Porto di arrivo / fine</label>
+<input id="cr-to" class="mt-1 w-full px-3 py-2.5 rounded-xl border text-sm" placeholder="stesso o altro porto"/></div>
+<div><label class="text-xs font-semibold text-slate-500" data-i18n="cruise_nights">Durata (notti)</label>
+<select id="cr-nights" class="mt-1 w-full px-3 py-2.5 rounded-xl border text-sm bg-white">
+<option value="">Tutte</option>
+<option value="3">3–4</option>
+<option value="7">5–8</option>
+<option value="10">9–12</option>
+<option value="14">13+</option>
+</select></div>
+<div><label class="text-xs font-semibold text-slate-500" data-i18n="cruise_region">Area</label>
+<select id="cr-region" class="mt-1 w-full px-3 py-2.5 rounded-xl border text-sm bg-white">
+<option value="">Tutte</option>
+<option value="med">Mediterraneo</option>
+<option value="north">Nord Europa</option>
+<option value="carib">Caraibi</option>
+<option value="asia">Asia / Emirati</option>
+<option value="world">Altro / mondo</option>
+</select></div>
+</div>
+<button type="button" onclick="searchCruises()" class="w-full sm:w-auto px-6 py-3 rounded-full bg-brand-600 text-white text-sm font-semibold" data-i18n="cruise_search_btn">Cerca crociere</button>
+</div>
 <div id="cruise-results" class="space-y-3"></div>
+<div class="mt-6 grid sm:grid-cols-2 gap-3 no-print">
+<button type="button" onclick="go('plan')" class="rounded-xl border bg-white p-4 text-left hover:border-brand-300"><div class="font-semibold text-sm">📋 Pianifica itinerario</div><div class="text-xs text-slate-500 mt-1">Collega la crociera al piano completo</div></button>
+<button type="button" onclick="go('flights')" class="rounded-xl border bg-white p-4 text-left hover:border-brand-300"><div class="font-semibold text-sm">✈️ Voli di andata/ritorno</div><div class="text-xs text-slate-500 mt-1">Cerca voli verso il porto di imbarco</div></button>
+</div>
 </section>
 </div>
-
 <div id="page-listings" class="page">
 <section class="py-12 max-w-5xl mx-auto px-4">
 <button type="button" onclick="go('home')" class="text-sm text-brand-600 font-semibold mb-3">← Home</button>
@@ -602,14 +657,14 @@ header.sticky{z-index:9999!important}
 var I18N={
 it:{
 nav_home:'Home',nav_listings:'Esplora',explore_title:'Esplora mete',explore_sub:'Cerca una città, un tipo di viaggio o un interesse. ST AI propone mete e ti porta al piano.',explore_by_interest:'Esplora per interesse',explore_season:'Idee per stagione',explore_popular:'Mete in evidenza',explore_all:'Mostra tutte',explore_cta_t:'Hai già la meta?',explore_cta_d:'Passa alla pianificazione completa con interessi, età, animali e PDF.',int_sea:'Mare',int_nature:'Natura',int_culture:'Cultura',int_food:'Cibo',int_city:'Città',int_family:'Famiglia',sea_spring:'Primavera — città d’arte e temperature miti',sea_summer:'Estate — mare e costiere',sea_autumn:'Autunno — cibo e borghi',sea_winter:'Inverno — capitali e musei',nav_plan:'Pianifica',nav_flights:'Voli & Hotel',nav_cruises:'Crociere',nav_pricing:'Prezzi',nav_cta:'Pianifica',
-hero_badge:'Itinerari · Mappa · PDF · ST AI',hero_t1:'Pianificazione completa,',hero_t2:'su misura per i tuoi interessi.',
+hero_badge:'Itinerari · Mappa · PDF · ST AI',home_price_label:'Piani Smart Travel',home_price_more:'Dettagli e cosa include →',p1_home:'1 piano · PDF · ST AI base',p3_home:'Illimitato 30gg · ST AI prioritario',p2_home:'10 dossier · senza scadenza mese',q_budget_full:'Budget totale viaggio (€) — obbligatorio',budget_full_hint:'Include voli, hotel/soggiorno, trasferimenti, pasti e attività.',cruise_sub:'Cerca per partenza, arrivo, durata e regione.',cruise_search_label:'Cerca crociera / meta / porto',cruise_from:'Porto di partenza',cruise_to:'Porto di arrivo / fine',cruise_nights:'Durata (notti)',cruise_region:'Area',cruise_search_btn:'Cerca crociere',hero_t1:'Pianificazione completa,',hero_t2:'su misura per i tuoi interessi.',
 hero_sub:'ST AI approfondisce dove, come e quando. Il piano include tappe giornaliere, mappa e export PDF.',
 hero_cta1:'Avvia pianificazione',hero_cta2:'Parla con ST AI',home_map_label:'Anteprima mappa itinerario',home_search_ph:'Cerca città o destinazione (ST AI)…',home_search_btn:'Cerca',notes_ai:'Approfondisci con ST AI',notes_ai_hint:'ST AI legge le note e propone domande o tappe da aggiungere al piano.',
 cat_pl:'Interessi → tappe → PDF',cat_ai:'Domande su dove, come, quando',cat_fl:'Prezzi e disponibilità nel sito',cat_list:'Mete, stagioni e idee viaggio',
 p1_name:'Analisi',p2_name:'10 piani',p3_name:'Mensile',buy:'Attiva',price_sub:'Ogni piano sblocca la consulenza digitale Smart Travel.',p1_for:'Per chi: prova unica o un solo viaggio.',p1_f1:'1 piano completo (itinerario + mappa + PDF)',p1_f2:'Roulette mete e profilo interessi base',p1_f3:'Ricerca voli/hotel in-sito',p1_f4:'ST AI: orientamento iniziale',p3_for:'Per chi: viaggia spesso o più mete nel mese.',p3_f1:'Piani illimitati per 30 giorni',p3_f2:'ST AI viaggi (voli, ristoro, ritmi)',p3_f3:'Intervista interessi + roulette globale',p3_f4:'PDF dossier e preferenze salvate',p3_f5:'Ideale famiglie e multi-destinazione',p2_for:'Per chi: stagione di viaggi o uso condiviso.',p2_f1:'10 piani completi',p2_f2:'ST AI su ogni piano',p2_f3:'Roulette mondiale e profili salvati',p2_f4:'PDF e mappa per ogni itinerario',plan_ai_title:'ST AI · Indagine interessi',plan_ai_sub:'Consulente di viaggio: desideri, voli, ristoro. Con Gemini risponde live.',plan_ai_start:'Avvia intervista AI',plan_ai_ph:'Scrivi liberamente i tuoi desideri di viaggio…',
 demo_banner:'Wizard completo: interessi, ritmo, orari. Output con mappa, tappe e PDF.',wiz_title:'Pianificazione viaggio',
 wiz_s1:'1/5 · Dove e con chi',wiz_s2:'2/5 · Come ti muovi',wiz_s3:'3/5 · Interessi (guidano le tappe)',wiz_s4:'4/5 · Età, animali, alloggio',
-q_people:'Viaggiatori',q_dest:'Destinazione (città o area)',wiz_s1:'1/5 · Profilo e meta',premium_line:'Consulenza premium',premium_sub:' — indaghiamo desideri, budget e ritmo prima di costruire l’itinerario.',q_know:'Sai già dove andare?',mode_known:'Sì, ho una meta',mode_unknown:'No, sorprendimi',q_desire:'Cosa cerchi in questo viaggio?',des_escape:'Svagarmi e staccare',des_wow:'Qualcosa di memorabile / “wow”',des_culture:'Approfondire cultura e luoghi',des_nature:'Natura e outdoor',des_food:'Cibo e sapori',des_romance:'Romantico / di coppia',des_family:'Famiglia e ritmo soft',des_party:'Energia, città, vita notturna',q_climate:'Clima / ambientazione preferita',cli_any:'Indifferente',cli_city:'Grande città',cli_sea:'Mare / costa',cli_mountain:'Lago / montagna',cli_exotic:'Esotico / tropicale',cli_desert:'Deserto / Oriente',q_distance:'Distanza accettabile',dist_eu:'Europa',dist_med:'Mediterraneo / vicino',dist_world:'Tutto il mondo',roulette_title:'Roulette destinazioni',roulette_sub:'in base a budget e desideri',roulette_btn:'🎲 Gira la roulette',budget_hint:'Usato per roulette mete, ritmo del piano e tetto alloggio/giorno',dest_hint:'Suggerimenti mentre digiti · mete globali supportate',q_when:'Quando',q_days:'Durata',q_transport:'Mezzo principale',
+q_people:'Viaggiatori',q_dest:'Destinazione (città o area)',wiz_s1:'1/5 · Profilo e meta',premium_line:'Consulenza premium',premium_sub:' — indaghiamo desideri, budget e ritmo prima di costruire l’itinerario.',q_know:'Sai già dove andare?',mode_known:'Sì, ho una meta',mode_unknown:'No, sorprendimi',q_desire:'Cosa cerchi in questo viaggio?',des_escape:'Svagarmi e staccare',des_wow:'Qualcosa di memorabile / “wow”',des_culture:'Approfondire cultura e luoghi',des_nature:'Natura e outdoor',des_food:'Cibo e sapori',des_romance:'Romantico / di coppia',des_family:'Famiglia e ritmo soft',des_party:'Energia, città, vita notturna',q_climate:'Clima / ambientazione preferita',cli_any:'Indifferente',cli_city:'Grande città',cli_sea:'Mare / costa',cli_mountain:'Lago / montagna',cli_exotic:'Esotico / tropicale',cli_desert:'Deserto / Oriente',q_distance:'Distanza accettabile',dist_eu:'Europa',dist_med:'Mediterraneo / vicino',dist_world:'Tutto il mondo',roulette_title:'Roulette destinazioni',roulette_sub:'in base a budget e desideri',roulette_btn:'🎲 Gira la roulette',budget_hint:'Budget complessivo: voli + hotel + trasferimenti + cibo + attività',dest_hint:'Suggerimenti mentre digiti · mete globali supportate',q_when:'Quando',q_days:'Durata',q_transport:'Mezzo principale',
 q_local:'Spostamenti in destinazione',q_pace:'Ritmo di visita',q_budget:'Budget totale (€)',q_int:'Interesse principale',q_int2:'Secondo interesse',
 q_food:'Preferenze pasto',q_time:'Fascia oraria preferita per le visite',q_stay:'Tipo alloggio',q_style:'Fascia',q_age_adults:'Adulti (18–64)',q_age_senior:'Over 65',q_age_child:'Bambini 0–12',q_age_teen:'Ragazzi 13–17',q_pets:'Animali al seguito',o_pets_none:'Nessuno',o_pets_dog:'Cane',o_pets_cat:'Gatto',o_pets_other:'Altro animale',q_pets_need:'Esigenze pet-friendly',o_pets_hotel:'Alloggio che accetta animali',o_pets_beach:'Spiagge / parchi pet-friendly',o_pets_both:'Alloggio + luoghi pet-friendly',q_access:'Accessibilità / mobilità ridotta',o_access_none:'Nessuna esigenza particolare',o_access_steps:'Evitare scale / percorsi impegnativi',o_access_wheel:'Accesso carrozzina / ridotta mobilità',o_access_stroller:'Passeggino / percorsi comodi',q_notes:'Note libere (opzionale)',
 o_flex:'Date flessibili',o_walk:'A piedi / poco raggio',o_transit:'Mezzi pubblici',o_car:'Auto a noleggio',o_mix:'Misto',
@@ -630,14 +685,14 @@ day:'Giorno',poi:'Tappa',export_ok:'PDF generato',price_title:'Piani'
 },
 en:{
 nav_home:'Home',nav_listings:'Explore',explore_title:'Explore places',explore_sub:'Search a city, trip type or interest. ST AI suggests places and takes you to the plan.',explore_by_interest:'Browse by interest',explore_season:'Seasonal ideas',explore_popular:'Featured places',explore_all:'Show all',explore_cta_t:'Already have a destination?',explore_cta_d:'Go to full planning with interests, ages, pets and PDF.',int_sea:'Sea',int_nature:'Nature',int_culture:'Culture',int_food:'Food',int_city:'City',int_family:'Family',sea_spring:'Spring — art cities and mild weather',sea_summer:'Summer — sea and coasts',sea_autumn:'Autumn — food and villages',sea_winter:'Winter — capitals and museums',list_sub:'Search cities and destinations. ST AI suggests places even from free-text.',dest_search_ph:'E.g. Naples, Sicily sea, lakes…',dest_ai_btn:'Search with ST AI',dest_ai_suggest:'ST AI suggests:',dest_ai_none:'No place found: try another description.',f_all:'All',nav_plan:'Plan',nav_flights:'Flights & Hotels',nav_cruises:'Cruises',nav_pricing:'Pricing',nav_cta:'Plan',
-hero_badge:'Itineraries · Map · PDF · ST AI',hero_t1:'Complete planning,',hero_t2:'tailored to your interests.',
+hero_badge:'Itineraries · Map · PDF · ST AI',home_price_label:'Smart Travel plans',home_price_more:'Details & inclusions →',p1_home:'1 plan · PDF · base ST AI',p3_home:'Unlimited 30d · priority ST AI',p2_home:'10 dossiers · no monthly expiry',q_budget_full:'Total trip budget (€) — required',budget_full_hint:'Includes flights, hotels, transfers, meals and activities.',cruise_sub:'Search by departure, arrival, duration and region.',cruise_search_label:'Search cruise / destination / port',cruise_from:'Departure port',cruise_to:'Arrival / end port',cruise_nights:'Duration (nights)',cruise_region:'Area',cruise_search_btn:'Search cruises',hero_t1:'Complete planning,',hero_t2:'tailored to your interests.',
 hero_sub:'ST AI digs into where, how and when. The plan includes daily stops, map and PDF export.',
 hero_cta1:'Start planning',hero_cta2:'Talk to ST AI',home_map_label:'Itinerary map preview',home_search_ph:'Search city or destination (ST AI)…',home_search_btn:'Search',notes_ai:'Deepen with ST AI',notes_ai_hint:'ST AI reads your notes and suggests questions or stops for the plan.',
 cat_pl:'Interests → stops → PDF',cat_ai:'Questions on where, how, when',cat_fl:'Live prices and availability',cat_list:'Places, seasons and trip ideas',
 p1_name:'Analysis',p2_name:'10 plans',p3_name:'Monthly',buy:'Activate',price_sub:'Each plan unlocks Smart Travel digital consulting.',p1_for:'For: one-off try or a single trip.',p1_f1:'1 full plan (itinerary + map + PDF)',p1_f2:'Destination roulette & basic interest profile',p1_f3:'In-site flight/hotel search',p1_f4:'ST AI: initial guidance',p3_for:'For: frequent travellers or multiple destinations/month.',p3_f1:'Unlimited plans for 30 days',p3_f2:'Travel ST AI (flights, dining, pace)',p3_f3:'Deep interest interview + global roulette',p3_f4:'PDF dossier and saved preferences',p3_f5:'Ideal for families and multi-stop trips',p2_for:'For: a travel season or light shared use.',p2_f1:'10 full plans',p2_f2:'ST AI on every plan',p2_f3:'Worldwide roulette and saved profiles',p2_f4:'PDF and map per itinerary',plan_ai_title:'ST AI · Interest discovery',plan_ai_sub:'Travel consultant: desires, flights, dining. Live with Gemini.',plan_ai_start:'Start AI interview',plan_ai_ph:'Write freely about your travel desires…',
 demo_banner:'Full wizard: interests, pace, times. Output with map, stops and PDF.',wiz_title:'Trip planning',
 wiz_s1:'1/5 · Where and who',wiz_s2:'2/5 · How you move',wiz_s3:'3/5 · Interests (drive the stops)',wiz_s4:'4/5 · Ages, pets, stay',
-q_people:'Travellers',q_dest:'Destination (city or area)',wiz_s1:'1/5 · Profile & destination',premium_line:'Premium consulting',premium_sub:' — we explore desires, budget and pace before building the itinerary.',q_know:'Do you already know where to go?',mode_known:'Yes, I have a place',mode_unknown:'No, surprise me',q_desire:'What do you want from this trip?',des_escape:'Unwind and switch off',des_wow:'Something memorable / wow',des_culture:'Culture and places in depth',des_nature:'Nature and outdoors',des_food:'Food and flavours',des_romance:'Romantic / couple',des_family:'Family and soft pace',des_party:'Energy, city, nightlife',q_climate:'Preferred climate / setting',cli_any:'No preference',cli_city:'Big city',cli_sea:'Sea / coast',cli_mountain:'Lake / mountains',cli_exotic:'Exotic / tropical',cli_desert:'Desert / East',q_distance:'Acceptable distance',dist_eu:'Europe',dist_med:'Mediterranean / nearby',dist_world:'Worldwide',roulette_title:'Destination roulette',roulette_sub:'based on budget and desires',roulette_btn:'🎲 Spin the roulette',budget_hint:'Used for destination roulette, plan pace and nightly stay cap',dest_hint:'Suggestions as you type · global destinations supported',q_when:'When',q_days:'Duration',q_transport:'Main transport',
+q_people:'Travellers',q_dest:'Destination (city or area)',wiz_s1:'1/5 · Profile & destination',premium_line:'Premium consulting',premium_sub:' — we explore desires, budget and pace before building the itinerary.',q_know:'Do you already know where to go?',mode_known:'Yes, I have a place',mode_unknown:'No, surprise me',q_desire:'What do you want from this trip?',des_escape:'Unwind and switch off',des_wow:'Something memorable / wow',des_culture:'Culture and places in depth',des_nature:'Nature and outdoors',des_food:'Food and flavours',des_romance:'Romantic / couple',des_family:'Family and soft pace',des_party:'Energy, city, nightlife',q_climate:'Preferred climate / setting',cli_any:'No preference',cli_city:'Big city',cli_sea:'Sea / coast',cli_mountain:'Lake / mountains',cli_exotic:'Exotic / tropical',cli_desert:'Desert / East',q_distance:'Acceptable distance',dist_eu:'Europe',dist_med:'Mediterranean / nearby',dist_world:'Worldwide',roulette_title:'Destination roulette',roulette_sub:'based on budget and desires',roulette_btn:'🎲 Spin the roulette',budget_hint:'Total budget: flights + hotels + transfers + food + activities',dest_hint:'Suggestions as you type · global destinations supported',q_when:'When',q_days:'Duration',q_transport:'Main transport',
 q_local:'Local mobility',q_pace:'Visit pace',q_budget:'Total budget (€)',q_int:'Main interest',q_int2:'Second interest',
 q_food:'Meal preference',q_time:'Preferred visit time band',q_stay:'Stay type',q_style:'Tier',q_age_adults:'Adults (18–64)',q_age_senior:'Over 65',q_age_child:'Children 0–12',q_age_teen:'Teens 13–17',q_pets:'Pets travelling',o_pets_none:'None',o_pets_dog:'Dog',o_pets_cat:'Cat',o_pets_other:'Other pet',q_pets_need:'Pet-friendly needs',o_pets_hotel:'Pet-friendly stay',o_pets_beach:'Pet-friendly beaches/parks',o_pets_both:'Stay + pet-friendly places',q_access:'Accessibility / reduced mobility',o_access_none:'No special needs',o_access_steps:'Avoid stairs / hard paths',o_access_wheel:'Wheelchair / reduced mobility',o_access_stroller:'Stroller-friendly routes',q_notes:'Free notes (optional)',
 o_flex:'Flexible dates',o_walk:'Walk / short range',o_transit:'Public transport',o_car:'Rental car',o_mix:'Mixed',
@@ -1069,9 +1124,17 @@ function budgetTier(bud){
   return 3;
 }
 function spinDestinationRoulette(){
-  var bud=parseInt((document.getElementById('w-bud')||{}).value,10)||parseInt((document.getElementById('w-bud-roul')||{}).value,10)||800;
-var _br=document.getElementById('w-bud');if(_br&&!_br.value)_br.value=bud;
-  var desire=(document.getElementById('w-desire')||{}).value||'wow';
+  var roul=document.getElementById('w-bud-roul');
+  var main=document.getElementById('w-bud');
+  var bud=parseInt((roul&&roul.value)||(main&&main.value)||'',10);
+  if(!bud||bud<100){
+    alert(lang==='it'?'Inserisci prima il budget totale del viaggio (min. 100 €), comprensivo di voli, hotel, trasferimenti, pasti e attività.':'Enter the total trip budget first (min. 100€), including flights, hotels, transfers, meals and activities.');
+    if(roul){roul.focus();roul.classList.add('ring-2','ring-rose-400');setTimeout(function(){roul.classList.remove('ring-2','ring-rose-400')},1500);}
+    return;
+  }
+  if(main)main.value=bud;
+  if(roul)roul.value=bud;
+var desire=(document.getElementById('w-desire')||{}).value||'wow';
   var climate=(document.getElementById('w-climate')||{}).value||'any';
   var distance=(document.getElementById('w-distance')||{}).value||'world';
   var int1=(document.getElementById('w-int')||{}).value||'combinata';
@@ -1653,7 +1716,23 @@ function buildPlan(){
   });
   html+='</div>';
 
-  html+='<p class="text-sm text-emerald-800 bg-emerald-50 border border-emerald-100 rounded-xl p-3">'+esc(t('fits_budget'))+': max ~'+nightBudget+' €/notte · '+esc(style)+' · '+esc(local)+'</p>';
+  html+='<div class="grid sm:grid-cols-3 gap-3 mb-4 no-print">';
+  html+='<button type="button" onclick="go(\'flights\')" class="rounded-2xl border border-sky-200 bg-sky-50 p-4 text-left hover:shadow-md transition"><div class="font-bold text-sky-900 text-sm">✈️ '+(lang==='it'?'Prenota / confronta voli':'Book / compare flights')+'</div><p class="text-xs text-sky-800 mt-1">'+(lang==='it'?'Apri Voli & Hotel con la meta del piano. Budget stimato trasferimenti incluso nel totale.':'Open Flights & Hotels with this destination. Transfer budget is in the total.')+'</p></button>';
+  html+='<button type="button" onclick="go(\'flights\')" class="rounded-2xl border border-violet-200 bg-violet-50 p-4 text-left hover:shadow-md transition"><div class="font-bold text-violet-900 text-sm">🏨 '+(lang==='it'?'Hotel e soggiorno':'Hotels & stay')+'</div><p class="text-xs text-violet-800 mt-1">'+(lang==='it'?'Cerca strutture nel budget ~'+nightBudget+' €/notte.':'Search stays around ~'+nightBudget+' €/night.')+'</p></button>';
+  html+='<button type="button" onclick="go(\'cruises\')" class="rounded-2xl border border-cyan-200 bg-cyan-50 p-4 text-left hover:shadow-md transition"><div class="font-bold text-cyan-900 text-sm">🚢 '+(lang==='it'?'Idee crociera':'Cruise ideas')+'</div><p class="text-xs text-cyan-800 mt-1">'+(lang==='it'?'Se preferisci mare e tutto incluso, cerca partenze collegate.':'Prefer all-inclusive at sea? Search related departures.')+'</p></button>';
+  html+='</div>';
+  html+='<div class="rounded-2xl border bg-white p-4 shadow-sm mb-4 text-sm text-slate-700">';
+  html+='<div class="font-bold text-slate-900 mb-2">'+(lang==='it'?'Dossier consulenza (anche piano Analisi)':'Consulting dossier (including Analysis plan)')+'</div>';
+  html+='<ul class="space-y-1.5 list-none">';
+  html+='<li>• <strong>'+(lang==='it'?'Profilo':'Profile')+':</strong> '+esc(peo)+' · '+esc(pace)+' · '+esc(int1)+(int2&&int2!=='none'?' + '+esc(int2):'')+'</li>';
+  html+='<li>• <strong>'+(lang==='it'?'Logistica':'Logistics')+':</strong> '+esc(tr)+' · '+esc(local)+' · '+esc(when)+'</li>';
+  html+='<li>• <strong>'+(lang==='it'?'Budget totale stimato':'Estimated total budget')+':</strong> '+bud+' € <span class="text-slate-500">('+(lang==='it'?'voli + soggiorno + cibo + attività':'flights + stay + food + activities')+')</span></li>';
+  html+='<li>• <strong>'+(lang==='it'?'Alloggio consigliato':'Suggested stay')+':</strong> max ~'+nightBudget+' €/'+(lang==='it'?'notte':'night')+'</li>';
+  html+='<li>• <strong>'+(lang==='it'?'Ristoro':'Dining')+':</strong> ~'+foodBudget+' €/'+(lang==='it'?'giorno':'day')+' · '+esc(food)+'</li>';
+  html+='<li>• <strong>'+(lang==='it'?'Attività':'Activities')+':</strong> ~'+actBudget+' €/'+(lang==='it'?'giorno':'day')+'</li>';
+  if(notes)html+='<li>• <strong>'+(lang==='it'?'Note cliente':'Client notes')+':</strong> '+esc(notes)+'</li>';
+  html+='</ul></div>';
+html+='<p class="text-sm text-emerald-800 bg-emerald-50 border border-emerald-100 rounded-xl p-3">'+esc(t('fits_budget'))+': max ~'+nightBudget+' €/notte · '+esc(style)+' · '+esc(local)+'</p>';
 
   document.getElementById('plan-out').innerHTML=html;
   setTimeout(function(){renderPlanMap(center,days)},150);
@@ -1980,12 +2059,95 @@ async function searchHotels(){
     });
   });
 }
-var CRUISES=[{id:'c1',name:'Mediterraneo 7 notti',nameEn:'Mediterranean 7n',line:'Costa',price:690},{id:'c2',name:'Grecia',nameEn:'Greece',line:'MSC',price:820}];
+var CRUISES=[
+  {id:'c1',name:'Mediterraneo occidentale',nameEn:'Western Mediterranean',line:'Costa',from:'Genova',to:'Genova',nights:7,region:'med',price:690,tags:'mediterraneo genova barcellona marsiglia roma civitavecchia',stops:'Barcelona · Marseille · Civitavecchia'},
+  {id:'c2',name:'Isole greche',nameEn:'Greek Islands',line:'MSC',from:'Pireo',to:'Pireo',nights:7,region:'med',price:820,tags:'grecia isole mykonos santorini atene pireo',stops:'Mykonos · Santorini · Rhodes'},
+  {id:'c3',name:'Costiera amalfitana experience',nameEn:'Amalfi Coast experience',line:'Explora',from:'Napoli',to:'Napoli',nights:5,region:'med',price:980,tags:'amalfi costiera napoli positano capri mediterraneo',stops:'Capri · Sorrento · Amalfi'},
+  {id:'c4',name:'Fiordi norvegesi',nameEn:'Norwegian Fjords',line:'Costa',from:'Copenhagen',to:'Copenhagen',nights:8,region:'north',price:1100,tags:'fiordi norvegia nord europa copenhagen bergen',stops:'Bergen · Geiranger · Stavanger'},
+  {id:'c5',name:'Caraibi orientali',nameEn:'Eastern Caribbean',line:'MSC',from:'Miami',to:'Miami',nights:7,region:'carib',price:750,tags:'caraibi miami bahamas st maarten',stops:'Nassau · St. Maarten · Puerto Rico'},
+  {id:'c6',name:'Emirati e Golfo',nameEn:'Emirates & Gulf',line:'MSC',from:'Dubai',to:'Dubai',nights:7,region:'asia',price:890,tags:'dubai emirati abu dhabi doha golfo',stops:'Abu Dhabi · Doha · Sir Bani Yas'},
+  {id:'c7',name:'Adriatico e Dalmazia',nameEn:'Adriatic & Dalmatia',line:'Costa',from:'Venezia',to:'Venezia',nights:7,region:'med',price:720,tags:'adriatico venezia split dubrovnik dalmazia',stops:'Split · Dubrovnik · Zadar'},
+  {id:'c8',name:'Baleari e Costa Blanca',nameEn:'Balearics & Costa Blanca',line:'MSC',from:'Barcelona',to:'Barcelona',nights:5,region:'med',price:540,tags:'baleari barcellona mallorca ibiza minorca',stops:'Palma · Ibiza · Valencia'},
+  {id:'c9',name:'Alaska Inside Passage',nameEn:'Alaska Inside Passage',line:'Princess',from:'Seattle',to:'Seattle',nights:7,region:'world',price:1250,tags:'alaska seattle juneau glacier',stops:'Juneau · Skagway · Glacier Bay'},
+  {id:'c10',name:'Giappone e Corea',nameEn:'Japan & Korea',line:'MSC',from:'Tokyo',to:'Tokyo',nights:8,region:'asia',price:1400,tags:'giappone tokyo seoul busan osaka',stops:'Osaka · Busan · Kagoshima'},
+  {id:'c11',name:'Canarie e Atlantico',nameEn:'Canaries & Atlantic',line:'Costa',from:'Barcellona',to:'Barcellona',nights:11,region:'med',price:950,tags:'canarie tenerife gran canaria atlantico',stops:'Tenerife · Gran Canaria · Madeira'},
+  {id:'c12',name:'Mini crociera Amalfi–Sicilia',nameEn:'Amalfi–Sicily mini cruise',line:'Explora',from:'Napoli',to:'Palermo',nights:4,region:'med',price:610,tags:'amalfi sicilia napoli palermo mini',stops:'Amalfi · Messina · Palermo'}
+];
+function cruiseMatches(c,q){
+  if(!q)return true;
+  var blob=(c.name+' '+c.nameEn+' '+c.line+' '+c.from+' '+c.to+' '+(c.tags||'')+' '+(c.stops||'')).toLowerCase();
+  var parts=q.toLowerCase().split(/[\s,;]+/).filter(Boolean);
+  return parts.every(function(w){return blob.indexOf(w)>=0;}) || blob.indexOf(q.toLowerCase())>=0;
+}
+function filterCruises(){
+  var q=((document.getElementById('cr-q')||{}).value||'').trim();
+  var from=((document.getElementById('cr-from')||{}).value||'').toLowerCase().trim();
+  var to=((document.getElementById('cr-to')||{}).value||'').toLowerCase().trim();
+  var nights=(document.getElementById('cr-nights')||{}).value;
+  var region=(document.getElementById('cr-region')||{}).value;
+  return CRUISES.filter(function(c){
+    if(!cruiseMatches(c,q))return false;
+    if(from&&(c.from||'').toLowerCase().indexOf(from)<0&&(c.tags||'').toLowerCase().indexOf(from)<0)return false;
+    if(to&&(c.to||'').toLowerCase().indexOf(to)<0&&(c.tags||'').toLowerCase().indexOf(to)<0)return false;
+    if(region&&c.region!==region)return false;
+    if(nights){
+      var n=Number(nights),cn=c.nights||0;
+      if(n===3&&(cn<3||cn>4))return false;
+      if(n===7&&(cn<5||cn>8))return false;
+      if(n===10&&(cn<9||cn>12))return false;
+      if(n===14&&cn<13)return false;
+    }
+    return true;
+  });
+}
+function onCruiseType(e){
+  var inp=document.getElementById('cr-q');
+  var box=document.getElementById('cr-ac');
+  if(!inp||!box)return;
+  var q=inp.value.trim().toLowerCase();
+  var tips=[];
+  CRUISES.forEach(function(c){
+    var name=lang==='it'?c.name:c.nameEn;
+    var blob=(name+' '+c.from+' '+c.to+' '+c.tags+' '+c.stops).toLowerCase();
+    if(!q||blob.indexOf(q)>=0||name.toLowerCase().indexOf(q)===0){
+      tips.push({label:name,sub:c.from+' → '+c.to+' · '+c.nights+'n · '+c.line,id:c.id});
+    }
+  });
+  // also suggest matching words from tags
+  if(q.length>=2){
+    var words={};
+    CRUISES.forEach(function(c){(c.tags||'').split(/\s+/).forEach(function(w){if(w.indexOf(q)===0)words[w]=1;});});
+    Object.keys(words).slice(0,5).forEach(function(w){tips.unshift({label:w,sub:(lang==='it'?'Suggerimento meta':'Destination tip'),id:''});});
+  }
+  // unique labels
+  var seen={};tips=tips.filter(function(x){if(seen[x.label])return false;seen[x.label]=1;return true;}).slice(0,10);
+  if(!tips.length){box.classList.add('hidden');return;}
+  box.innerHTML=tips.map(function(x){
+    return '<button type="button" class="w-full text-left px-4 py-2.5 hover:bg-brand-50 border-b last:border-0 cr-ac-item" data-label="'+esc(x.label)+'"><span class="font-semibold">'+esc(x.label)+'</span> <span class="text-xs text-slate-400">'+esc(x.sub)+'</span></button>';
+  }).join('');
+  box.classList.remove('hidden');
+  box.querySelectorAll('.cr-ac-item').forEach(function(btn){
+    btn.addEventListener('mousedown',function(ev){ev.preventDefault();inp.value=btn.getAttribute('data-label');box.classList.add('hidden');searchCruises();});
+  });
+}
+function searchCruises(){renderCruises();}
 function renderCruises(){
   var box=document.getElementById('cruise-results');if(!box)return;
-  box.innerHTML=CRUISES.map(function(c){
+  var list=filterCruises();
+  if(!list.length){
+    box.innerHTML='<p class="text-center text-slate-500 py-8">'+(lang==='it'?'Nessuna crociera con questi filtri. Prova «Amalfi», «Mediterraneo» o svuota i campi.':'No cruises for these filters. Try "Amalfi", "Mediterranean" or clear fields.')+'</p>';
+    return;
+  }
+  box.innerHTML=list.map(function(c){
     var n=lang==='en'?c.nameEn:c.name;
-    return '<div class="rounded-xl border bg-white p-4 flex justify-between gap-3"><div><div class="font-bold">'+esc(n)+'</div><div class="text-sm text-slate-500">'+esc(c.line)+'</div></div><div class="text-right"><div class="font-extrabold text-brand-700">'+c.price+' €</div><button type="button" class="cpick text-sm text-brand-600 font-semibold" data-id="'+c.id+'">'+esc(t('fl_select'))+'</button></div></div>';
+    return '<div class="rounded-xl border bg-white p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">'+
+      '<div class="min-w-0"><div class="font-bold text-slate-900">'+esc(n)+'</div>'+
+      '<div class="text-sm text-slate-500 mt-0.5">'+esc(c.line)+' · '+c.nights+' '+(lang==='it'?'notti':'nights')+'</div>'+
+      '<div class="text-sm text-slate-600 mt-1">🚢 '+esc(c.from)+' → '+esc(c.to)+'</div>'+
+      '<div class="text-xs text-slate-500 mt-0.5">'+(lang==='it'?'Tappe':'Stops')+': '+esc(c.stops||'—')+'</div></div>'+
+      '<div class="text-right shrink-0"><div class="font-extrabold text-brand-700">da '+c.price+' €</div>'+
+      '<div class="text-[11px] text-slate-400">'+(lang==='it'?'a persona, indicativo':'pp, indicative')+'</div>'+
+      '<button type="button" class="cpick mt-2 px-4 py-1.5 rounded-full bg-brand-600 text-white text-sm font-semibold" data-id="'+c.id+'">'+esc(t('fl_select'))+'</button></div></div>';
   }).join('');
   box.querySelectorAll('.cpick').forEach(function(btn){
     btn.addEventListener('click',function(){
@@ -2218,6 +2380,8 @@ function notesToAI(){
 
 window.searchFromHome=searchFromHome;
 window.renderListings=renderListings;
+window.searchCruises=searchCruises;
+window.onCruiseType=onCruiseType;
 window.aiDestSearch=aiDestSearch;
 window.exploreInterest=exploreInterest;
 window.onDestSearchInput=onDestSearchInput;
